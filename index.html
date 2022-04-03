@@ -191,12 +191,12 @@
 			}, 1000);
 	setInterval(function() {
 				if (auto > 0, electricity >= auto) {
-					money = money + auto;
+					money = money + auto * 3;
 					electricity = electricity - auto;
 					document.getElementById("electricity").innerHTML = electricity;
 					document.getElementById("money").innerHTML = money;
 				} else if (auto > 0, electricity < auto) {
-					money = money + electricity;
+					money = money + electricity * 3;
 					electricity = 0;
 					document.getElementById("electricity").innerHTML = electricity;
 					document.getElementById("money").innerHTML = money;
