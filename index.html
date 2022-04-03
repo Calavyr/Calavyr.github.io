@@ -86,6 +86,18 @@
 </div>
 </div>
 <div class="sectionRight">
+
+	<table class="shopButton" onclick="buyAuto()">
+		<tr>
+				<td id="nameAndCost">
+				<p>Buy Autoseller</p>
+				<p><span>10</span> Credits</td>
+					</td>
+				<td id="amount"><span id="coalshop">0</span></td>
+		</tr>
+	</table>
+	<br>
+	<br>
 	<table class="shopButton" onclick="buyCoal()">
 		<tr>
 				<td id="nameAndCost">
@@ -136,6 +148,8 @@
 
 
 <script>
+	var auto = 0
+	var autocost = 10
 	var money = 75
 	var electricity = 0
 	var coal = 0
@@ -176,6 +190,15 @@
 				electricity = electricity + panels * panelpower + wheels * wheelpower + turbines * turbinepower
 			}, 1000);
 
+	function buyAuto() {
+				if (money >= autocost) {
+					money = money - autocost;
+					auto = auto + 1;
+					document.getElementById("money").innerHTML = money;
+					document.getElementById("autocost").innerHTML = coalcost;
+					document.getElementById("auto").innerHTML = coal;
+				}
+			};
 	function buyCoal() {
 				if (money >= coalcost) {
 					money = money - coalcost;
