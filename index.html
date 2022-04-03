@@ -195,11 +195,13 @@
 					electricity = electricity - auto;
 					document.getElementById("electricity").innerHTML = electricity;
 					document.getElementById("money").innerHTML = money;
+					document.getElementById("auto").innerHTML = auto;
 				} else if (auto > 0, electricity < auto) {
 					money = money + electricity * 3;
 					electricity = 0;
 					document.getElementById("electricity").innerHTML = electricity;
 					document.getElementById("money").innerHTML = money;
+					document.getElementById("auto").innerHTML = auto;
 				}
 			}, 1000);
 	function buyAuto() {
