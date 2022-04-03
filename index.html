@@ -189,13 +189,25 @@
 	setInterval(function() {
 				electricity = electricity + panels * panelpower + wheels * wheelpower + turbines * turbinepower
 			}, 1000);
-
+	setInterval(function() {
+				if (auto > 0, electricity >= auto) {
+					money = money + auto;
+					electricity = electricity - auto;
+					document.getElementById("electricity").innerHTML = electricity;
+					document.getElementById("money").innerHTML = money;
+				} else if (auto > 0, electricity < auto) {
+					money = money + electricity;
+					electricity = 0;
+					document.getElementById("electricity").innerHTML = electricity;
+					document.getElementById("money").innerHTML = money;
+				}
+			}, 1000);
 	function buyAuto() {
 				if (money >= autocost) {
 					money = money - autocost;
 					auto = auto + 1;
 					document.getElementById("money").innerHTML = money;
-					document.getElementById("autocost").innerHTML = coalcost;
+					document.getElementById("autocost").innerHTML = autocost;
 					document.getElementById("auto").innerHTML = coal;
 				}
 			};
