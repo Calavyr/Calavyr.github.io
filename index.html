@@ -184,12 +184,6 @@
 					document.getElementById("coal").innerHTML = coal;
 					document.getElementById("coalshop").innerHTML = coalshop;
 				}
-			}, 1000);
-	
-	setInterval(function() {
-				electricity = electricity + panels * panelpower + wheels * wheelpower + turbines * turbinepower
-			}, 1000);
-	setInterval(function() {
 				if (auto > 0, electricity >= auto) {
 					money = money + auto * 3;
 					electricity = electricity - auto;
@@ -202,8 +196,11 @@
 					document.getElementById("electricity").innerHTML = electricity;
 					document.getElementById("money").innerHTML = money;
 					document.getElementById("auto").innerHTML = auto;
-				}
+				} 
+				electricity = electricity + panels * panelpower + wheels * wheelpower + turbines * turbinepower
 			}, 1000);
+	
+
 	function buyAuto() {
 				if (money >= autocost) {
 					money = money - autocost;
