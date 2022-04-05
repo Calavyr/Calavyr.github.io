@@ -71,7 +71,7 @@
 		<tr>
 				<td id="nameAndCost">
 				<p>Sell Electricity</p>
-				<p><span>3</span> Credits</td>
+				<p><span>3</span> Credits</td></p>
 					</td>
 		</tr>
 	</table>
@@ -168,6 +168,7 @@
 	var turbinecost = 300
 	var turbinepower = 5
 	
+
 	setInterval(function() {
 				if (coalgen > 0, coal >= coalgen) {
 					electricity = electricity + coalgen;
@@ -200,7 +201,47 @@
 				electricity = electricity + panels * panelpower + wheels * wheelpower + turbines * turbinepower
 			}, 1000);
 	
-
+	function loadGame() {
+				var savedGame = JSON.parse(localStorage.getItem("gameSave"));
+				if (typeof savedGame.money !== "undefined") money = savedGame.money;
+				if (typeof savedGame.auto !== "undefined") auto = savedGame.auto;
+				if (typeof savedGame.electricity !== "undefined") electricity = savedGame.electricity;
+				if (typeof savedGame.coal !== "undefined") coal = savedGame.coal;
+				if (typeof savedGame.coalshop !== "undefined") coalshop = savedGame.coalshop;
+				if (typeof savedGame.coalgen !== "undefined") coalgen = savedGame.coalgen;
+				if (typeof savedGame.panels !== "undefined") panels = savedGame.panels;
+				if (typeof savedGame.wheels !== "undefined") wheels = savedGame.wheels;
+				if (typeof savedGame.turbines !== "undefined") turbines = savedGame.turbines;
+			}
+			
+	window.onload = function() {
+				loadGame();
+				document.getElementById("money").innerHTML = money;
+				document.getElementById("auto").innerHTML = auto;
+				document.getElementById("electricity").innerHTML = electricity;
+				document.getElementById("coal").innerHTML = coal;
+				document.getElementById("coalshop").innerHTML = coalshop;
+				document.getElementById("coalgen").innerHTML = coalgen;
+				document.getElementById("panels").innerHTML = panels;
+				document.getElementById("wheels").innerHTML = wheels;
+				document.getElementById("turbines").innerHTML = turbines;
+			};
+			
+	function saveGame() {
+				var gameSave = {
+					money: money,
+					auto: auto,
+					electricity: electricity,
+					coal: coal,
+					coalshop: coalshop,
+					coalgen: coalgen,
+					panels: panels,
+					wheels: wheels,
+					turbines: turbines
+				};
+				localStorage.setItem("gameSave", JSON.stringify(gameSave));
+			}
+			
 	function buyAuto() {
 				if (money >= autocost) {
 					money = money - autocost;
@@ -284,4 +325,8 @@
 					document.getElementById("coalshop").innerHTML = coalshop;
 				}	
 			};
+	
+	setInterval(function() {
+		saveGame()
+	}, 30000);
 </script>
