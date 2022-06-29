@@ -1,0 +1,686 @@
+<HTML>
+<head>
+<title>RPG</title>
+</head>
+<style>
+.background {
+	background: #000000;
+	user-select: none;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-o-user-select: none;
+}
+.area {
+	float: left;
+	padding-top: 20px;
+	padding-left: 96px;
+	font-size: 24px;
+	display: inline-block;
+}
+
+.enemystats {
+	color: white;
+}
+	
+.stats {
+	float: right;
+	padding-top: 20px;
+	padding-right: 96px;
+	font-size: 24px;
+	display: inline-block;
+}
+
+.stats2 {
+	font-size: 18px;
+}
+
+.tooltip {
+	color: white;
+	display: inline-block;
+	left: 90px;
+	top: 750px;
+	position: absolute;
+}
+
+.hud {
+	text-align: center;
+	top: 20px;
+	font-size: 24px;
+	left: 900px;
+	position: absolute;
+}
+
+.regenstuff {
+	text-align: center;
+	top: 20px;
+	font-size: 24px;
+	left: 900px;
+	position: absolute;
+}
+.text {
+	color: white;
+}
+
+.skills {
+text-align: center;
+color: white;
+display: inline-block;
+left: 840px;
+top: 800px;
+position: absolute;
+}
+
+#shop {
+	background-color: rgb(77, 77, 77);
+	border-radius: 5px;
+	text-align: center;
+	color: white;
+	display: inline-block;
+	left: 935px;
+	top: 500px;
+	position: absolute;
+	z-index: -999;
+}
+
+.shopButton {
+	background-color: #EEEEEE;
+	transition: all .2s ease-in-out;
+	border-radius: 25px;
+	width: 100%;
+	margin: 10px 0px 10px 0px;
+}
+			
+.shopButton:hover {
+	background-color: #DDDDDD	;
+	transition: all .2s ease-in-out;
+}
+
+
+</style>
+
+<body class="background">
+<button onclick="displayShop()">Shop</button>
+
+
+	
+<div id="shop" style="display:none">
+<p style="font-weight:bold" style="font-size:128px"> &nbsp;SHOP&nbsp; </p>
+	<table class="shopButton" onclick="buyPoint()" onmouseover="tooltips = tooltiplist[19]">
+		<tbody><tr>
+			<td id="nameAndCost">
+				<p style="text-align:center">SP</p>
+				<p style="text-align:center">&nbsp;<span id="pointcost">10000</span> Gold</p></td>
+	</tbody></table>
+		</tr>
+	<table class="shopButton" onclick="buySword()" onmouseover="tooltips = tooltiplist[20]">
+		<tbody><tr>
+			<td id="nameAndCost">
+				<p style="text-align:center">Sword</p>
+				<span id="swordthingy" style="text-align:center">&nbsp;100000 Gold</span></td>
+		</tr>
+	</tbody></table>
+	<table class="shopButton" onclick="buyStaff()" onmouseover="tooltips = tooltiplist[21]">
+		<tbody><tr>
+			<td id="nameAndCost">
+				<p style="text-align:center">Staff</p>
+				<span id="staffthingy" style="text-align:center">&nbsp;100000 Gold</span></td>
+		</tr>
+	</tbody></table>
+<p> &nbsp;Wait for new update.&nbsp; </p>
+</div>
+
+
+
+<div class="area" onmouseover="tooltips = tooltiplist[4]">
+
+<button onClick="previousStage()"><-</button><span id="stage" style="color:white">1</span><button onClick="nextStage()">-></button><br><br>
+
+<div class="enemystats">
+<span id="enemyhp">25</span> / <span id="enemymaxhp">25</span><br>
+<p>Damage = <span id="enemydamage">1</span></p>
+<p>XP Drop = <span id="enemyxp">25</span></p>
+</div></div>
+<div class="text">
+<div class="stats">	
+<img style="padding-right: 24px" src="images/stats.png" height="80px" width="80px" onmouseover="tooltips = tooltiplist[5]">
+<p style="color:white" onMouseOver="tooltips = tooltiplist[6]"><span id="strength">1</span> Strength </p><button onClick="strengthUp()">+</button>
+<img style="padding-right: 12px" src="images/strength.png" height="36px" width="36px" onMouseOver="tooltips = tooltiplist[6]">
+<p style="color:white" onMouseOver="tooltips = tooltiplist[7]"><span id="magic">1</span> Magic </p><button onClick="magicUp()">+</button>
+<img style="padding-right: 12px" src="images/magic.png" height="36px" width="36px" onMouseOver="tooltips = tooltiplist[7]">
+<p style="color:white" onMouseOver="tooltips = tooltiplist[8]"><span id="vitality">1</span> Vitality </p><button onClick="vitalityUp()">+</button>
+<img style="padding-right: 12px" src="images/vitality.png" height="36px" width="36px" onMouseOver="tooltips = tooltiplist[8]">
+<p style="color:white" onMouseOver="tooltips = tooltiplist[9]"><span id="agility">1</span> Agility </p><button onClick="agilityUp()">+</button>
+<img style="padding-right: 12px" src="images/agility.png" height="36px" width="36px" onMouseOver="tooltips = tooltiplist[9]">
+<br><br><br>
+<span id="points" style="font-size:18px" onMouseOver="tooltips = tooltiplist[10]">0</span> Stat Points<br><br>
+<button onClick="refundPoints()">Refund SP (1000 Gold)</button>
+<div class="stats2">
+<br><br>
+<p onMouseOver="tooltips = tooltiplist[11]">Damage = <span id="damage">5</span></p>
+<p onMouseOver="tooltips = tooltiplist[12]">Health Regen = <span id="hregen">1</span></p>
+<p onMouseOver="tooltips = tooltiplist[13]">Mana Regen = <span id="mregen">1</span></p>
+
+</div></div></div>
+<div class="tooltip">
+<p style="font-size:24px">Tooltip</p>
+<span id="tooltips">Hover your mouse over anything that confuses you to get information about it!</span>
+</div>
+
+<div class="hud">
+<p style="color:white" style="padding-left:48px" onmouseover="tooltips = tooltiplist[0]">Level <span id="level">1</span></p><p style="color:white" onmouseover="tooltips = tooltiplist[14]"><span id="gold">0</span> Gold</p>
+<p style="color:white" style="padding-right: 10px"></p>
+<p style="color:white" onmouseover="tooltips = tooltiplist[1]"><span id="health">25</span>/<span id="maxhealth">25</span> Health</p>
+<p style="color:white" onmouseover="tooltips = tooltiplist[2]"><span id="mana">10</span>/<span id="maxmana">10</span> Mana</p>
+<p style="color:white" onmouseover="tooltips = tooltiplist[3]"><span id="xp">0</span>/<span id="xpreq">20</span> XP</p><br><br><br><br>
+<pre><p style="color:white"><span id="playerImage" style="font-size:48px">O<br>/|\<br>/\</span></p></pre>
+</div>
+<div class="regenstuff">
+<br><br><br><br><br><br><br><br><br><br><br><br>
+<p style="color:red" style="padding-left:12px"><span id="damageIndicator"> </span></p>
+<p style="color:lime" style="padding-left:12px"><span id="hregenIndicator"> </span></p>
+<p style="color:aqua" style="padding-left:12px"><span id="mregenIndicator"> </span></p>
+</div>
+
+
+<div class="skills">
+<img src="images/healingaura.png" width="72px" height="72px" onmouseover="tooltips = tooltiplist[15]" onClick="spellHealingAura()">
+<img src="images/fireblast.png" width="72px" height="72px" onmouseover="tooltips = tooltiplist[16]" onClick="spellFireBlast()">
+<img src="images/icespear.png" width="72px" height="72px" onmouseover="tooltips = tooltiplist[17]" onClick="spellIceSpear()">
+<img src="images/decayingtouch.png" width="72px" height="72px" onmouseover="tooltips = tooltiplist[18]" onClick="spellDecayingTouch()">
+</div>
+
+<script>
+var health = 25
+var maxhealth = 25
+var gold = 0
+var level = 1
+var xp = 0
+var xpreq = 20
+var strength = 1
+var damage = 5
+var vitality = 1
+var magic = 1
+var agility = 1
+var mana = 10
+var maxmana = 10
+var stage = 1
+var fighting = 0
+var turn = 1
+var enemyhp = 25
+var enemymaxhp = 25
+var enemydamage = 3
+var enemyxp = 25
+var points = 0
+var attackspeed = 1
+var hregen = 1
+var mregen = 1
+var damageIndicator = " "
+var hregenIndicator = " "
+var mregenIndicator = " "
+var playerImage = "O<br>/|\\<br>/\\"
+var tooltips = "Hover your mouse over anything that confuses you <br> to get information about it!"
+
+var pointcost = 10000
+
+var sword = 0
+var swordthingy = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100000 Gold"
+var staff = 0
+var staffthingy = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100000 Gold"
+
+const decay = [0, 0];
+
+const tooltiplist = [
+"Your level is a numeric value that goes up whenever <br> your XP is equivalent to the XP requirement. <br> Whenever you level up you gain 1 stat point.",
+"Health is how many hits you can take before dying.",
+"Mana defines how many spells you can cast.",
+"XP is required to level up. You can gain XP by killing <br> enemies. On the left side of the slash is your current XP, <br> on the right is XP required to level up.",
+"The Stage number determines how strong the enemies you <br> are facing will be, both in health and damage. You can <br> increase or decrease this number by pressing the buttons on <br> either side of the number. <br><br> The number beneath the area number is the enemies health <br> which determines how much damage it can take before it dies.",
+"Stats are the numbers that determine how powerful you are. <br> You can increase them by pressing the + button next to each stat symbol.",
+"Strength determines your melee damage.",
+"Magic determines effectiveness of spells, maximum Mana and <br> Mana regeneration speed.",
+"Vitality determines your total Health and Health <br> regeneration speed.",
+"Agility determines nothing as of now.",
+"Stat Points are the currency require to upgrade <br> your stats. Stat Points are obtained through leveling up.",
+"Damage is how much you lower the enemies health each time you do a melee attack. It is equivalent to Strength * 5.",
+"Health Regen is how much Health you regenerate <br> every second. Health Regen is multiplied by 3 outside of combat.",
+"Mana Regen is how much Mana you regenerate every <br> second. Mana Regen is multipled by 3 outside of combat.",
+"Gold is used to purchase stuff. You can obtain <br> gold through killing enemies.",
+"Healing Aura<br>Mana Cost: 10 Mana<br>Restores (Magic * 10) Health<br><br>Heals double health if you have bought Staff",
+"Fire Blast<br>Mana Cost: 50 Mana<br>Deals (Magic * 10) Fire Damage<br><br>Deals double damage if you have bought Staff",
+"Ice Spear<br>Mana Cost: 150 Mana<br>Deals (Magic * 40) Ice Damage<br><br>Deals double damage if you have bought Staff",
+"Decaying Touch<br>Mana Cost: 400 Mana<br>Deals (Magic * 5) Decaying Damage <br>every second for (Magic / 5) seconds rounded down.<br><br>Deals double damage and has double <br>duration if you have bought Staff",
+"One Stat Point. Price multiples by 2 every purchase.",
+"A standard Sword. Doubles melee damage.<br>Maximum of one purchase.",
+"A standard Staff. Doubles spell power.<br>Maximum of one purchase."
+];
+
+const xpgain = [0, 25, 50];
+const goldgain = [0, 50, 100];
+
+
+window.addEventListener('mousemove', function(event){
+    if (event.target.tagName === "HTML" || event.target.tagName === "BODY"){
+        resettip()
+    }
+});
+
+function resettip() {
+tooltips = "Hover your mouse over anything that confuses you <br> to get information about it!"
+}
+
+
+
+function loadGame() {
+	var savedGame = JSON.parse(localStorage.getItem("gameSave"));
+		if (typeof savedGame.health !== "undefined") health = savedGame.health;
+		if (typeof savedGame.maxhealth !== "undefined") maxhealth = savedGame.maxhealth;
+		if (typeof savedGame.gold !== "undefined") gold = savedGame.gold;
+		if (typeof savedGame.level !== "undefined") level = savedGame.level;
+		if (typeof savedGame.points !== "undefined") points = savedGame.points;
+		if (typeof savedGame.strength !== "undefined") strength = savedGame.strength;
+		if (typeof savedGame.damage !== "undefined") damage = savedGame.damage;
+		if (typeof savedGame.vitality !== "undefined") vitality = savedGame.vitality;
+		if (typeof savedGame.magic !== "undefined") magic = savedGame.magic;
+		if (typeof savedGame.agility !== "undefined") agility = savedGame.agility;
+		if (typeof savedGame.mana !== "undefined") mana = savedGame.mana;
+		if (typeof savedGame.maxmana !== "undefined") maxmana = savedGame.maxmana;
+		if (typeof savedGame.xp !== "undefined") xp = savedGame.xp;
+		if (typeof savedGame.xpreq !== "undefined") xpreq = savedGame.xpreq;
+		if (typeof savedGame.pointcost !== "undefined") pointcost = savedGame.pointcost;
+		if (typeof savedGame.sword !== "undefined") sword = savedGame.sword;
+		if (typeof savedGame.swordthingy !== "undefined") swordthingy = savedGame.swordthingy;
+		if (typeof savedGame.staff !== "undefined") staff = savedGame.staff;
+		if (typeof savedGame.staffthingy !== "undefined") staffthingy = savedGame.staffthingy;
+}
+
+function saveGame() {
+	var gameSave = {
+		health: health,
+		maxhealth: maxhealth,
+		gold: gold,
+		level: level,
+		points: points,
+		strength: strength,
+		damage: damage,
+		vitality: vitality,
+		magic: magic,
+		agility: agility,
+		mana: mana,
+		maxmana: mana,
+		xp: xp,
+		xpreq: xpreq,
+		pointcost: pointcost,
+		sword: sword,
+		swordthingy: swordthingy,
+		staff: staff,
+		staffthingy: staffthingy
+	};
+	localStorage.setItem("gameSave", JSON.stringify(gameSave));
+}
+
+function resetSave() {
+	health = 25;
+	maxhealth = 25;
+	gold = 0;
+	level = 1;
+	points = 0;
+	xp = 0;
+	xpreq = 20;
+	strength = 1;
+	damage = 5;
+	vitality = 1;
+	magic = 1;
+	agility = 1;
+	mana = 10;
+	maxmana = 10;
+	stage = 1
+	xpgain = [0, 15, 30];
+	sword = 0
+	swordthingy = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100000 Gold"
+	staff = 0
+	staffthingy = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100000 Gold"
+}
+
+	window.onload = function() {
+		loadGame();
+};
+	function previousStage() {
+		if (stage > 1) {
+			stage = stage - 1;
+			document.getElementById("stage").innerHTML = stage;
+			fighting = 0
+			turn = 1
+			xpgain.pop()
+			goldgain.pop()
+		}};
+	
+	function nextStage() {
+			stage = stage + 1;
+			document.getElementById("stage").innerHTML = stage;
+			fighting = 0
+			turn = 1
+			if (stage > 1) {
+				xpgain.push(xpgain[xpgain.length - 2] + xpgain[xpgain.length - 1])
+				goldgain.push(goldgain[goldgain.length - 2] + goldgain[goldgain.length - 1])
+			}
+		};
+	
+	function refundPoints() {
+		if (gold >= 1000) {
+			gold = gold - 1000
+			points = points + (level - 1)
+			strength = 1
+			magic = 1
+			vitality = 1
+			agility = 1
+		}
+	}
+	
+	function strengthUp() {
+		if (points > 0) {
+			strength = strength + 1;
+			points = points - 1;
+			document.getElementById("points").innerHTML = points;
+			}
+		}
+	function magicUp() {
+		if (points > 0) {
+			magic = magic + 1;
+			points = points - 1;
+			document.getElementById("points").innerHTML = points;
+			}
+		}
+	function vitalityUp() {
+		if (points > 0) {
+			vitality = vitality + 1;
+			points = points - 1;
+			document.getElementById("points").innerHTML = points;
+			}
+		}
+	function agilityUp() {
+		if (points > 0) {
+			agility = agility + 1;
+
+			points = points - 1;
+			document.getElementById("points").innerHTML = points;
+			}
+		}
+	function levelUp() {	
+		xpreq = Math.round(xpreq * 1.5);
+		level = level + 1;
+		points = points + 2;
+		if (level == 7) {
+		xp = 0
+		} else if (level == 6) {
+		xp = 0
+		} else if (level == 5) {
+		xp = 0
+		} else if (level == 4) {
+		xp = 0
+		}
+		saveGame();
+	}
+	setInterval(function() {
+		document.getElementById("health").innerHTML = health;
+		document.getElementById("maxhealth").innerHTML = maxhealth;
+		document.getElementById("gold").innerHTML = gold;
+		document.getElementById("level").innerHTML = level;
+		document.getElementById("points").innerHTML = points;	
+		document.getElementById("strength").innerHTML = strength;
+		document.getElementById("damage").innerHTML = damage;
+		document.getElementById("vitality").innerHTML = vitality;
+		document.getElementById("magic").innerHTML = magic;
+		document.getElementById("agility").innerHTML = agility;
+		document.getElementById("mana").innerHTML = mana;
+		document.getElementById("maxmana").innerHTML = maxmana;
+		document.getElementById("xp").innerHTML = xp;
+		document.getElementById("xpreq").innerHTML = xpreq;
+		document.getElementById("stage").innerHTML = stage;
+		document.getElementById("enemyhp").innerHTML = enemyhp;
+		document.getElementById("enemydamage").innerHTML = enemydamage;
+		document.getElementById("enemyxp").innerHTML = enemyxp;
+		document.getElementById("hregen").innerHTML = hregen;
+		document.getElementById("mregen").innerHTML = mregen;
+		document.getElementById("tooltips").innerHTML = tooltips;
+		document.getElementById("playerImage").innerHTML = playerImage;
+		document.getElementById("damageIndicator").innerHTML = damageIndicator;
+		document.getElementById("hregenIndicator").innerHTML = hregenIndicator;
+		document.getElementById("mregenIndicator").innerHTML = mregenIndicator;
+		document.getElementById("pointcost").innerHTML = pointcost;
+		document.getElementById("swordthingy").innerHTML = swordthingy;
+		document.getElementById("staffthingy").innerHTML = staffthingy;
+		
+		if (health > maxhealth) {
+		health = maxhealth;
+		}
+		if (mana > maxmana) {
+		mana = maxmana;
+		}
+		
+		if (xp >= xpreq) {
+			xp = xp - xpreq;
+			levelUp()
+		}
+		if (enemyhp == 0) {
+			enemyDeath()
+		}
+		
+		damage = strength * 5
+		hregen = vitality * 1
+		mregen = magic * 1
+		enemydamage = stage * 3
+		enemyxp = xpgain[xpgain.length - 2]
+	}, 10);
+
+	setInterval(function() {
+		if (health < maxhealth) {
+			if (fighting == 1) {
+			health = health + vitality;
+			hregenIndicator = vitality;
+			document.getElementById("health").innerHTML = health;
+			}
+			if (fighting ==0) {
+			health = health + vitality * 3;
+			hregenIndicator = vitality * 3;
+			document.getElementById("health").innerHTML = health;
+			}
+		}
+		if (mana < maxmana) {
+			if (fighting == 1) {
+			mana = mana + magic;
+			document.getElementById("mana").innerHTML = mana;
+			}
+			if (fighting == 0) {
+			mana = mana + magic * 3;
+			document.getElementById("mana").innerHTML = mana;
+			}
+		}
+	}, 1000);
+	
+	setInterval(function() {
+	if (fighting == 1) {
+			if (turn == 1) {
+				if (health > 0) {
+				if (sword == 0) {
+				enemyhp = Math.max(0, enemyhp - damage)
+				} else if (sword == 1) {
+				enemyhp = Math.max(0, enemyhp - damage * 2)
+				}
+				document.getElementById("enemyhp").innerHTML = enemyhp;
+				turn = 2
+			}
+			}
+			if (turn == 2) {
+				if (enemyhp > 0) {
+				health = Math.max(0, health - enemydamage)
+				if (health != 0) {
+				damageTaken()
+				}
+				document.getElementById("health").innerHTML = health;
+				}
+				turn = 1
+				if (health == 0) {
+				fighting = 0
+				turn = 1
+				}}}
+	}, 1000);
+
+	function enemyDeath() {
+		enemyhp = stage * 25;
+		xp = xp + xpgain[xpgain.length - 2]
+		gold = gold + goldgain[xpgain.length - 2]
+	}
+	
+	function damageTaken() {
+		damageIndicator = enemydamage
+		if (health != 0) {
+		playerImage = " O<br> /|\\<br> /\\"
+		setTimeout(playerAnimation1, 100)}
+	}
+	function playerAnimation1() {
+		playerImage = "O<br>/|\\<br>/\\"
+	}
+	setInterval(function() {
+		if (fighting == 0) {
+		if (mana != maxmana) {
+		mregenIndicator = magic * 3
+		}
+		if (health != maxhealth) {
+		hregenIndicator = vitality * 3
+		}
+		} else if (fighting == 1) {
+		if (mana != maxmana) {
+		mregenIndicator = magic
+		}
+		if (health != maxhealth) {
+		hregenIndicator = vitality
+		}
+		}
+	}, 500);
+	
+	setInterval(function() {
+		damageIndicator = " "
+		hregenIndicator = " "
+		mregenIndicator = " "
+	}, 751);
+	
+	setInterval(function() {
+		if (fighting == 0) {
+			if (enemymaxhp != stage * 25) {
+			enemyhp = stage * 25;
+			enemymaxhp = enemyhp;
+			}
+			document.getElementById("enemyhp").innerHTML = enemyhp;
+			document.getElementById("enemymaxhp").innerHTML = enemymaxhp;
+		if (health == maxhealth) {
+			turn = 2
+			fighting = 1;
+			}}
+		}, 100);
+		
+	setInterval(function() {
+		saveGame()
+	}, 1000);
+	
+	setInterval(function() {
+		maxhealth = vitality * 25;
+		maxmana = magic * 10;
+	}, 1000);
+	
+	//SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS SPELLS 
+	function spellHealingAura() {
+		if (mana >= 10) {
+		if (staff == 0) {
+		health = health + magic * 10
+		} else if (staff == 1) {
+		health = health + magic * 10 * 2
+		}
+		mana = mana - 10
+		}
+	}
+	function spellFireBlast() {
+		if (mana >= 50) {
+		if (staff == 0) {
+		enemyhp = Math.max(0, enemyhp - magic * 10)
+		} else if (staff == 1) {
+		enemyhp = Math.max(0, enemyhp - magic * 10 * 2)
+		}
+		mana = mana - 50
+		}
+	}
+	function spellIceSpear() {
+		if (mana >= 150) {
+		if (staff == 0) {
+		enemyhp = Math.max(0, enemyhp - magic * 40)
+		} else if (staff == 1) {
+		enemyhp = Math.max(0, enemyhp - magic * 40 * 2)
+		}
+		mana = mana - 150
+		}
+	}
+	function spellDecayingTouch() {
+		if (mana >= 400) {
+		if (staff == 0) {
+		decay[0] = decay[0] + magic * 5
+		decay[1] = decay[1] + Math.floor(magic / 5)
+		} else if (staff == 1) {
+		decay[0] = decay[0] + magic * 5 * 2
+		decay[1] = decay[1] + Math.floor(magic / 5) * 2
+		}
+		mana = mana - 400
+		}
+	}
+	
+	
+	setInterval(function() {
+		if (decay[1] > 0) {
+			enemyhp = Math.max(0, enemyhp - decay[0])
+			decay[1] = decay[1] - 1
+		}
+	}, 1000);
+
+	//SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP SHOP 
+	function displayShop() {
+		if (document.getElementById("shop").style.display == 'none') {
+		document.getElementById('shop').style.display = 'block';
+		document.getElementById('shop').style.zIndex = "100";
+		} else if (document.getElementById("shop").style.display == 'block') {
+		document.getElementById('shop').style.display = 'none';
+		document.getElementById('shop').style.zIndex = "-999";
+		}
+	}
+	
+	function buyPoint() {
+		if (gold >= pointcost) {
+			points = points + 1;
+			gold = gold - pointcost;
+			pointcost = pointcost * 2
+		}
+		
+	}
+	
+	function buySword() {
+		if (gold >= 100000) {
+			if (sword != 1) {
+				sword = sword + 1
+				gold = gold - 100000
+				swordthingy = "&nbsp;&nbsp;Already Purchased"
+				document.getElementById("swordthingy").innerHTML = swordthingy;
+			}
+		}
+	
+	}
+	
+	function buyStaff() {
+		if (gold >= 100000) {
+			if (staff != 1) {
+				staff = staff + 1
+				gold = gold - 100000
+				staffthingy = "&nbsp;&nbsp;Already Purchased"
+				document.getElementById("staffthingy").innerHTML = staffthingy;
+			}
+		}
+	
+	}
+</script>
