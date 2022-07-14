@@ -1,0 +1,179 @@
+<!DOCTYPE html><html>
+
+<head>
+<title>TealDR's (bad) Aim Trainer</title>
+</head>
+
+<style>
+body {
+width: 100%;
+height: 100%;
+margin: 0;
+}
+
+#screen {
+z-index: 5;
+display: block;
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+}
+
+#settings {
+z-index: 6;
+display: none;
+position: absolute;
+top: 10%;
+left: 10%;
+right: 10%;
+bottom: 10%;
+width: 80%;
+height: 80%;
+background-color: #f5f5f5;
+text-align: center;
+font-size: 24px;
+}
+
+
+</style>
+
+<body id="body" onLoad="onLoadStuff()">
+<div id="settings">
+<h1>Settings</h1>
+<p>Target Size: </p>
+<span id="circleDisplay">25</span>
+<input type="range" min="5" max="45" id="circleSlider">
+<p>Theme: </p>
+<button onClick="changeTheme()">Change</button>
+</div>
+
+<canvas id="screen"></canvas>
+</body>
+
+<script>
+const body = document.getElementById("body");
+
+
+var canvas = document.getElementById("screen");
+var ctx = canvas.getContext("2d");
+var circleRadius = 25;
+var maxX = window.innerWidth - circleRadius;
+var maxY = window.innerHeight - circleRadius;
+var minX = circleRadius, minY = circleRadius;
+
+var slider = document.getElementById("circleSlider")
+
+
+var settingsBoolean = false;
+var settings = document.getElementById("settings")
+
+var theme = "light";
+
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function drawCircle() {
+	canvas = document.getElementById("screen");
+	ctx = canvas.getContext("2d");
+	ctx.beginPath();
+	ctx.arc(
+	randomNumber(minX, maxX),
+	randomNumber(minY, maxY),
+	circleRadius,
+	0,
+	2 * Math.PI)
+	ctx.fill()
+	ctx.stroke()
+}
+
+function clearCanvas() {
+ctx.beginPath();
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.stroke();
+}
+
+window.addEventListener('resize', () => {
+	canvas = document.getElementById("screen")
+	canvas.width = window.innerWidth
+	canvas.height = window.innerHeight
+	drawCircle()
+})
+
+slider.oninput = function() {
+	clearCanvas()
+	document.getElementById("circleDisplay").innerHTML = slider.value;
+	circleRadius = slider.value;
+	maxX = window.innerWidth - circleRadius;
+	maxY = window.innerHeight - circleRadius;
+	minX = circleRadius, minY = circleRadius;
+	
+}
+
+//Aim
+document.addEventListener("click", function() {
+  let pixel = ctx.getImageData(event.clientX, event.clientY, 1, 1);
+  let hue = pixel.data
+  if (theme == "light") {
+	if (hue[0] == 18 && hue[1] == 18 && hue[2] == 18 && hue[3] == 255) {
+		clearCanvas()
+		drawCircle()
+	}
+  } else if (theme == "dark") {
+	if (hue[0] == 255 && hue[1] == 255 && hue[2] == 255 && hue[3] == 255) {
+		clearCanvas()
+		drawCircle()
+	}
+  }
+});
+
+document.body.onkeyup = function(e) {
+  if (e.key == "m" || e.code =="KeyM" || e.keyCode == 77) {
+	toggleSettings()
+  } else if (e.key == "r" || e.code =="KeyR" || e.keyCode == 82) {
+	clearCanvas()
+  }
+}
+
+function toggleSettings() {
+	if (settingsBoolean == true) {
+		settingsBoolean = false;
+		settings.style.display = "none";
+	} else if (settingsBoolean == false) {
+		settingsBoolean = true;
+		settings.style.display = "block";
+	}
+}
+
+function changeTheme() {
+clearCanvas()
+if (theme == "dark") {
+	theme = "light"
+	ctx.strokeStyle = "#121212"
+	ctx.fillStyle = "#121212"
+	body.style.background = "#ffffff"
+	settings.style.backgroundColor = "#f5f5f5"
+	settings.style.color = "black"
+} else if (theme == "light") {
+	theme = "dark"
+	ctx.strokeStyle = "#ffffff"
+	ctx.fillStyle = "#ffffff"
+	body.style.background = "#121212"
+	settings.style.backgroundColor = "#000000"
+	settings.style.color = "white"
+}
+}
+
+
+function randomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+function onLoadStuff() {
+changeTheme()
+drawCircle()
+}
+
+</script>
