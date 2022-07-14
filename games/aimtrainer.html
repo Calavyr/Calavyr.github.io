@@ -12,13 +12,20 @@ margin: 0;
 }
 
 #screen {
-z-index: 5;
+z-index: 4;
 display: block;
 position: absolute;
 top: 0;
 left: 0;
 right: 0;
 bottom: 0;
+}
+
+#score {
+z-index: 5;
+top: 5%;
+left: 10%;
+position: absolute;
 }
 
 #settings {
@@ -36,24 +43,39 @@ text-align: center;
 font-size: 24px;
 }
 
+.noselect {
+-webkit-touch-callout: none; 
+-webkit-user-select: none; 
+-khtml-user-select: none; 
+-moz-user-select: none; 
+-ms-user-select: none; 
+user-select: none; 
+}
 
 </style>
 
 <body id="body" onLoad="onLoadStuff()">
+<div id="score" class="noselect">
+<h1 id="scoreCount">0</h1>
+</div>
+
 <div id="settings">
 <h1>Settings</h1>
 <p>Target Size: </p>
 <span id="circleDisplay">25</span>
-<input type="range" min="5" max="45" id="circleSlider">
+<input type="range" min="5" max="45" id="circleSlider" class="noselect">
 <p>Theme: </p>
 <button onClick="changeTheme()">Change</button>
 </div>
+
 
 <canvas id="screen"></canvas>
 </body>
 
 <script>
 const body = document.getElementById("body");
+
+var score = 0;
 
 
 var canvas = document.getElementById("screen");
@@ -93,6 +115,7 @@ function clearCanvas() {
 ctx.beginPath();
 ctx.clearRect(0, 0, canvas.width, canvas.height);
 ctx.stroke();
+drawCircle();
 }
 
 window.addEventListener('resize', () => {
@@ -119,12 +142,12 @@ document.addEventListener("click", function() {
   if (theme == "light") {
 	if (hue[0] == 18 && hue[1] == 18 && hue[2] == 18 && hue[3] == 255) {
 		clearCanvas()
-		drawCircle()
+		scoreUp()
 	}
   } else if (theme == "dark") {
 	if (hue[0] == 255 && hue[1] == 255 && hue[2] == 255 && hue[3] == 255) {
 		clearCanvas()
-		drawCircle()
+		scoreUp()
 	}
   }
 });
@@ -133,8 +156,14 @@ document.body.onkeyup = function(e) {
   if (e.key == "m" || e.code =="KeyM" || e.keyCode == 77) {
 	toggleSettings()
   } else if (e.key == "r" || e.code =="KeyR" || e.keyCode == 82) {
-	clearCanvas()
+	reset()
   }
+}
+
+function reset() {
+clearCanvas()
+score = 0
+document.getElementById("scoreCount").innerHTML = score
 }
 
 function toggleSettings() {
@@ -148,7 +177,6 @@ function toggleSettings() {
 }
 
 function changeTheme() {
-clearCanvas()
 if (theme == "dark") {
 	theme = "light"
 	ctx.strokeStyle = "#121212"
@@ -164,6 +192,12 @@ if (theme == "dark") {
 	settings.style.backgroundColor = "#000000"
 	settings.style.color = "white"
 }
+clearCanvas()
+}
+
+function scoreUp() {
+score += 1
+document.getElementById("scoreCount").innerHTML = score
 }
 
 
