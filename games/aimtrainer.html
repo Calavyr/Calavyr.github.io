@@ -63,6 +63,9 @@ user-select: none;
 </div>
 
 <div id="settings" class="noselect">
+<h1>Info</h1>
+<p>Accuracy: <span id="accDisplay">Null</span></p>
+<p>Average time between hits: <span id="hitTimeDisplay">Null</span></p>
 <h1>Settings</h1>
 <p>Target Size: </p>
 <span id="circleDisplay">25</span>
@@ -79,6 +82,15 @@ user-select: none;
 const body = document.getElementById("body");
 
 var score = 0;
+
+var accHits = 0;
+var Hits = 0;
+var accuracy = 100;
+
+
+var time = 0;
+var hitTimestamps = [];
+var averageTime = 0;
 
 
 var canvas = document.getElementById("screen");
@@ -146,14 +158,43 @@ document.addEventListener("click", function() {
 	if (hue[0] == 18 && hue[1] == 18 && hue[2] == 18 && hue[3] == 255) {
 		clearCanvas()
 		scoreUp()
+		accHits += 1
+		hitTimestamps.push(time)
 	}
   } else if (theme == "dark") {
 	if (hue[0] == 255 && hue[1] == 255 && hue[2] == 255 && hue[3] == 255) {
 		clearCanvas()
 		scoreUp()
+		accHits += 1
+		hitTimestamps.push(time)
 	}
   }
+  Hits += 1;
+  calculateStats()
 });
+
+function calculateStats() {
+//Accuracy Calculations
+accuracy = (accHits / Hits) * 100;
+document.getElementById("accDisplay").innerHTML = accuracy.toFixed(2) + "%"
+
+//Time between Hits Calculations
+averageTime = 0;
+//FIX
+
+for (let i = 0; i < hitTimestamps.length; i++) {
+if (hitTimestamps[i - 1] != undefined) {
+averageTime += hitTimestamps[i] - hitTimestamps[i - 1]
+} else {
+averageTime += hitTimestamps[i]
+}
+}
+
+averageTime = averageTime / hitTimestamps.length
+averageTime = averageTime / 1000
+document.getElementById("hitTimeDisplay").innerHTML = averageTime.toFixed(1) + "/s"
+}
+
 
 document.body.onkeyup = function(e) {
   if (e.key == "m" || e.code =="KeyM" || e.keyCode == 77) {
@@ -166,6 +207,13 @@ document.body.onkeyup = function(e) {
 function reset() {
 clearCanvas()
 score = 0
+accHits = 0
+Hits = 0
+accuracy = 100
+hitTimestamps = [];
+time = 0;
+document.getElementById("accDisplay").innerHTML = "Null"
+document.getElementById("hitTimeDisplay").innerHTML = "Null"
 document.getElementById("scoreCount").innerHTML = score
 }
 
@@ -212,5 +260,10 @@ function onLoadStuff() {
 changeTheme()
 reset()
 }
+
+
+setInterval(function() {
+time += 10
+}, 10)
 
 </script>
