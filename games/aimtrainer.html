@@ -182,23 +182,25 @@ slider.oninput = function() {
 document.addEventListener("click", function() {
   let pixel = ctx.getImageData(event.clientX, event.clientY, 1, 1);
   let hue = pixel.data
-  if (theme == "light") {
-	if (hue[0] == 18 && hue[1] == 18 && hue[2] == 18 && hue[3] == 255) {
-		clearCanvas()
-		scoreUp()
-		accHits += 1
-		hitTimestamps.push(time)
+  if (settings.style.display == "none") {
+	if (theme == "light") {
+		if (hue[0] == 18 && hue[1] == 18 && hue[2] == 18 && hue[3] == 255) {
+			clearCanvas()
+			scoreUp()
+			accHits += 1
+			hitTimestamps.push(time)
+		}
+	} else if (theme == "dark") {
+		if (hue[0] == 255 && hue[1] == 255 && hue[2] == 255 && hue[3] == 255) {
+			clearCanvas()
+			scoreUp()
+			accHits += 1
+			hitTimestamps.push(time)
+		}
 	}
-  } else if (theme == "dark") {
-	if (hue[0] == 255 && hue[1] == 255 && hue[2] == 255 && hue[3] == 255) {
-		clearCanvas()
-		scoreUp()
-		accHits += 1
-		hitTimestamps.push(time)
-	}
+	Hits += 1;
+	calculateStats()
   }
-  Hits += 1;
-  calculateStats()
 });
 
 function calculateStats() {
@@ -294,7 +296,9 @@ document.getElementById("start").style.display = "none";
 
 
 setInterval(function() {
+if (settings.style.display == "none") {
 time += 10
+}
 }, 10)
 
 </script>
