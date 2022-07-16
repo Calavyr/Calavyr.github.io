@@ -89,8 +89,8 @@ user-select: none;
 
 <div id="settings" class="noselect">
 <h1>Info</h1>
-<p>Accuracy: <span id="accDisplay">Null</span></p>
-<p>Average time between hits: <span id="hitTimeDisplay">Null</span></p>
+<p>Accuracy(%): <span id="accDisplay">Null</span></p>
+<p>Time per Hit(s): <span id="hitTimeDisplay">Null</span></p>
 <h1>Settings</h1>
 <p>Target Size: </p>
 <span id="circleDisplay">25</span>
@@ -182,7 +182,7 @@ slider.oninput = function() {
 document.addEventListener("click", function() {
   let pixel = ctx.getImageData(event.clientX, event.clientY, 1, 1);
   let hue = pixel.data
-  if (settings.style.display == "none") {
+  if (settingsBoolean == false) {
 	if (theme == "light") {
 		if (hue[0] == 18 && hue[1] == 18 && hue[2] == 18 && hue[3] == 255) {
 			clearCanvas()
@@ -206,7 +206,7 @@ document.addEventListener("click", function() {
 function calculateStats() {
 //Accuracy Calculations
 accuracy = (accHits / Hits) * 100;
-document.getElementById("accDisplay").innerHTML = accuracy.toFixed(2) + "%"
+document.getElementById("accDisplay").innerHTML = accuracy.toFixed(2)
 
 //Time between Hits Calculations
 averageTime = 0;
@@ -222,13 +222,15 @@ averageTime += hitTimestamps[i]
 
 averageTime = averageTime / hitTimestamps.length
 averageTime = averageTime / 1000
-document.getElementById("hitTimeDisplay").innerHTML = averageTime.toFixed(1) + "/s"
+document.getElementById("hitTimeDisplay").innerHTML = averageTime.toFixed(1) + "/hit"
 }
 
 
 document.body.onkeyup = function(e) {
   if (e.key == "m" || e.code =="KeyM" || e.keyCode == 77) {
+	if (document.getElementById("start").style.display == "none") {
 	toggleSettings()
+	}
   } else if (e.key == "r" || e.code =="KeyR" || e.keyCode == 82) {
 	if (document.getElementById("start").style.display == "none") {
 		reset()
@@ -291,7 +293,6 @@ function randomNumber(min, max) {
 function startGame() {
 changeTheme()
 reset()
-settings.style.display = "none";
 document.getElementById("start").style.display = "none";
 }
 
