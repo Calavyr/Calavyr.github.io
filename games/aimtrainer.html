@@ -90,7 +90,7 @@ user-select: none;
 <div id="settings" class="noselect">
 <h1>Info</h1>
 <p>Accuracy(%): <span id="accDisplay">Null</span></p>
-<p>Time per Hit(s): <span id="hitTimeDisplay">Null</span></p>
+<p>Hits Per Second: <span id="hitTimeDisplay">Null</span></p>
 <h1>Settings</h1>
 <p>Target Size: </p>
 <span id="circleDisplay">25</span>
@@ -222,7 +222,7 @@ averageTime += hitTimestamps[i]
 
 averageTime = averageTime / hitTimestamps.length
 averageTime = averageTime / 1000
-document.getElementById("hitTimeDisplay").innerHTML = averageTime.toFixed(1) + "/hit"
+document.getElementById("hitTimeDisplay").innerHTML = averageTime.toFixed(1) + "/second"
 }
 
 
