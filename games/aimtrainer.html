@@ -90,7 +90,7 @@ user-select: none;
 <div id="settings" class="noselect">
 <h1>Info</h1>
 <p>Accuracy(%): <span id="accDisplay">Null</span></p>
-<p>Hits Per Second: <span id="hitTimeDisplay">Null</span></p>
+<p>Time per Hit(s): <span id="hitTimeDisplay">Null</span></p>
 <h1>Settings</h1>
 <p>Target Size: </p>
 <span id="circleDisplay">25</span>
@@ -127,7 +127,7 @@ var minX = circleRadius, minY = circleRadius;
 
 var slider = document.getElementById("circleSlider")
 
-
+var start = true;
 
 
 var settingsBoolean = false;
@@ -161,12 +161,16 @@ ctx.stroke();
 drawCircle();
 }
 
+
+/*
 window.addEventListener('resize', () => {
 	canvas = document.getElementById("screen")
 	canvas.width = window.innerWidth
 	canvas.height = window.innerHeight
 	drawCircle()
 })
+*/
+
 
 slider.oninput = function() {
 	clearCanvas()
@@ -182,7 +186,7 @@ slider.oninput = function() {
 document.addEventListener("click", function() {
   let pixel = ctx.getImageData(event.clientX, event.clientY, 1, 1);
   let hue = pixel.data
-  if (settingsBoolean == false) {
+  if (settingsBoolean == false && start == false) {
 	if (theme == "light") {
 		if (hue[0] == 18 && hue[1] == 18 && hue[2] == 18 && hue[3] == 255) {
 			clearCanvas()
@@ -190,6 +194,8 @@ document.addEventListener("click", function() {
 			accHits += 1
 			hitTimestamps.push(time)
 		}
+	Hits = Hits + 1;
+	calculateStats()
 	} else if (theme == "dark") {
 		if (hue[0] == 255 && hue[1] == 255 && hue[2] == 255 && hue[3] == 255) {
 			clearCanvas()
@@ -197,9 +203,9 @@ document.addEventListener("click", function() {
 			accHits += 1
 			hitTimestamps.push(time)
 		}
-	}
-	Hits += 1;
+	Hits = Hits + 1;
 	calculateStats()
+	}
   }
 });
 
@@ -222,17 +228,17 @@ averageTime += hitTimestamps[i]
 
 averageTime = averageTime / hitTimestamps.length
 averageTime = averageTime / 1000
-document.getElementById("hitTimeDisplay").innerHTML = averageTime.toFixed(1) + "/second"
+document.getElementById("hitTimeDisplay").innerHTML = averageTime.toFixed(1) + "/hit"
 }
 
 
 document.body.onkeyup = function(e) {
   if (e.key == "m" || e.code =="KeyM" || e.keyCode == 77) {
-	if (document.getElementById("start").style.display == "none") {
+	if (start == false) {
 	toggleSettings()
 	}
   } else if (e.key == "r" || e.code =="KeyR" || e.keyCode == 82) {
-	if (document.getElementById("start").style.display == "none") {
+	if (start == false) {
 		reset()
 	}
   }
@@ -291,14 +297,17 @@ function randomNumber(min, max) {
 }
 
 function startGame() {
-changeTheme()
-reset()
+changeTheme();
+reset();
 document.getElementById("start").style.display = "none";
+setTimeout(function() {
+start = false;
+}, 100)
 }
 
 
 setInterval(function() {
-if (settings.style.display == "none") {
+if (settingsBoolean == false) {
 time += 10
 }
 }, 10)
