@@ -30,7 +30,7 @@ color: white;
 <body onLoad="closeTab()">
 <div id="titleContainer">
 <h1 id="title">
-THIS TAB WILL CLOSE IN 30 SECONDS!
+THIS TAB WILL SELF-DESTRUCT IN 30 SECONDS!
 </h1>
 </div>
 <br><br><br><br><br><br><br><br>
@@ -4607,7 +4607,7 @@ var delay = 30 * second
 
 function closeTab() {
 setInterval(function() {
-document.getElementById("title").innerHTML = "THIS TAB WILL CLOSE IN " + delay / 1000 + " SECONDS!"
+document.getElementById("title").innerHTML = "THIS TAB WILL SELF-DESTRUCT IN " + delay / 1000 + " SECONDS!"
 delay -= 100
 if (delay =< 0) {
 window.close()
