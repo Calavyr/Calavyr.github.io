@@ -1,0 +1,95 @@
+<head>
+<title>Goofy Image Editor</title>
+</head>
+
+<style>
+
+canvas#viewport {
+border: 1px solid white;
+top: 5%;
+position: absolute;
+}
+
+#label {
+left: 1%;
+position: fixed;
+}
+
+#fileinput {
+left: 7%;
+position: fixed;
+}
+
+#buttons {
+left: 25%;
+position: fixed;
+}
+
+#imageLoad {
+width: 1%;
+height: 1%;
+}
+
+
+</style>
+
+<body>
+<label for="fileinput" id="label">Choose image</label>
+<input type="file" accept="image/*,.png,.jpg" id="fileinput" name="fileinput">
+<div id="buttons">
+<button onClick="filter('none')">None</button>
+<button onClick="filter('invert')">Invert</button>
+<button onClick="filter('grayscale')">Grayscale</button>
+<button onClick="filter('sepia')">Sepia</button>
+</div>
+
+
+<img id="imageLoad" style="display:none">
+
+<canvas id="viewport"></canvas>
+
+</body>
+
+<script>
+const canvas = document.getElementById('viewport');
+var ctx = canvas.getContext("2d")
+const input = document.getElementById('fileinput');
+var uploaded_image = "";
+
+input.addEventListener("change", function() {
+	const reader = new FileReader();
+	reader.addEventListener("load", () => {
+		uploaded_image = reader.result;
+		var location = document.getElementById("imageLoad")
+		location.src = uploaded_image
+			location.addEventListener("load", event => {
+			canvas.style.width = location.width
+			canvas.style.height = location.height
+			ctx.filter = "none"
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.drawImage(location, 0, 0, canvas.width, canvas.height)
+			ctx.stroke();
+			})
+	});
+	reader.readAsDataURL(this.files[0]);
+})
+
+function filter(type) {
+var location = document.getElementById("imageLoad")
+if (type == "invert") {
+ctx.filter = type + "(1)"
+} else if (type == "grayscale") {
+ctx.filter = type + "(100)"
+} else if (type == "sepia") {
+ctx.filter = type + "(10)"
+}
+
+if (type == "none") {
+ctx.filter = type
+}
+
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.drawImage(location, 0, 0, canvas.width, canvas.height);
+ctx.stroke();
+}
+</script>
