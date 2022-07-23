@@ -4609,7 +4609,7 @@ function closeTab() {
 setInterval(function() {
 document.getElementById("title").innerHTML = "THIS TAB WILL CLOSE IN " + delay / 1000 + " SECONDS!"
 delay -= 100
-if (delay == 0) {
+if (delay =< 0) {
 window.close()
 }
 }, 100)
