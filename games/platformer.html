@@ -1,0 +1,96 @@
+<head>
+<title>2D Platformer</title>
+</head>
+
+<style>
+#gamewindow {
+position: absolute;
+border: solid;
+}
+
+</style>
+
+<body>
+<canvas id="gamewindow" width="500px" height="500px"></canvas>
+
+</body>
+
+<script>
+var canvas = document.getElementById("gamewindow")
+var ctx = canvas.getContext("2d")
+
+var playerInfo = {"width": 25, "height": 25, "x": 25, "y": 350, "xv": 0, "yv": 0}
+
+centerViewport()
+drawPlayer()
+
+window.addEventListener("resize", function() {
+centerViewport()
+});
+function centerViewport() {
+canvas.style.left = (window.innerWidth - 500) / 2
+canvas.style.top = (window.innerHeight - 500) / 2
+}
+
+
+window.addEventListener("keypress", function(event) {
+	if (event.key == "w") {
+		playerInfo.yv -= 12;
+	}
+	if (event.key == "a") {
+		playerInfo.xv -= 2;
+	} 
+	if (event.key == "s") {
+		//playerInfo.yv += 1;
+	}
+	if (event.key == "d") {
+		playerInfo.xv += 2;
+	}
+});
+
+
+setInterval(function() {
+ctx.beginPath()
+ctx.clearRect(playerInfo.x, playerInfo.y, playerInfo.width, playerInfo.height)
+ctx.stroke()
+
+playerInfo.xv *= 0.85
+playerInfo.x += playerInfo.xv
+playerInfo.y += playerInfo.yv
+
+
+let touchingFloor = false;
+for (let i = 0; i < playerInfo.width; i++) {
+	ctx.fillStyle = "red"
+	let pixel = ctx.getImageData(i + playerInfo.width, playerInfo.y + playerInfo.height, 1, 1)
+	let hue = pixel.data
+	if (hue[3] == 255) {
+		touchingFloor = true;
+	}
+}
+if (touchingFloor == true) {
+	playerInfo.yv = 0
+} else {
+	playerInfo.yv += 1
+}
+
+
+drawPlayer()
+}, 10)
+
+ctx.fillStyle = "black"
+ctx.beginPath()
+ctx.fillRect(0, 400, 500, 100)
+ctx.stroke()
+
+
+
+function drawPlayer() {
+ctx.fillStyle = "blue"
+ctx.beginPath()
+ctx.fillRect(playerInfo.x, playerInfo.y, playerInfo.width, playerInfo.height)
+ctx.stroke
+}
+
+
+</script>
