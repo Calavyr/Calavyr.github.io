@@ -21,6 +21,11 @@ var ctx = canvas.getContext("2d")
 
 var playerInfo = {"width": 25, "height": 25, "x": 25, "y": 350, "xv": 0, "yv": 0}
 
+var movement = {"left": false, "right": false}
+
+var touchingFloor = false;
+var inFloor = false;
+
 centerViewport()
 drawPlayer()
 
@@ -34,17 +39,28 @@ canvas.style.top = (window.innerHeight - 500) / 2
 
 
 window.addEventListener("keypress", function(event) {
-	if (event.key == "w") {
+	if (event.key.toLowerCase() == "w") {
+		if (touchingFloor == true) {
 		playerInfo.yv -= 12;
+		}
 	}
-	if (event.key == "a") {
-		playerInfo.xv -= 2;
-	} 
-	if (event.key == "s") {
-		//playerInfo.yv += 1;
+});
+
+window.addEventListener("keydown", function(event) {
+	if (event.key.toLowerCase() == "a") {
+		movement.left = true;
 	}
-	if (event.key == "d") {
-		playerInfo.xv += 2;
+	if (event.key.toLowerCase() == "d") {
+		movement.right = true;
+	}
+});
+
+window.addEventListener("keyup", function(event) {
+	if (event.key.toLowerCase() == "a") {
+		movement.left = false;
+	}
+	if (event.key.toLowerCase() == "d") {
+		movement.right = false;
 	}
 });
 
@@ -59,38 +75,75 @@ playerInfo.x += playerInfo.xv
 playerInfo.y += playerInfo.yv
 
 
-let touchingFloor = false;
+if (movement.right) {
+	playerInfo.xv += 0.5;
+}
+if (movement.left) {
+	playerInfo.xv -= 0.5;
+}
+
+
 for (let i = 0; i < playerInfo.width; i++) {
 	ctx.fillStyle = "red"
 	let pixel = ctx.getImageData(i + playerInfo.width, playerInfo.y + playerInfo.height, 1, 1)
 	let hue = pixel.data
-	if (hue[3] == 255) {
+	if (hue[0] == 100 && hue[1] == 100 && hue[2] == 100) {
 		touchingFloor = true;
+	} else {
+		touchingFloor = false;
+	}
+	pixel = ctx.getImageData(i + playerInfo.width, playerInfo.y + playerInfo.height - 1, 1, 1)
+	hue = pixel.data
+	if (hue[0] == 100 & hue[1] == 100 && hue[2] == 100) {
+		inFloor = true;
+	} else {
+		inFloor = false;
 	}
 }
 if (touchingFloor == true) {
 	playerInfo.yv = 0
 } else {
-	playerInfo.yv += 1
+	playerInfo.yv += 0.75
 }
 
-
+if (inFloor == true) {
+	playerInfo.y -= 1
+}
 drawPlayer()
 }, 10)
 
-ctx.fillStyle = "black"
-ctx.beginPath()
-ctx.fillRect(0, 400, 500, 100)
-ctx.stroke()
+
 
 
 
 function drawPlayer() {
+ctx = canvas.getContext("2d")
+ctx.fillStyle = "white"
+ctx.beginPath()
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.stroke()
+
+ctx.fillStyle = "rgb(100, 100, 100)"
+ctx.beginPath()
+
+//Map
+ctx.moveTo(0, 400)
+ctx.lineTo(500, 400)
+ctx.lineTo(500, 500)
+ctx.lineTo(0, 500)
+ctx.fillRect(300, 350, 250, 250)
+
+
+ctx.closePath()
+ctx.fill()
+
+
 ctx.fillStyle = "blue"
 ctx.beginPath()
 ctx.fillRect(playerInfo.x, playerInfo.y, playerInfo.width, playerInfo.height)
-ctx.stroke
+ctx.stroke()
 }
+
 
 
 </script>
