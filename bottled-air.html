@@ -18,15 +18,16 @@ var img = document.getElementById("image")
 
 
 window.addEventListener("load", function() {
-console.log(img.width)
-img.style.left = (window.innerWidth - img.width) / 2
-img.style.top = (window.innerHeight - img.height) / 2
+centerImage()
 })
 
 window.addEventListener("resize", function() {
-img.style.left = (window.innerWidth - img.width) / 2
-img.style.top = (window.innerHeight - img.height) / 2
+centerImage()
 })
 
+function centerImage() {
+img.style.left = (window.innerWidth - img.width) / 2
+img.style.top = (window.innerHeight - img.height) / 2
+}
 
 </script>
