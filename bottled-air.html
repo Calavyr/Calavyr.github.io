@@ -2,10 +2,27 @@
 <title>Bottled Air</title>
 </head>
 <style>
-body {
-background-image: url(images/ohare.webp)
+.image {
+position: absolute;
 }
+
 </style>
 
 <body>
+<img url="images/ohare.webp" id="image"></img>
+
 </body>
+
+<script>
+var img = document.getElementById("image")
+
+image.style.left = (window.innerWidth - image.width) / 2
+image.style.top = (window.innerHeight - image.height) / 2
+
+window.addEventListener("resize", function() {
+image.style.left = (window.innerWidth - image.width) / 2
+image.style.top = (window.innerHeight - image.height) / 2
+})
+
+
+</script>
