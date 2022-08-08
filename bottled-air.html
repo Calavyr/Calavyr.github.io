@@ -15,13 +15,14 @@ position: absolute;
 
 <script>
 var img = document.getElementById("image")
-
-image.style.left = (window.innerWidth - image.width) / 2
-image.style.top = (window.innerHeight - image.height) / 2
+window.addEventListener("load", function() {
+img.style.left = (window.innerWidth - img.width) / 2
+img.style.top = (window.innerHeight - img.height) / 2
+}
 
 window.addEventListener("resize", function() {
-image.style.left = (window.innerWidth - image.width) / 2
-image.style.top = (window.innerHeight - image.height) / 2
+img.style.left = (window.innerWidth - img.width) / 2
+img.style.top = (window.innerHeight - img.height) / 2
 })
 
 
