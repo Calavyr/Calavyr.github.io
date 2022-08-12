@@ -1,0 +1,97 @@
+<head>
+<title>Reload</title>
+<link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
+</head>
+
+<style>
+#title {
+text-align: center;
+position: absolute;
+font-size: 24px;
+font-family: Comfortaa;
+background: grey;
+left: 25%;
+width: 50%;
+height: 17.5%;
+border-radius: 25px;
+}
+
+#container {
+text-align: center;
+position: absolute;
+font-family: Comfortaa;
+font-size: 16px;
+left: 10%;
+top: 20%;
+height: 70%;
+width: 80%;
+background-color: grey;
+border-radius: 25px;
+}
+
+
+</style>
+
+<body>
+
+
+<div id="title">
+<h1>REL⟳AD</h1>
+</div>
+
+<div id="container">
+<h1>Reload the page to gain money!</h1>
+<h1>Money: <span id="currencyCont">0</span></h1>
+<h1>Multiplier: <span id="multiCont">1</span></h1>
+</div>
+
+
+</body>
+
+<script>
+var currency;
+var cmulti;
+
+window.addEventListener("load", function() {
+loadGame()
+setTimeout(function() {
+currency += cmulti;
+saveGame();
+}, 100)
+})
+
+//Saving Game
+function saveGame() {
+const data = { currency: currency, cmulti: cmulti }
+const json = JSON.stringify(data)
+localStorage.setItem("reloadSaveFile", json)
+}
+//Loading Game
+function loadGame() {
+let retrieve = localStorage.getItem("reloadSaveFile");
+saveInfo = JSON.parse(retrieve)
+setTimeout(function() {
+console.log(saveInfo)
+if (saveInfo.currency != null) { currency = saveInfo.currency} else { currency = 0 }
+if (saveInfo.cmulti != null) { cmulti = saveInfo.cmulti} else { cmulti = 1 }
+}, 100)
+
+}
+
+
+//Update Display
+setInterval(function() {
+if (currency != undefined) {
+document.getElementById("currencyCont").innerHTML = currency
+} else {
+document.getElementById("currencyCont").innerHTML = "Loading"
+}
+
+if (cmulti != undefined) {
+document.getElementById("multiCont").innerHTML = cmulti
+} else {
+document.getElementById("multiCont").innerHTML = "Loading"
+}
+
+}, 10)
+</script>
