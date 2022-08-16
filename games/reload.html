@@ -43,6 +43,8 @@ border-radius: 25px;
 <h1>Reload the page to gain money!</h1>
 <h1>Money: <span id="currencyCont">0</span></h1>
 <h1>Multiplier: <span id="multiCont">1</span></h1>
+<br>
+<button onClick="purchaseMulti()" id="multiButton">Increase Multiplier: 100</button>
 </div>
 
 
@@ -51,6 +53,16 @@ border-radius: 25px;
 <script>
 var currency;
 var cmulti;
+var cmulticost;
+
+function purchaseMulti() {
+if (currency >= cmulticost) {
+currency -= cmulticost
+cmulti += 1
+cmulticost *= 2
+saveGame()
+}
+}
 
 window.addEventListener("load", function() {
 loadGame()
@@ -62,7 +74,7 @@ saveGame();
 
 //Saving Game
 function saveGame() {
-const data = { currency: currency, cmulti: cmulti }
+const data = { currency: currency, cmulti: cmulti, cmulticost: cmulticost }
 const json = JSON.stringify(data)
 localStorage.setItem("reloadSaveFile", json)
 }
@@ -71,9 +83,9 @@ function loadGame() {
 let retrieve = localStorage.getItem("reloadSaveFile");
 saveInfo = JSON.parse(retrieve)
 setTimeout(function() {
-console.log(saveInfo)
 if (saveInfo.currency != null) { currency = saveInfo.currency} else { currency = 0 }
 if (saveInfo.cmulti != null) { cmulti = saveInfo.cmulti} else { cmulti = 1 }
+if (saveInfo.cmulticost != null) { cmulticost = saveInfo.cmulticost} else { cmulticost = 100 }
 }, 100)
 
 }
@@ -91,6 +103,12 @@ if (cmulti != undefined) {
 document.getElementById("multiCont").innerHTML = cmulti
 } else {
 document.getElementById("multiCont").innerHTML = "Loading"
+}
+
+if (cmulticost != undefined) {
+document.getElementById("multiButton").innerHTML = "Increase Multiplier: " + cmulticost
+} else {
+document.getElementById("multiButton").innerHTML = "Increase Multiplier: Loading"
 }
 
 }, 10)
