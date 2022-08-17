@@ -46,7 +46,7 @@ function uploadStats(currency, multi) {
 	set(ref(db, 'data/') {
 	money: currency,
 	multiplier: multi
-	}
+	});
 }
 
 function getData(thing) {
