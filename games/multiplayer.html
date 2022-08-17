@@ -30,7 +30,7 @@ const app = initializeApp(firebaseConfig);
 
 
 // Initialize Realtime Database and get a reference to the service
-var database = getDatabase(app);
+const database = getDatabase(app);
 
 </script>
 </body>
@@ -42,8 +42,8 @@ uploadStats(getData("cur") + getData("multi"), getData("multi"))
 
 
 function uploadStats(currency, multi) {
-	const db = getDatabase();
-	set(ref(db, 'data/' + 0) {
+	//const db = getDatabase();
+	set(ref(database, 'data/' + 0) {
 	"money": currency,
 	"multiplier": multi
 	})
@@ -51,9 +51,9 @@ function uploadStats(currency, multi) {
 
 function getData(thing) {
 
-const db = getDatabase(app);
-const money = ref(db, 'data/' + 0 + 'money');
-const multiplier = ref(db, 'data/' + 0 + 'multiplier');
+//const db = getDatabase();
+const money = ref(database, 'data/' + 0 + 'money');
+const multiplier = ref(database, 'data/' + 0 + 'multiplier');
 
 if (thing == "cur") {
 onValue(money, (snapshot) => {
