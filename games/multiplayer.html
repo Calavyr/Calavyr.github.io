@@ -1,0 +1,73 @@
+<head>
+<title>Multiplayer Inc.</title>
+</head>
+
+<body>
+
+
+
+
+<script type="module">
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set } from "firebase/database";
+
+// TODO: Replace the following with your app's Firebase project configuration
+// See: https://firebase.google.com/docs/web/learn-more#config-object
+const firebaseConfig = {
+  apiKey: "AIzaSyDlDQ70s76UZl35-r1q36cH2OQ1_SCgvy4",
+  authDomain: "multiplayer-inc.firebaseapp.com",
+  projectId: "multiplayer-inc",
+  storageBucket: "multiplayer-inc.appspot.com",
+  messagingSenderId: "827148227832",
+  appId: "1:827148227832:web:1a6935c5216a83735a170d",
+  measurementId: "G-7SF0LPLBES",
+  databaseURL: "https://multiplayer-inc.firebaseio.com"
+};
+
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+
+// Initialize Realtime Database and get a reference to the service
+var database = getDatabase(app);
+
+</script>
+</body>
+
+<script>
+window.addEventListener("click", function() {
+uploadStats(getData("cur") + getData("multi"), getData("multi"))
+}
+
+
+function uploadStats(currency, multi) {
+	const db = getDatabase(app);
+	set(ref(db, 'data/') {
+	money: currency,
+	multiplier: multi
+	}
+}
+
+function getData(thing) {
+
+const db = getDatabase(app);
+const money = ref(db, 'data/' + 'money');
+const multiplier = ref(db, 'data/' + 'multiplier');
+
+if (thing == "cur") {
+onValue(money, (snapshot) => {
+return snapshot.val()
+}
+}
+if (thing == "multi") {
+onValue(multiplier, (snapshot) => {
+return snapshot.val()
+}
+}
+
+}
+
+
+
+</script>
