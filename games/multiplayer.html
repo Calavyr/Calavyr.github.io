@@ -44,9 +44,9 @@ uploadStats(getData("cur") + getData("multi"), getData("multi"))
 function uploadStats(currency, multi) {
 	const db = getDatabase(app);
 	set(ref(db, 'data/') {
-	money: currency,
-	multiplier: multi
-	});
+	"money": currency,
+	"multiplier": multi
+	})
 }
 
 function getData(thing) {
