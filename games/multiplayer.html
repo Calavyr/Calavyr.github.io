@@ -4,8 +4,8 @@
 
 <body>
 
-
-
+<h1 id="currencyCont">Money: 0</h1>
+<h1 id="multiCont">Multi: 0</h1>
 
 <script type="module">
 import { initializeApp } from "firebase/app";
@@ -67,6 +67,11 @@ return snapshot.val()
 }
 
 }
+
+setInterval(function() {
+document.getElementById("currencyCont").innerHTML = "Money: " + getData("cur")
+document.getElementById("multiCont").innerHTML = "Multi: " + getData("multi")
+}, 100)
 
 
 
