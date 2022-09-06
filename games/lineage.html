@@ -1,5 +1,6 @@
 <head>
 <title>Lineage</title>
+<meta name="google" content="notranslate" />
 </head>
 
 <style>
@@ -16,7 +17,7 @@ position: absolute;
 top: 0;
 left: 0;
 height: 75%;
-width: 25%;
+width: 30%;
 text-align: center;
 background: #dedede;
 }
@@ -25,7 +26,7 @@ background: #dedede;
 z-index: 1;
 position: absolute;
 top: 0;
-left: 25%;
+left: 30%;
 height: 75%;
 width: 50%;
 text-align: center;
@@ -37,9 +38,9 @@ border-right-style: solid;
 #rightContainer {
 position: absolute;
 top: 0;
-left: 75%;
+left: 80%;
 height: 75%;
-width: 25%;
+width: 20%;
 text-align: center;
 background: #dedede;
 }
@@ -71,15 +72,43 @@ border-top-right-radius: 25px;
 
 #logInput {
 position: absolute;
-top: 11%;
+top: 12%;
 left: 2.5%;
 height: 90%;
-width: 97.5%;
-background: #cdcdcd;
+width: 95%;
+background: #c7c7c7;
 overflow-y: scroll;
 }
 
 .logText {
+font-size: 24px;
+line-height: 2px;
+}
+
+
+#attributes {
+position: absolute;
+top: 50%;
+left: 5%;
+height: 30%;
+width: 90%;
+background: #cdcdcd;
+border-style: solid;
+border-radius: 10px;
+}
+
+#attributes h1 {
+position: absolute;
+top: 0;
+width: 100%;
+height: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 36px;
+}
+
+#attributes p {
 font-size: 24px;
 line-height: 2px;
 }
@@ -89,7 +118,12 @@ line-height: 2px;
 <body id="body">
 
 <div id="leftContainer">
-<h1>Test1</h1>
+
+<div id="attributes">
+<h1>Attributes</h1>
+
+</div>
+
 </div>
 
 <div id="centerContainer">
@@ -109,6 +143,28 @@ line-height: 2px;
 </body>
 
 <script>
+var strength = 1
+var toughness = 1
+var speed = 1
+var intelligence = 1
+var charisma = 1
+
+
+
+
+
+
+setInterval(function() {
+let placeholder = document.getElementById("attributes")
+let string = ""
+string += "<p>Strength: " + strength + "</p>"
+string += "<p>Toughness: " + toughness + "</p>"
+string += "<p>Speed: " + speed + "</p>"
+string += "<p>Intelligence: " + intelligence + "</p>"
+string += "<p>Charisma: " + charisma + "</p>"
+placeholder.innerHTML = "<h1>Attributes</h1><br><br>" + string
+}, 100)
+
 var logs = document.getElementById("logs")
 var logTop = document.getElementById("logTop")
 
@@ -134,10 +190,6 @@ dragging = false
 return
 }
 }
-
-document.getElementById("leftContainer").style.height = window.innerHeight - (window.innerHeight - 450) + 5
-document.getElementById("centerContainer").style.height = window.innerHeight - (window.innerHeight - 450) + 5
-document.getElementById("rightContainer").style.height = window.innerHeight - (window.innerHeight - 450) + 5
 
 document.addEventListener("mousemove", function() {
 mouseY = window.event.clientY
