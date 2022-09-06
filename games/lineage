@@ -1,0 +1,161 @@
+<head>
+<title>Lineage</title>
+</head>
+
+<style>
+#body {
+overflow: hidden;
+}
+
+h1, p {
+user-select: none;
+}
+
+#leftContainer {
+position: absolute;
+top: 0;
+left: 0;
+height: 75%;
+width: 25%;
+text-align: center;
+background: #dedede;
+}
+
+#centerContainer {
+z-index: 1;
+position: absolute;
+top: 0;
+left: 25%;
+height: 75%;
+width: 50%;
+text-align: center;
+background: #dedede;
+border-left-style: solid;
+border-right-style: solid;
+}
+
+#rightContainer {
+position: absolute;
+top: 0;
+left: 75%;
+height: 75%;
+width: 25%;
+text-align: center;
+background: #dedede;
+}
+
+#logs {
+z-index: 2;
+position: absolute;
+top: 75%;
+left: 0;
+height: 55%;
+width: 100%;
+background: #c7c7c7;
+border-top-left-radius: 25px;
+border-top-right-radius: 25px;
+}
+
+#logTop {
+position: absolute;
+top: 0;
+left: 0;
+height: 10%;
+width: 100%;
+background: #cdcdcd;
+border-top-style: solid;
+border-bottom-style: outset;
+border-top-left-radius: 25px;
+border-top-right-radius: 25px;
+}
+
+#logInput {
+position: absolute;
+top: 11%;
+left: 2.5%;
+height: 90%;
+width: 97.5%;
+background: #cdcdcd;
+overflow-y: scroll;
+}
+
+.logText {
+font-size: 24px;
+line-height: 2px;
+}
+
+</style>
+
+<body id="body">
+
+<div id="leftContainer">
+<h1>Test1</h1>
+</div>
+
+<div id="centerContainer">
+<h1>Test2</h1>
+</div>
+
+<div id="rightContainer">
+<h1>Test3</h1>
+</div>
+
+<div id="logs">
+
+<div id="logTop"></div>
+<div id="logInput"></div>
+
+</div>
+</body>
+
+<script>
+var logs = document.getElementById("logs")
+var logTop = document.getElementById("logTop")
+
+var mouseY = 0
+
+
+var dragging = false
+
+logTop.addEventListener("mousedown", function() {
+toggleDrag("down")
+})
+document.addEventListener("mouseup", function() {
+toggleDrag("up")
+})
+
+function toggleDrag(state) {
+if (state == "down") {
+dragging = true
+return
+}
+if (state == "up") {
+dragging = false
+return
+}
+}
+
+document.getElementById("leftContainer").style.height = window.innerHeight - (window.innerHeight - 450) + 5
+document.getElementById("centerContainer").style.height = window.innerHeight - (window.innerHeight - 450) + 5
+document.getElementById("rightContainer").style.height = window.innerHeight - (window.innerHeight - 450) + 5
+
+document.addEventListener("mousemove", function() {
+mouseY = window.event.clientY
+if (dragging == true) {
+	if (mouseY > window.innerHeight / 2 && mouseY < window.innerHeight - logTop.scrollHeight) {
+	logs.style.top = window.innerHeight - (window.innerHeight - mouseY) - window.innerHeight * 0.01875
+	document.getElementById("leftContainer").style.height = window.innerHeight - (window.innerHeight - mouseY) + 5
+	document.getElementById("centerContainer").style.height = window.innerHeight - (window.innerHeight - mouseY) + 5
+	document.getElementById("rightContainer").style.height = window.innerHeight - (window.innerHeight - mouseY) + 5
+	}
+}
+});
+
+
+function log(text) {
+var logInput = document.getElementById("logInput")
+logInput.innerHTML += "<p class='logText'>" + text + "</p>"
+}
+
+
+</script>
