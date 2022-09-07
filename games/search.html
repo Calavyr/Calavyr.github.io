@@ -1,0 +1,21 @@
+<head>
+<title>Search Engine</title>
+</head>
+
+<body>
+<label for="input">URL:</label>
+<input type="text" name="input" id="input">
+<button onClick="search()">Search</button>
+</body>
+
+<script>
+
+function search() {
+var url = document.getElementById("input").value
+if (!url.startsWith("https://")) {
+url = "https://" + url
+}
+location.assign(url)
+}
+
+</script>
