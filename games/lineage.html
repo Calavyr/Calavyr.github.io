@@ -197,6 +197,7 @@ if (dragging == true) {
 	if (mouseY > window.innerHeight / 2 && mouseY < window.innerHeight - logTop.scrollHeight) {
 	logs.style.top = window.innerHeight - (window.innerHeight - mouseY) - window.innerHeight * 0.01875
 	document.getElementById("leftContainer").style.height = window.innerHeight - (window.innerHeight - mouseY) + 5
+	document.getElementById("attributes").style.top = window.innerHeight - (window.innerHeight - mouseY)
 	document.getElementById("centerContainer").style.height = window.innerHeight - (window.innerHeight - mouseY) + 5
 	document.getElementById("rightContainer").style.height = window.innerHeight - (window.innerHeight - mouseY) + 5
 	}
