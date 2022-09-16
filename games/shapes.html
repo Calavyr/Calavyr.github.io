@@ -1,5 +1,5 @@
 <head>
-<title>Shapes</title>
+<title>Spiral</title>
 </head>
 
 <style>
@@ -39,7 +39,7 @@ ctx.beginPath()
 steps = document.getElementById("steps").valueAsNumber
 increment = 2*Math.PI/steps + document.getElementById("inc").valueAsNumber
 theta = increment;
-while (theta < 40*Math.PI) {
+while (theta < 65*Math.PI) {
 newX = centerX + theta * Math.cos(theta); 
 newY = centerY + theta * Math.sin(theta); 
 ctx.lineTo(newX, newY);
