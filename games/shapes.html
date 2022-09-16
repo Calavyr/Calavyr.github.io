@@ -12,11 +12,33 @@ position: absolute;
 <canvas id="screen" width="500" height="500"></canvas>
 <label>Steps:</label><input id="steps" max="60" min="1" value="60" type="number">
 <label>Increment:</label><input id="inc" max="100" min="0" value="0" type="number">
+<br>
+
+<label>Line Colour: </label><select id="strokeStyle">
+	<option>Black</option>
+	<option>White</option>
+	<option>Red</option>
+	<option>Green</option>
+	<option>Blue</option>
+	<option>Yellow</option>
+</select><br>
+<label>Background Colour: </label><select id="fillStyle">
+	<option>Black</option>
+	<option selected>White</option>
+	<option>Red</option>
+	<option>Green</option>
+	<option>Blue</option>
+	<option>Yellow</option>
+</select>
+
 </body>
 
 <script>
 var canvas = document.getElementById("screen")
 var ctx = canvas.getContext("2d")
+
+var stroke = 'Black'
+var fill = 'White'
 
 var centerX = 250;
 var centerY = 250;
@@ -56,22 +78,38 @@ increment = 2*Math.PI/steps + document.getElementById("inc").valueAsNumber
 }, 50)
 
 document.getElementById("steps").addEventListener('change', (event) => {
-ctx = canvas.getContext("2d")
 ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
 setTimeout(function() {
 drawSpiral()
-}, 100)
+}, 50)
 });
 document.getElementById("inc").addEventListener('change', (event) => {
-ctx = canvas.getContext("2d")
 ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
 setTimeout(function() {
 drawSpiral()
-}, 100)
+}, 50)
 });
 
-
-
+document.getElementById("fillStyle").addEventListener('change', (event) => {
+ctx.fillStyle = document.getElementById("fillStyle").value
+ctx.strokeStyle = document.getElementById("strokeStyle").value
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+setTimeout(function() {
+drawSpiral()
+}, 50)
+});
+document.getElementById("strokeStyle").addEventListener('change', (event) => {
+ctx.fillStyle = document.getElementById("fillStyle").value
+ctx.strokeStyle = document.getElementById("strokeStyle").value
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+setTimeout(function() {
+drawSpiral()
+}, 50)
+});
 
 
 
