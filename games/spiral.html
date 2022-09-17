@@ -58,7 +58,7 @@ var angle;
 var radius;
 var radial_increment;
 var angle_increment;
-var start;
+var start = 0
 
 steps = 60;
 increment = 2*Math.PI/steps
@@ -151,9 +151,7 @@ ctx.fillStyle = document.getElementById("fillStyle").value
 ctx.strokeStyle = document.getElementById("strokeStyle").value
 ctx.clearRect(0, 0, canvas.width, canvas.height)
 ctx.fillRect(0, 0, canvas.width, canvas.height)
-setTimeout(function() {
 drawSpiral()
-}, 50)
 }, 1)
 
 function centerScreen() {
