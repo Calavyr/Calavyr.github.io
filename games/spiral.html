@@ -120,13 +120,7 @@ setTimeout(function() {
 drawSpiral()
 }, 50)
 });
-document.getElementById("start").addEventListener('change', (event) => {
-ctx.clearRect(0, 0, canvas.width, canvas.height)
-ctx.fillRect(0, 0, canvas.width, canvas.height)
-setTimeout(function() {
-drawSpiral()
-}, 50)
-});
+	
 
 document.getElementById("fillStyle").addEventListener('change', (event) => {
 ctx.fillStyle = document.getElementById("fillStyle").value
