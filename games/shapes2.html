@@ -1,0 +1,170 @@
+<head>
+<title>Shape Generator</title>
+</head>
+
+<style>
+#screen {
+position: absolute;
+}
+</style>
+
+<body>
+<canvas id="screen" width="500" height="500"></canvas>
+<label>Steps:</label><input id="steps" max="600000" min="1" value="5000" type="number">
+<label>Radial Increment:</label><input id="inc" max="100" min="0" value="14" type="number">
+<label>Angle Increment:</label><input id="ang" max="360" min="0" value="1" type="number">
+<label>Starting Angle:</label><input id="start" max="360" min="0" value="0" type="number">
+<br>
+
+<label>Line Colour: </label><select id="strokeStyle">
+	<option>Black</option>
+	<option>White</option>
+	<option>Red</option>
+	<option>Green</option>
+	<option>Blue</option>
+	<option>Orange</option>
+	<option>Yellow</option>
+	<option>Purple</option>
+	<option>Pink</option>
+</select><br>
+<label>Background Colour: </label><select id="fillStyle">
+	<option>Black</option>
+	<option selected>White</option>
+	<option>Red</option>
+	<option>Green</option>
+	<option>Blue</option>
+	<option>Orange</option>
+	<option>Yellow</option>
+	<option>Purple</option>
+	<option>Pink</option>
+</select>
+
+</body>
+
+<script>
+var canvas = document.getElementById("screen")
+var ctx = canvas.getContext("2d")
+
+var stroke = 'Black'
+var fill = 'White'
+
+var centerX = 250;
+var centerY = 250;
+
+var steps;
+var step;
+var increment;
+var theta;
+var angle;
+var radius;
+var radial_increment;
+var angle_increment;
+
+steps = 60;
+increment = 2*Math.PI/steps
+theta = increment;
+
+drawSpiral()
+
+function drawSpiral() {
+  ctx = canvas.getContext("2d")
+  ctx.moveTo(centerX, centerY)
+  ctx.beginPath()
+
+  steps = document.getElementById("steps").valueAsNumber
+  radial_increment = document.getElementById("inc").valueAsNumber
+  angle_increment = document.getElementById("ang").valueAsNumber
+  angle = document.getElementById("start").valueAsNumber
+  radius = 200
+  increment = 2*Math.PI/steps + document.getElementById("inc").valueAsNumber
+  step = -1;
+  while (step < steps) {
+    theta = angle * Math.PI / 180
+    newX = centerX + radius * Math.cos(theta); 
+    newY = centerY + radius * Math.sin(theta); 
+    angle += angle_increment
+    radius = 200 - radial_increment * step * angle_increment / 360
+    ctx.lineTo(newX, newY);
+    theta = theta + increment;
+	step += 1
+  }
+  ctx.stroke()
+}
+
+
+setInterval(function() {
+centerScreen()
+steps = document.getElementById("steps").valueAsNumber
+increment = 2*Math.PI/steps + document.getElementById("inc").valueAsNumber
+}, 50)
+
+document.getElementById("steps").addEventListener('change', (event) => {
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+setTimeout(function() {
+drawSpiral()
+}, 50)
+});
+document.getElementById("inc").addEventListener('change', (event) => {
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+setTimeout(function() {
+drawSpiral()
+}, 50)
+});
+document.getElementById("ang").addEventListener('change', (event) => {
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+setTimeout(function() {
+drawSpiral()
+}, 50)
+});
+document.getElementById("start").addEventListener('change', (event) => {
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+setTimeout(function() {
+drawSpiral()
+}, 50)
+});
+
+document.getElementById("fillStyle").addEventListener('change', (event) => {
+ctx.fillStyle = document.getElementById("fillStyle").value
+ctx.strokeStyle = document.getElementById("strokeStyle").value
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+setTimeout(function() {
+drawSpiral()
+}, 50)
+});
+document.getElementById("strokeStyle").addEventListener('change', (event) => {
+ctx.fillStyle = document.getElementById("fillStyle").value
+ctx.strokeStyle = document.getElementById("strokeStyle").value
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+setTimeout(function() {
+drawSpiral()
+}, 50)
+});
+
+setInterval(function() {
+document.getElementById("start").valueAsNumber += 1
+if (document.getElementById("start").valueAsNumber == 180) {
+document.getElementById("start").valueAsNumber = -179
+} else if (document.getElementById("start").valueAsNumber == -180) {
+document.getElementById("start").valueAsNumber = 181
+}
+ctx.fillStyle = document.getElementById("fillStyle").value
+ctx.strokeStyle = document.getElementById("strokeStyle").value
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+setTimeout(function() {
+drawSpiral()
+}, 50)
+}, 1)
+
+function centerScreen() {
+canvas.style.left = (window.innerWidth - canvas.width) / 2
+canvas.style.top = (window.innerHeight - canvas.height) / 2
+}
+
+</script>
