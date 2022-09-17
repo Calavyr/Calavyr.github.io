@@ -1,5 +1,5 @@
 <head>
-<title>Shape Generator</title>
+<title>Spiral Generator</title>
 </head>
 
 <style>
@@ -13,7 +13,6 @@ position: absolute;
 <label>Steps:</label><input id="steps" max="600000" min="1" value="5000" type="number">
 <label>Radial Increment:</label><input id="inc" max="100" min="0" value="14" type="number">
 <label>Angle Increment:</label><input id="ang" max="360" min="0" value="1" type="number">
-<label>Starting Angle:</label><input id="start" max="360" min="0" value="0" type="number">
 <br>
 
 <label>Line Colour: </label><select id="strokeStyle">
@@ -29,6 +28,7 @@ position: absolute;
 </select><br>
 <label>Background Colour: </label><select id="fillStyle">
   <option>White</option>
+	<option>White</option>
 	<option>Black</option>
 	<option>Red</option>
 	<option>Green</option>
@@ -59,6 +59,7 @@ var angle;
 var radius;
 var radial_increment;
 var angle_increment;
+var start;
 
 steps = 60;
 increment = 2*Math.PI/steps
@@ -74,9 +75,9 @@ function drawSpiral() {
   steps = document.getElementById("steps").valueAsNumber
   radial_increment = document.getElementById("inc").valueAsNumber
   angle_increment = document.getElementById("ang").valueAsNumber
-  angle = document.getElementById("start").valueAsNumber
   radius = 200
   increment = 2*Math.PI/steps + document.getElementById("inc").valueAsNumber
+  angle = start
   step = -1;
   while (step < steps) {
     theta = angle * Math.PI / 180
@@ -147,11 +148,11 @@ drawSpiral()
 });
 
 setInterval(function() {
-document.getElementById("start").valueAsNumber += 1
-if (document.getElementById("start").valueAsNumber == 180) {
-document.getElementById("start").valueAsNumber = -179
-} else if (document.getElementById("start").valueAsNumber == -180) {
-document.getElementById("start").valueAsNumber = 181
+start += 1
+if (start == 180) {
+start = -179
+} else if (start == -180) {
+start = 181
 }
 ctx.fillStyle = document.getElementById("fillStyle").value
 ctx.strokeStyle = document.getElementById("strokeStyle").value
