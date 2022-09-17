@@ -13,6 +13,7 @@ position: absolute;
 <label>Points:</label><input id="steps" max="600000" min="1" value="5000" type="number">
 <label>Distance between points:</label><input id="ang" max="360" min="0" value="1" type="number">
 <label>Radial:</label><input id="inc" max="100" min="0" value="14" type="number">
+<label>Rotation Speed:</label><input id="speed" max="50" min="-50" value="1" type="number">
 <br>
 
 <label>Line Colour: </label><select id="strokeStyle">
@@ -141,7 +142,7 @@ drawSpiral()
 });
 
 setInterval(function() {
-start += 1
+start += document.getElementById("speed").valueAsNumber
 if (start == 180) {
 start = -179
 } else if (start == -180) {
