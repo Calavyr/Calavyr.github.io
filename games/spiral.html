@@ -142,7 +142,11 @@ drawSpiral()
 });
 
 setInterval(function() {
-start += document.getElementById("speed").valueAsNumber
+variablename = 1
+if (!isNaN(document.getElementById("speed").valueAsNumber)) {
+variablename = document.getElementById("speed").valueAsNumber
+}
+start += variablename
 if (start == 180) {
 start = -179
 } else if (start == -180) {
