@@ -22,10 +22,17 @@ user-select: none;
 <body class="noselect">
 <input type="file" accept="image/*,.png,.jpg" id="fileInput" name="fileInput" class="noselect">
 <br>
-<button onClick="clearCanvas()" class="noselect">Clear</button>
+<label>Box Width: &nbsp;</label><input type="number" id="boxWidth" value="270"><br><label>Box Height: </label><input type="number" id="boxHeight" value="185">
+<br>
+<label>Drawing Box: </label><input type="checkbox" id="toggleBox">
 <br><br>
 <button onClick="saveImage()" class="noselect">Save</button>
 <a id="link"></a>
+<br><br>
+<button onClick="undo()" class="noselect">Undo</button>
+<br><br>
+<button onClick="clearCanvas()" class="noselect">Clear</button>
+
 
 <canvas id="canvas" width="640" height="360" class="noselect">
 <img id="imageLoad" class="noselect">
@@ -46,6 +53,7 @@ var save = document.getElementById("save")
 
 var oldCanvas = ""
 var dragging = false
+var square = false
 
 
 
@@ -75,7 +83,24 @@ dragging = false
 })
 
 document.addEventListener("mousemove", function() {
+if (document.getElementById("toggleBox").checked == true && square == false) {
+square = true
+saveCanvas()
+} else if (document.getElementById("toggleBox").checked == false) {
+square = false
+}
+
 if (dragging == true) {
+if (square == true) {
+loadCanvas()
+
+let x = event.clientX - (window.innerWidth - canvas.width) / 2  - (document.getElementById("boxWidth").valueAsNumber / 2)
+let y = event.clientY - (window.innerHeight - canvas.height) / 2  - (document.getElementById("boxHeight").valueAsNumber / 2)
+
+
+ctx.fillRect(x, y, document.getElementById("boxWidth").valueAsNumber, document.getElementById("boxHeight").valueAsNumber)
+ctx.stroke();
+} else {
 loadCanvas()
 var insertimage = document.getElementById("imageLoad")
 insertimage.src = uploaded_image
@@ -86,7 +111,7 @@ let y = event.clientY - (window.innerHeight - canvas.height) / 2  - (insertimage
 
 ctx.drawImage(insertimage, x, y, insertimage.width, insertimage.height)
 ctx.stroke();
-
+}
 }
 })
 
@@ -120,5 +145,6 @@ link.setAttribute('download', 'Thumbnail.png');
 link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
 link.click();
 }
+
 
 </script>
