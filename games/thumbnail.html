@@ -1,0 +1,124 @@
+<head>
+<title>Thumbnail Maker</title>
+</head>
+
+<style>
+#canvas {
+position: absolute;
+border-style: solid;
+border-width: 6px;
+}
+
+.noselect {
+-webkit-touch-callout: none;
+-webkit-user-select: none;
+-khtml-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+</style>
+
+<body class="noselect">
+<input type="file" accept="image/*,.png,.jpg" id="fileInput" name="fileInput" class="noselect">
+<br>
+<button onClick="clearCanvas()" class="noselect">Clear</button>
+<br><br>
+<button onClick="saveImage()" class="noselect">Save</button>
+<a id="link"></a>
+
+<canvas id="canvas" width="640" height="360" class="noselect">
+<img id="imageLoad" class="noselect">
+<img id="save" class="noselect">
+
+
+</body>
+
+<script>
+var canvas = document.getElementById("canvas")
+var ctx = canvas.getContext("2d")
+
+var imageInput = document.getElementById("fileInput")
+var uploaded_image = ""
+
+var save = document.getElementById("save")
+
+
+var oldCanvas = ""
+var dragging = false
+
+
+
+imageInput.addEventListener("change", function() {
+	saveCanvas()
+	const reader = new FileReader();
+	reader.addEventListener("load", () => {
+		uploaded_image = reader.result;
+		var insertimage = document.getElementById("imageLoad")
+		insertimage.src = uploaded_image
+			insertimage.addEventListener("load", event => {
+			ctx.filter = "none"
+			if (!dragging) {
+			ctx.drawImage(insertimage, 0, 0, insertimage.width, insertimage.height)
+			ctx.stroke();
+			}
+			})
+	});
+	reader.readAsDataURL(this.files[0]);
+})
+
+canvas.addEventListener("mousedown", function() {
+dragging = true
+})
+document.addEventListener("mouseup", function() {
+dragging = false
+})
+
+document.addEventListener("mousemove", function() {
+if (dragging == true) {
+loadCanvas()
+var insertimage = document.getElementById("imageLoad")
+insertimage.src = uploaded_image
+
+let x = event.clientX - (window.innerWidth - canvas.width) / 2  - (insertimage.width / 2)
+let y = event.clientY - (window.innerHeight - canvas.height) / 2  - (insertimage.height / 2)
+
+
+ctx.drawImage(insertimage, x, y, insertimage.width, insertimage.height)
+ctx.stroke();
+
+}
+})
+
+function clearCanvas() {
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+}
+
+window.addEventListener("resize", function() {
+centerCanvas()
+})
+
+centerCanvas()
+function centerCanvas() {
+canvas.style.left = (window.innerWidth - parseInt(canvas.width)) / 2
+canvas.style.top = (window.innerHeight - parseInt(canvas.height)) / 2
+}
+
+function saveCanvas() {
+var img = canvas.toDataURL("image/png")
+save.src = img
+}
+
+function loadCanvas() {
+clearCanvas()
+ctx.drawImage(save, 0, 0, save.width, save.height)
+}
+
+function saveImage() {
+var link = document.getElementById('link');
+link.setAttribute('download', 'Thumbnail.png');
+link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+link.click();
+}
+
+</script>
