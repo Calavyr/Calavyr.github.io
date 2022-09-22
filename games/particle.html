@@ -1,0 +1,184 @@
+<head>
+<title>Particle Incremental</title>
+<meta name="google" content="notranslate">
+<link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
+</head>
+
+<style>
+body {
+background: #6DB4F7;
+}
+
+#game {
+background: #2992E3;
+position: absolute;
+left: 7.5%;
+top: 5%;
+width: 85%;
+height: 90%;
+}
+
+#canvas {
+position: absolute;
+left: 5%;
+top: 5%;
+border-style: solid;
+}
+#canvasInfo {
+background-color: #68D8F7;
+position: absolute;
+top: 86%;
+height: 7.5%;
+width: 45%;
+left: 5%;
+text-align: center;
+color: white;
+font-family: "Comfortaa";
+font-weight: 700;
+font-size: 36px;
+line-height: 0;
+border-style: solid;
+}
+
+</style>
+
+
+<body>
+<div id="game">
+<canvas id="canvas"></canvas>
+<div id="canvasInfo">
+<p><span id="particles">0</span>/<span id="maxparticles">10</span> Particles (+<span id="particleSec">0.5</span>/sec)</p>
+</div>
+
+</div>
+</body>
+
+<script>
+var canvas = document.getElementById("canvas")
+var ctx = canvas.getContext("2d")
+
+var particleLocations = []
+
+
+var part = 0
+var particles = 0
+var maxParticles = 10
+var particlesPerSec = 0.5
+
+var particleSize = 10
+
+var pickupRange = 25
+
+
+var mousePos = 0
+
+
+setInterval(function() {
+if (particles < maxParticles) {
+	part += particlesPerSec / 20
+	let i = particles
+	particles = Math.floor(part)
+	
+	if (i < particles) {
+		drawParticles()
+	}
+}
+}, 50)
+
+setInterval(function() {
+document.getElementById("particles").innerHTML = particles
+document.getElementById("maxparticles").innerHTML = maxParticles
+document.getElementById("particleSec").innerHTML = particlesPerSec
+}, 50)
+
+
+
+
+
+function drawParticles() {
+canvasBackground()
+ctx.fillStyle = "#4EF5CE"
+let k = particles
+for (let j = 0; j < particleLocations.length; j++) {
+k -= 1
+let x = particleLocations[j].x
+let y = particleLocations[j].y
+ctx.fillRect(x, y, particleSize, particleSize) 
+}
+
+for (let i = 0; i < k; i++) {
+let x = randomInteger(particleSize, canvas.width - particleSize)
+let y = randomInteger(particleSize, canvas.height - particleSize)
+
+particleLocations.push({x: x, y: y})
+
+ctx.fillRect(x, y, particleSize, particleSize)
+}
+
+ctx.fillStyle = "#88CCE3"
+ctx.fillRect(mousePos.x - pickupRange / 2, mousePos.y - pickupRange / 2, pickupRange, pickupRange)
+}
+
+
+
+
+
+window.addEventListener("mousemove", (evt) => {
+drawParticles()
+mousePos = getMousePos(canvas, evt)
+ctx.fillStyle = "#88CCE3"
+ctx.fillRect(mousePos.x - pickupRange / 2, mousePos.y - pickupRange / 2, pickupRange, pickupRange)
+
+for (let i = 0; i < particleLocations.length; i++) {
+	for (let j = 0; j < pickupRange / 2; j++) {
+	
+		if (Math.floor(mousePos.x) + j == particleLocations[i].x) {
+			for (let k = 0; k < pickupRange / 2; k++) {
+				if (Math.floor(mousePos.x) + j == particleLocations[i].x && Math.floor(mousePos.y) + k == particleLocations[i].y) {
+					particleLocations.splice(i, 1)
+					particles -= 1
+				}
+			}
+		}
+	}
+
+}
+
+})
+
+
+
+
+
+
+resizeCanvas()
+function resizeCanvas() {
+let port = document.getElementById("game")
+canvas.height = (port.clientHeight / 100) * 80
+canvas.width = (port.clientWidth / 100) * 45
+}
+
+canvasBackground()
+function canvasBackground() {
+ctx.fillStyle = "#63BCE6"
+ctx.fillRect(0, 0, canvas.width, canvas.height)
+}
+
+window.addEventListener("resize", function() {
+resizeCanvas()
+})
+
+
+
+function randomInteger(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
+</script>
