@@ -1,5 +1,5 @@
 <head>
-<title>Particle Incremental</title>
+<title>Game</title>
 <meta name="google" content="notranslate">
 <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
 </head>
@@ -57,14 +57,15 @@ border-style: solid;
 var canvas = document.getElementById("canvas")
 var ctx = canvas.getContext("2d")
 
-var particleLocations = []
+var particulates = 0
+var particulateMulti = 1
 
 
 var part = 0
 var particles = 0
-var maxParticles = 10
-var particlesPerSec = 0.5
-
+var maxParticles = 1
+var particlesPerSec = 1
+var particleLocations = []
 var particleSize = 10
 
 var pickupRange = 25
@@ -130,18 +131,27 @@ ctx.fillStyle = "#88CCE3"
 ctx.fillRect(mousePos.x - pickupRange / 2, mousePos.y - pickupRange / 2, pickupRange, pickupRange)
 
 for (let i = 0; i < particleLocations.length; i++) {
-	for (let j = 0; j < pickupRange / 2; j++) {
+
+	for (let j = Math.floor(pickupRange / 2) * -1; j < pickupRange / 2; j++) {
 	
-		if (Math.floor(mousePos.x) + j == particleLocations[i].x) {
-			for (let k = 0; k < pickupRange / 2; k++) {
-				if (Math.floor(mousePos.x) + j == particleLocations[i].x && Math.floor(mousePos.y) + k == particleLocations[i].y) {
+	
+			for (let k = Math.floor(pickupRange / 2) * -1; k < pickupRange / 2; k++) {
+			
+				if (Math.floor(mousePos.x) + j == particleLocations[i].x) {
+				
+					if (Math.floor(mousePos.y) + k == particleLocations[i].y) {
+					
 					particleLocations.splice(i, 1)
 					particles -= 1
+					
+					particulates += particulateMulti
+					
+					break
+					
+					}
 				}
 			}
-		}
-	}
-
+}
 }
 
 })
