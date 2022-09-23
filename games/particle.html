@@ -9,6 +9,14 @@ body {
 background: #6DB4F7;
 }
 
+.noselect {
+-moz-user-select: none;
+-khtml-user-select: none;
+-webkit-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+
 #game {
 background: #2992E3;
 position: absolute;
@@ -23,7 +31,8 @@ position: absolute;
 left: 5%;
 top: 5%;
 border-style: solid;
-color: white;
+color: black;
+cursor: none;
 }
 #canvasInfo {
 background-color: #68D8F7;
@@ -33,7 +42,7 @@ height: 7.5%;
 width: 45%;
 left: 5%;
 text-align: center;
-color: white;
+color: black;
 font-family: "Comfortaa";
 font-weight: 700;
 font-size: 36px;
@@ -53,7 +62,7 @@ text-align: center;
 vertical-align: middle;
 line-height: 80px;
 display: inline-block;
-color: white;
+color: black;
 border-style: solid;
 }
 
@@ -63,7 +72,7 @@ top: 17.5%;
 left: 56.375%;
 width: 37.5%;
 height: 75%;
-color: white;
+color: black;
 border-style: solid;
 background: #72D8F7;
 }
@@ -72,7 +81,7 @@ background: #72D8F7;
 
 
 <body>
-<div id="game">
+<div id="game" class="noselect">
 <canvas id="canvas"></canvas>
 <div id="canvasInfo">
 <p><span id="particles">0</span>/<span id="maxparticles">10</span> Particles (+<span id="particleSec">0.5</span>/sec)</p>
@@ -136,7 +145,7 @@ document.getElementById("particulates").innerHTML = particulates
 
 function drawParticles() {
 canvasBackground()
-ctx.fillStyle = "#4EF5CE"
+ctx.fillStyle = "#ED6C34"
 placeholder = particles
 for (let j = 0; j < particleLocations.length; j++) {
 placeholder -= 1
@@ -154,8 +163,7 @@ particleLocations.push({x: x, y: y})
 ctx.fillRect(x, y, particleSize, particleSize)
 }
 
-ctx.fillStyle = "#88CCE3"
-ctx.fillRect(mousePos.x - pickupRange / 2, mousePos.y - pickupRange / 2, pickupRange, pickupRange)
+detectCollection()
 }
 
 
@@ -166,8 +174,9 @@ window.addEventListener("mousemove", (evt) => {
 drawParticles()
 mousePos = getMousePos(canvas, evt)
 detectCollection()
-
 })
+
+
 
 function detectCollection() {
 ctx.fillStyle = "#88CCE3"
