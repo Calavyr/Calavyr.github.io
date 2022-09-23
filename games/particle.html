@@ -23,6 +23,7 @@ position: absolute;
 left: 5%;
 top: 5%;
 border-style: solid;
+color: white;
 }
 #canvasInfo {
 background-color: #68D8F7;
@@ -40,6 +41,33 @@ line-height: 0;
 border-style: solid;
 }
 
+#particulateHolder {
+font-size: 48px;
+font-family: "Comfortaa";
+position: absolute;
+left: 57.5%;
+width: 35%;
+height: 10%;
+background: #68D8F7;
+text-align: center;
+vertical-align: middle;
+line-height: 80px;
+display: inline-block;
+color: white;
+border-style: solid;
+}
+
+#upgrades {
+position: absolute;
+top: 17.5%;
+left: 56.375%;
+width: 37.5%;
+height: 75%;
+color: white;
+border-style: solid;
+background: #72D8F7;
+}
+
 </style>
 
 
@@ -48,6 +76,13 @@ border-style: solid;
 <canvas id="canvas"></canvas>
 <div id="canvasInfo">
 <p><span id="particles">0</span>/<span id="maxparticles">10</span> Particles (+<span id="particleSec">0.5</span>/sec)</p>
+</div>
+
+<h1 id="particulateHolder"><span id="particulates">0</span> Particulates</h1>
+
+<div id="upgrades">
+
+
 </div>
 
 </div>
@@ -63,8 +98,8 @@ var particulateMulti = 1
 
 var part = 0
 var particles = 0
-var maxParticles = 1
-var particlesPerSec = 1
+var maxParticles = 10
+var particlesPerSec = 0.5
 var particleLocations = []
 var particleSize = 10
 
@@ -74,22 +109,25 @@ var pickupRange = 25
 var mousePos = 0
 
 
+var placeholder = 0
 setInterval(function() {
 if (particles < maxParticles) {
 	part += particlesPerSec / 20
-	let i = particles
+	placeholder = particles
 	particles = Math.floor(part)
 	
-	if (i < particles) {
+	if (placeholder < particles) {
 		drawParticles()
 	}
 }
+detectCollection()
 }, 50)
 
 setInterval(function() {
 document.getElementById("particles").innerHTML = particles
 document.getElementById("maxparticles").innerHTML = maxParticles
 document.getElementById("particleSec").innerHTML = particlesPerSec
+document.getElementById("particulates").innerHTML = particulates
 }, 50)
 
 
@@ -99,15 +137,15 @@ document.getElementById("particleSec").innerHTML = particlesPerSec
 function drawParticles() {
 canvasBackground()
 ctx.fillStyle = "#4EF5CE"
-let k = particles
+placeholder = particles
 for (let j = 0; j < particleLocations.length; j++) {
-k -= 1
+placeholder -= 1
 let x = particleLocations[j].x
 let y = particleLocations[j].y
 ctx.fillRect(x, y, particleSize, particleSize) 
 }
 
-for (let i = 0; i < k; i++) {
+for (let i = 0; i < placeholder; i++) {
 let x = randomInteger(particleSize, canvas.width - particleSize)
 let y = randomInteger(particleSize, canvas.height - particleSize)
 
@@ -127,6 +165,11 @@ ctx.fillRect(mousePos.x - pickupRange / 2, mousePos.y - pickupRange / 2, pickupR
 window.addEventListener("mousemove", (evt) => {
 drawParticles()
 mousePos = getMousePos(canvas, evt)
+detectCollection()
+
+})
+
+function detectCollection() {
 ctx.fillStyle = "#88CCE3"
 ctx.fillRect(mousePos.x - pickupRange / 2, mousePos.y - pickupRange / 2, pickupRange, pickupRange)
 
@@ -143,6 +186,7 @@ for (let i = 0; i < particleLocations.length; i++) {
 					
 					particleLocations.splice(i, 1)
 					particles -= 1
+					part = Math.max(0, part - 1)
 					
 					particulates += particulateMulti
 					
@@ -153,9 +197,7 @@ for (let i = 0; i < particleLocations.length; i++) {
 			}
 }
 }
-
-})
-
+}
 
 
 
@@ -166,6 +208,7 @@ function resizeCanvas() {
 let port = document.getElementById("game")
 canvas.height = (port.clientHeight / 100) * 80
 canvas.width = (port.clientWidth / 100) * 45
+drawParticles()
 }
 
 canvasBackground()
