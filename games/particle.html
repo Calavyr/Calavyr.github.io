@@ -180,30 +180,34 @@ detectCollection()
 
 function detectCollection() {
 ctx.fillStyle = "#88CCE3"
-ctx.fillRect(mousePos.x - pickupRange / 2, mousePos.y - pickupRange / 2, pickupRange, pickupRange)
+ctx.fillRect(mousePos.x - pickupRange / 2 + 1, mousePos.y - pickupRange / 2 + 1, pickupRange, pickupRange)
 
-for (let i = 0; i < particleLocations.length; i++) {
+if (particleLocations.length == 0) { return }
 
-	for (let j = Math.floor(pickupRange / 2) * -1; j < pickupRange / 2; j++) {
+
+for (let i = 0; i <= particleLocations.length - 1; i++) {
+
+
+	for (let j = Math.ceil(pickupRange) * -1; j <= Math.ceil(pickupRange / 2); j++) {
 	
-	
-			for (let k = Math.floor(pickupRange / 2) * -1; k < pickupRange / 2; k++) {
+			for (let k = Math.ceil(pickupRange) * -1; k <= Math.ceil(pickupRange / 2); k++) {
 			
-				if (Math.floor(mousePos.x) + j == particleLocations[i].x) {
+				if (Math.ceil(mousePos.x) + j == particleLocations[i].x) {
 				
-					if (Math.floor(mousePos.y) + k == particleLocations[i].y) {
+					if (Math.ceil(mousePos.y) + k == particleLocations[i].y) {
 					
 					particleLocations.splice(i, 1)
 					particles -= 1
 					part = Math.max(0, part - 1)
 					
 					particulates += particulateMulti
+					drawParticles()
 					
-					break
-					
+					return
 					}
 				}
 			}
+
 }
 }
 }
