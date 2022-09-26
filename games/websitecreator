@@ -1,0 +1,101 @@
+<head>
+<title>Website Creator</title>
+</head>
+
+<body>
+<h1>Head</h1>
+<label>Title: </label><input type="string" id="nameInput" value="Title">
+
+<br><br>
+<h1>Design</h1>
+<div id="style"></div>
+
+<br><br>
+<h1>Body</h1>
+<div id="body"></div>
+<br><button onClick="addSection()">+</button>
+
+
+<br><br><br>
+<button onClick="compile()">Compile File</button>
+
+</body>
+
+<script>
+var head = ""
+var style = ""
+var body = ""
+var script = ""
+
+var sectionStyle = []
+
+var sectionsNum = 0
+
+
+var nameInput = document.getElementById("nameInput")
+
+nameInput.addEventListener("change", function() {
+setHead()
+})
+
+function addSection() {
+sectionsNum += 1
+let bodyAdd = document.getElementById("body")
+let styleAdd = document.getElementById("style")
+
+styleAdd.innerHTML += "Section " + sectionsNum + "<br>Text Color: <input type='string' value='Black' id='color" + sectionsNum + "'><br>Background Color: <input type='string' value='White' id='background" + sectionsNum + "'><br>Font size: <input type='number' value='32' id='size" + sectionsNum + "'><br>"
+bodyAdd.innerHTML += "<div id='section" + sectionsNum + "'> Section " + sectionsNum + ": <input type='string' value='Input Text' id='input" + sectionsNum + "'</div>"
+}
+
+setHead()
+function setHead() {
+head = ""
+head += "<head>\n<title>" + nameInput.value + "</title>\n</head>"
+}
+
+function setStyle() {
+sectionStyle.length = 0
+for (let i = 0; i < sectionsNum; i++) {
+
+let color = document.getElementById("color" + i).value
+let background = document.getElementById("background" + i).value
+let fontsize = document.getElementById("size" + i).valueAsNumber
+
+sectionStyle.push({"color": color, "background": background, "fontsize": fontsize})
+
+}
+
+style = ""
+style += "<style>\n"
+for (let i = 0; i < sectionStyle.length; i++) {
+style += "#section" + (i + 1) + " {"
+style += "\ncolor: " + sectionStyle[i].color
+style += ";\nbackground: " + sectionStyle[i].background 
+style += ";\nfont-size: " + sectionStyle[i].fontsize
+style += "\n}\n"
+}
+style += "</style>"
+}
+
+function setBody() {
+body = ""
+for (let i = 0; i < sectionsNum; i++) {
+body += "<p id='section" + i + "'>" + document.getElementById("input" + i).value + "</p>"
+}
+
+}
+
+
+
+
+function compile() {
+setStyle()
+setBody()
+
+
+
+var file = head + "\n\n" + style + "\n\n" + body + "\n\n" + "\n\n" + script
+console.log(file)
+}
+
+</script>
