@@ -17,6 +17,10 @@ background: #6DB4F7;
 user-select: none;
 }
 
+p, h1 {
+color: black;
+}
+
 #game {
 background: #2992E3;
 position: absolute;
@@ -75,6 +79,27 @@ height: 75%;
 color: black;
 border-style: solid;
 background: #72D8F7;
+overflow-y: auto;
+}
+
+.upgradeBox {
+position: relative;
+border-radius: 15px;
+padding: 5%;
+width: 80%;
+height: 15%;
+background: #1ab1db;
+text-align: center;
+color: white;
+font-family: Comfortaa;
+left: 5%;
+overflow-x: hide;
+overflow-y: hide;
+margin-bottom: 5px;
+}
+
+.upgradeBox:hover {
+background: #0286ab;
 }
 
 </style>
@@ -84,14 +109,29 @@ background: #72D8F7;
 <div id="game" class="noselect">
 <canvas id="canvas"></canvas>
 <div id="canvasInfo">
-<p><span id="particles">0</span>/<span id="maxparticles">10</span> Particles (+<span id="particleSec">0.5</span>/sec)</p>
+<p><span id="particles">0</span>/<span id="maxParticles">10</span> Particles (+<span id="particleSec">0.5</span>/sec)</p>
 </div>
 
 <h1 id="particulateHolder"><span id="particulates">0</span> Particulates</h1>
 
 <div id="upgrades">
-
-
+<br>
+	<div class="upgradeBox" onClick="upgrade('particulateMulti')">
+		<h1>Increase Particulates Multi</h1>
+		<p>Cost: <span id="particulateMultiCost">15</span></p>
+	</div>
+	
+	<div class="upgradeBox" onClick="upgrade('maxParticles')">
+		<h1>Increase Max Particles</h1>
+		<p>Cost: <span id="maxParticlesCost">25</span></p>
+	</div>
+	
+	<div class="upgradeBox" onClick="upgrade('particlesPerSec')">
+		<h1>Increase Particles perSec</h1>
+		<p>Cost: <span id="particlesPerSecCost">25</span></p>
+	</div>
+	
+	
 </div>
 
 </div>
@@ -107,8 +147,16 @@ var particulateMulti = 1
 
 var part = 0
 var particles = 0
+
+var particulateMulti = 1
+var particulateMultiCost = 15
+
 var maxParticles = 10
+var maxParticlesCost = 25
+
 var particlesPerSec = 0.5
+var particlesPerSecCost = 25
+
 var particleLocations = []
 var particleSize = 15
 
@@ -134,9 +182,12 @@ detectCollection()
 
 setInterval(function() {
 document.getElementById("particles").innerHTML = particles
-document.getElementById("maxparticles").innerHTML = maxParticles
+document.getElementById("maxParticles").innerHTML = maxParticles
 document.getElementById("particleSec").innerHTML = particlesPerSec
 document.getElementById("particulates").innerHTML = particulates
+document.getElementById("particulateMultiCost").innerHTML = particulateMultiCost
+document.getElementById("maxParticlesCost").innerHTML = maxParticlesCost
+document.getElementById("particlesPerSecCost").innerHTML = particlesPerSecCost
 }, 50)
 
 
@@ -176,7 +227,10 @@ mousePos = getMousePos(canvas, evt)
 detectCollection()
 })
 
-
+setInterval(function() {
+ctx.fillStyle = "#88CCE3"
+ctx.fillRect(mousePos.x - pickupRange / 2 + 1, mousePos.y - pickupRange / 2 + 1, pickupRange, pickupRange)
+}, 10)
 
 function detectCollection() {
 ctx.fillStyle = "#88CCE3"
@@ -247,4 +301,29 @@ function getMousePos(canvas, evt) {
     y: evt.clientY - rect.top
   };
 }
+
+function upgrade(type) {
+if (type == "particulateMulti") {
+if (particulates >= particulateMultiCost) {
+particulates -= particulateMultiCost
+particulateMulti += 1
+particulateMultiCost = Math.floor(particulateMultiCost * 1.5)
+}
+} else if (type == "maxParticles") {
+if (particulates >= maxParticlesCost) {
+particulates -= maxParticlesCost
+maxParticles += 1
+maxParticlesCost = Math.floor(maxParticlesCost * 1.5)
+}
+} else if (type == "particlesPerSec") {
+if (particulates >= particlesPerSecCost) {
+particulates -= particlesPerSecCost
+particlesPerSec += 0.5
+particlesPerSecCost = Math.floor(particlesPerSecCost * 1.5)
+}
+}
+
+
+}
+
 </script>
