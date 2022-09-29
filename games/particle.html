@@ -169,9 +169,9 @@ var mousePos = 0
 var placeholder = 0
 setInterval(function() {
 if (particles < maxParticles) {
-	part += particlesPerSec / 20
+	part = Math.min(part + particlesPerSec / 20, maxParticles)
 	placeholder = particles
-	particles = Math.floor(part)
+	particles = Math.min(Math.floor(part), maxParticles)
 	
 	if (placeholder < particles) {
 		drawParticles()
