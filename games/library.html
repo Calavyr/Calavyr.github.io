@@ -1,0 +1,110 @@
+<head>
+<title>Library</title>
+</head>
+
+<style>
+#bar {
+position: fixed;
+left: 0;
+top: 0;
+width: 100%;
+height: 50px;
+border-bottom-style: solid;
+background-color: white;
+}
+
+#scroll {
+background: yellow;
+display: inline;
+}
+
+p {
+display: inline;
+}
+</style>
+
+<body>
+<div id="bar">
+<button onClick="generateBook()">Generate</button>
+<button onClick="generateBooks(5000)">Generate Maximum</button><br>
+<button onClick="search(input.value.toLowerCase())">Search</button><input type="string" id="input">
+</div><br><br><br>
+<p id="output"></p>
+</body>
+
+<script>
+var input = document.getElementById("input")
+var output = document.getElementById("output")
+
+var code = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", ",", ".", " "]
+
+
+
+
+
+//Search
+function search(searchInput) {
+if (output.innerHTML.includes('<div id="search" style="background: yellow; display: inline;"><p>') && output.innerHTML.includes('</p></div>')) {
+let replace1 = '<div id="search" style="background: yellow; display: inline;"><p>'
+let replace2 = "</p></div>"
+let re1 = new RegExp(replace1, "i")
+let re2 = new RegExp(replace2, "i")
+output.innerHTML = output.innerHTML.replace(re1, "")
+output.innerHTML = output.innerHTML.replace(re2, "")
+}
+
+if (output.textContent.includes(searchInput)) {
+let index = output.textContent.indexOf(searchInput)
+let re = new RegExp(searchInput, "i") //add "g" to the string to make global, "i" to the string to make case-insensitive
+output.innerHTML = output.innerHTML.replace(re, '<div id="search"><p>' + searchInput + '</p></div>')
+let scroll = document.getElementById("search")
+scroll.style.background = "yellow"
+scroll.style.display = "inline"
+const y = scroll.getBoundingClientRect().top + window.pageYOffset - 50;
+window.scrollTo({top: y, behavior: 'smooth'});
+} else {
+alert("The library does not contain the term \"" + searchInput + "\".")
+}
+}
+
+
+//Generate
+function generateBook() {
+var books = []
+for (let i = 0; i < 1; i++) {
+var book = ""
+	for (let j = 0; j < 100; j++) {
+	book += code[randomInt(0, 29)]
+	
+	if (book.length >= 100) {
+	book += "\n"
+	}
+	
+	}
+books.push(book)
+}
+output.innerHTML += books + "<br>"
+}
+
+function generateBooks(quantity) {
+var books = []
+for (let i = 0; i < quantity; i++) {
+var book = ""
+	for (let j = 0; j < 100; j++) {
+	book += code[randomInt(0, 29)]
+	
+	if (book.length >= 100) {
+	book += "\n"
+	}
+
+	}
+books.push(book)
+}
+output.innerHTML += books + "<br>"
+}
+
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min) + min)
+}
+</script>
