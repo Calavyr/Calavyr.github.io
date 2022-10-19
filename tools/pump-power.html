@@ -14,11 +14,13 @@
 <label>Measurement: </label><select id="pressureMeasurementInput"><option>mH2O</option><option>kPa</option><option>atm</option><option>bar</option></select>
 <br>
 <label>Pump Efficiency (%): <input id="pumpEfficiencyInput" type="number"><br>
-<label>Power Efficiency (%): <input id="motorEfficiencyInput" type="number"><br>
+<label>Motor Efficiency (%): <input id="motorEfficiencyInput" type="number"><br>
 <br><br>
 
 <button onClick="calculate()">Calculate</button>
-<p>Pump Power Consumption: <span id="output" /></p>
+<p>Pump Power Consumption <select id="timeInput"><option>hourly</option><option>daily</option><option>annually</option></select>: <br><span id="output" /></p>
+
+
 </body>
 
 <script>
@@ -39,7 +41,7 @@ var pressureMeasurementInput = document.getElementById("pressureMeasurementInput
 var pumpEfficiencyInput = document.getElementById("pumpEfficiencyInput")
 var motorEfficiencyInput = document.getElementById("motorEfficiencyInput")
 
-
+var timeInput = document.getElementById("timeInput")
 
 
 
@@ -71,6 +73,14 @@ function calculate() {
 	var output;
 	
 	output = (((standardFlow * standardPressure * density * g) / pumpEfficiency) / motorEfficiency) / 1000
+	
+	if (timeInput.value == "daily" || timeInput.value == "annually") {
+		output *= 24
+	}
+	if (timeInput.value == "annually") {
+		output *= 365
+	}
+	
 	var outputString = `${output.toFixed(1)} kWh`
 	outputEle.innerHTML = outputString
 	
