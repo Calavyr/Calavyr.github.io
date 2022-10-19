@@ -14,7 +14,6 @@
 <label>Measurement: </label><select id="pressureMeasurementInput"><option>mH2O</option><option>kPa</option><option>atm</option><option>bar</option></select>
 <br>
 <label>Energy Efficiency (%): <input id="percentageInput" type="number" Input="100"><br>
-<label>Time (hours): <input id="timeInput" type="number" Input="100">
 <br><br>
 
 <button onClick="calculate()">Calculate</button>
@@ -38,7 +37,6 @@ var pressureMeasurementInput = document.getElementById("pressureMeasurementInput
 
 var percentageInput = document.getElementById("percentageInput")
 
-var timeInput = document.getElementById("timeInput")
 
 
 
@@ -52,21 +50,26 @@ pressureMeasurement.innerHTML = pressureMeasurementType
 }, 10)
 
 function calculate() {
-	var time = timeInput.value
-	var efficiency = percentageInput.value / 100
+	var tempC = 4
+	const density = 1000
+	const g = 9.81
+	
+	var efficiency = percentageInput.valueAsNumber / 100
 	var standardFlow, standardPressure;
 
 	if (flowMeasurementType == "L/s") {
-		standardFlow = flowMeasurementInput.value * 3600 //L/s to L/h
+		standardFlow = flowInput.valueAsNumber / 1000 //L/s to L/h
 	}
 	
 	if (pressureMeasurementType == "mH2O") {
-		standardPressure = pressureMeasurementType.value
+		standardPressure = pressureInput.valueAsNumber
 	}
 	
 	var output;
 	
-	output = (standardFlow * standardPressure * 
+	output = ((standardFlow * standardPressure * density * g) / efficiency) / 1000
+	var outputString = `${output.toFixed(1)} kWh`
+	outputEle.innerHTML = outputString
 	
 }
 </script>
