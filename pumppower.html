@@ -1,0 +1,72 @@
+<head>
+<title>Pump Power Consumption Calculator</title>
+</head>
+
+<style>
+
+</style>
+
+<body>
+<label>Flow (<span id="flowMeasurement"></span>): <input id="flowInput" type="number">
+<label>Measurement: </label><select id="flowMeasurementInput"><option>L/s</option><option>m&sup3;/h</option><option>m&sup3;/day</option></select>
+<br>
+<label>Pressure (<span id="pressureMeasurement"></span>): <input id="pressureInput" type="number">
+<label>Measurement: </label><select id="pressureMeasurementInput"><option>mH2O</option><option>kPa</option><option>atm</option><option>bar</option></select>
+<br>
+<label>Energy Efficiency (%): <input id="percentageInput" type="number" Input="100"><br>
+<label>Time (hours): <input id="timeInput" type="number" Input="100">
+<br><br>
+
+<button onClick="calculate()">Calculate</button>
+<p>Output: <span id="output" /></p>
+</body>
+
+<script>
+var outputEle = document.getElementById("output")
+var output = ""
+
+
+var flowInput = document.getElementById("flowInput")
+var flowMeasurement = document.getElementById("flowMeasurement")
+var flowMeasurementType = "L/s"
+var flowMeasurementInput = document.getElementById("flowMeasurementInput")
+
+var pressureInput = document.getElementById("pressureInput")
+var pressureMeasurement = document.getElementById("pressureMeasurement")
+var pressureMeasurementType = "mH2O"
+var pressureMeasurementInput = document.getElementById("pressureMeasurementInput")
+
+var percentageInput = document.getElementById("percentageInput")
+
+var timeInput = document.getElementById("timeInput")
+
+
+
+
+setInterval(function() {
+flowMeasurementType = flowMeasurementInput.value
+pressureMeasurementType = pressureMeasurementInput.value
+
+flowMeasurement.innerHTML = flowMeasurementType
+pressureMeasurement.innerHTML = pressureMeasurementType
+}, 10)
+
+function calculate() {
+	var time = timeInput.value
+	var efficiency = percentageInput.value / 100
+	var standardFlow, standardPressure;
+
+	if (flowMeasurementType == "L/s") {
+		standardFlow = flowMeasurementInput.value * 3600 //L/s to L/h
+	}
+	
+	if (pressureMeasurementType == "mH2O") {
+		standardPressure = pressureMeasurementType.value
+	}
+	
+	var output;
+	
+	output = (standardFlow * standardPressure * 
+	
+}
+</script>
