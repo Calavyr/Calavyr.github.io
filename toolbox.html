@@ -1,0 +1,90 @@
+<head>
+<title>The Toolbox</title>
+<link rel="shortcut icon" type="image/x-icon" href="./images/favicon.ico">
+
+<link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
+
+<meta charset="UTF-8">
+<meta name="description" content="A toolbox for all of TealDR's more practical projects">
+<meta name="author" content="TealDR">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<style>
+
+.noselect {
+-webkit-touch-callout: none; 
+-webkit-user-select: none; 
+-khtml-user-select: none; 
+-moz-user-select: none; 
+-ms-user-select: none; 
+user-select: none; 
+}
+
+
+body {
+background-color: #1b1b1b;
+}
+
+#title {
+text-align: center;
+color: white;
+font-family: Comfortaa;
+font-size: 48px;
+}
+
+h1 {
+text-align: center;
+color: white;
+font-family: Comfortaa;
+font-size: 36px;
+font-weight: 700;
+}
+
+.textbox {
+position: relative;
+box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.5);
+border-radius: 3px;
+padding: 10px;
+margin: 5px 10px;
+width: 50%;
+min-height: 60px;
+background: #333;
+text-align: center;
+color: white;
+font-family: Comfortaa;
+left: 25%;
+}
+
+.textbox:hover {
+background: #444;
+
+}
+
+</style>
+
+
+<body class="noselect">
+
+<div id="title">
+the toolbox
+<span style="font-size:8px;"> v1.0</span>
+</div>
+<br><br><br>
+
+<div id="tools">
+	<div class="textbox" onClick="tool('pump-power')">
+		<h1>The Library</h1>
+		<p>Generates random text which you can search through for words.</p>
+		<p>Heavily inspired by the Library of Babel at https://libraryofbabel.info/</p>
+		<br>
+	</div>
+	
+</div>
+</body>
+
+<script>
+function tool(toolname) {
+	window.location.href = './tools/' + toolname;
+}
+</script>
