@@ -1,0 +1,78 @@
+<head>
+<title>Pump Power Consumption Calculator</title>
+</head>
+
+<style>
+
+</style>
+
+<body>
+<label>Flow (<span id="flowMeasurement"></span>): <input id="flowInput" type="number">
+<label>Measurement: </label><select id="flowMeasurementInput"><option>L/s</option><option>m&sup3;/h</option><option>m&sup3;/day</option></select>
+<br>
+<label>Pressure (<span id="pressureMeasurement"></span>): <input id="pressureInput" type="number">
+<label>Measurement: </label><select id="pressureMeasurementInput"><option>mH2O</option><option>kPa</option><option>atm</option><option>bar</option></select>
+<br>
+<label>Pump Efficiency (%): <input id="pumpEfficiencyInput" type="number"><br>
+<label>Power Efficiency (%): <input id="powerEfficiencyInput" type="number"><br>
+<br><br>
+
+<button onClick="calculate()">Calculate</button>
+<p>Output: <span id="output" /></p>
+</body>
+
+<script>
+var outputEle = document.getElementById("output")
+var output = ""
+
+
+var flowInput = document.getElementById("flowInput")
+var flowMeasurement = document.getElementById("flowMeasurement")
+var flowMeasurementType = "L/s"
+var flowMeasurementInput = document.getElementById("flowMeasurementInput")
+
+var pressureInput = document.getElementById("pressureInput")
+var pressureMeasurement = document.getElementById("pressureMeasurement")
+var pressureMeasurementType = "mH2O"
+var pressureMeasurementInput = document.getElementById("pressureMeasurementInput")
+
+var pumpEfficiencyInput = document.getElementById("pumpEfficiencyInput")
+var powerEfficiencyInput = document.getElementById("powerEfficiencyInput")
+
+
+
+
+
+setInterval(function() {
+flowMeasurementType = flowMeasurementInput.value
+pressureMeasurementType = pressureMeasurementInput.value
+
+flowMeasurement.innerHTML = flowMeasurementType
+pressureMeasurement.innerHTML = pressureMeasurementType
+}, 10)
+
+function calculate() {
+	var tempC = 4
+	const density = 1000
+	const g = 9.81
+	
+	var pumpEfficiency = pumpEfficiencyInput.valueAsNumber / 100
+	var powerEfficiency = powerEfficiencyInput.valueAsNumber / 100
+	var standardFlow, standardPressure;
+
+	if (flowMeasurementType == "L/s") {
+		standardFlow = flowInput.valueAsNumber / 1000 //L/s to L/h
+	}
+	
+	if (pressureMeasurementType == "mH2O") {
+		standardPressure = pressureInput.valueAsNumber
+	}
+	
+	var output;
+	
+	output = (((standardFlow * standardPressure * density * g) / pumpEfficiency) / powerEfficiency) / 1000
+	var outputString = `${output.toFixed(1)} kWh`
+	outputEle.innerHTML = outputString
+	
+}
+</script>
