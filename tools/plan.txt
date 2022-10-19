@@ -1,0 +1,9 @@
+1. Diary function
+Database that contains user-added list of crops
+when added to database, crop info such as season is included along with requirements like inside/outside plant
+database can be searched through by crop name and season
+In diary, press + button to add one of crops from database that is sorted alphabetically through SELECT element
+diary and database saved through cookies
+
+2. plan function
+when it is the season for a plant in database, reminds to plant 
