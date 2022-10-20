@@ -1,0 +1,55 @@
+<head>
+<title>Gardening Diary</title>
+</head>
+
+<style>
+#viewPort {
+
+}
+
+h1, p, span {
+text-align: center;
+}
+</style>
+
+<body>
+<div id="viewPort">
+<h1 id="date">Current Day</h1>
+
+</div>
+</body>
+
+<script>
+
+
+window.addEventListener("load", function() {
+loadLog()
+getTodaysDate()
+}
+
+function getTodaysDate() {
+var dateEle = document.getElementById("date")
+
+if (dateEle.innerHTML != "Current Day") return 
+
+const d = new Date()
+var date = d.getDate()
+var month = d.getMonth() + 1
+var year = d.getFullYear()
+
+var todaysDate = date + "/" + month + "/" + year
+dateEle.innerHTML = todaysDate
+}
+
+function saveLog() {
+	var JSON = {
+	diary: diary
+	}
+	localStorage.setItem("logData", JSON.stringify(JSON))
+}
+
+function loadLog() {
+	var JSON = JSON.parse(localStorage.getItem("logData"))
+	if (JSON.diary != null) diary = JSON.diary
+}
+</script>
