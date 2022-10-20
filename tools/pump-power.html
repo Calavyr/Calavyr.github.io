@@ -57,6 +57,7 @@ function calculate() {
 	var tempC = 4
 	const density = 1000
 	const g = 9.81
+	var suffix = "kWh"
 	
 	var pumpEfficiency = pumpEfficiencyInput.valueAsNumber / 100
 	var motorEfficiency = motorEfficiencyInput.valueAsNumber / 100
@@ -78,10 +79,11 @@ function calculate() {
 		output *= 24
 	}
 	if (timeInput.value == "annually") {
-		output *= 365
+		output *= 365 / 1000
+		suffix = "MWh"
 	}
 	
-	var outputString = `${output.toFixed(1)} kWh`
+	var outputString = `${output.toFixed(1)} ${suffix}`
 	outputEle.innerHTML = outputString
 	
 }
