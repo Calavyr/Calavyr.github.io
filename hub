@@ -1,0 +1,25 @@
+<head>
+<title>Hub</title>
+</head>
+
+<style>
+body {
+overflow: hidden;
+}
+
+div {
+font-size: 192px;
+text-align: center;
+vertical-align: middle;
+}
+</style>
+
+<body>
+<div>
+Redirection
+</div>
+</body>
+
+<script>
+  window.location.hrf = "https://pornhub.com"
+</script>
