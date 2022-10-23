@@ -20,12 +20,12 @@ text-align: center;
 </body>
 
 <script>
-
+var diary = "10/10/10"
 
 window.addEventListener("load", function() {
 loadLog()
 getTodaysDate()
-}
+})
 
 function getTodaysDate() {
 var dateEle = document.getElementById("date")
@@ -51,5 +51,6 @@ function saveLog() {
 function loadLog() {
 	var JSON = JSON.parse(localStorage.getItem("logData"))
 	if (JSON.diary != null) diary = JSON.diary
+	dateEle.innerHTML = diary
 }
 </script>
