@@ -73,6 +73,11 @@ tealdr's site
 <br><br><br>
 
 <div id="games">
+	<a class="textbox" href='javascript: (() => {let thingymabob = window.prompt("Website URL:", "google.com");if (thingymabob.toLowerCase().startsWith("https://")) {window.location.replace(thingymabob);} else if (thingymabob.toLowerCase().startsWith("http://")) {window.location.replace(thingymabob);} else {thingymabob = "https://" + thingymabob;window.location.replace(thingymabob);}})()'>
+		<h1>Safe Browsing</h1>
+		<p>Drag and drop this box into bookmark bar and click to run.</p>
+		<p>If you go to a website, run this program and go to a different website, the starting website will be gone from history.</p>
+	</a>	
 	<div class="textbox" onClick="game('library')">
 		<h1>The Library</h1>
 		<p>Generates random text which you can search through for words.</p>
