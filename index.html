@@ -91,43 +91,47 @@ tealdr's site
 <br><br><br>
 
 <div id="games">
-	<a disabled="disabled" href='javascript: (() => {let thingymabob = window.prompt("Website URL:", "google.com");if (thingymabob.toLowerCase().startsWith("https://")) {window.location.replace(thingymabob);} else if (thingymabob.toLowerCase().startsWith("http://")) {window.location.replace(thingymabob);} else {thingymabob = "https://" + thingymabob;window.location.replace(thingymabob);}})()' disabled>
-	<div class="textbox">
-		<h1>Safe Browsing</h1>
-		<p>Drag and drop this box into bookmark bar and click to run.</p>
-		<p>If you go to a website, run this program and go to a different website, the starting website will be gone from history.</p>
+	<div class="textbox" onClick="game('trail')">
+		<h1>Mouse Trails</h1>
+		<p>Does cool mouse trails.</p>
+		<p>Will add settings soon.</p>
 	</div>
-	</a>	
+	
 	<div class="textbox" onClick="game('library')">
 		<h1>The Library</h1>
 		<p>Generates random text which you can search through for words.</p>
 		<p>Heavily inspired by the Library of Babel at https://libraryofbabel.info/</p>
 		<br>
 	</div>
+	
 	<div class="textbox" onClick="game('particle')">
 		<h1>Particle Collector</h1>
 		<p>Move your mouse to collect particles to gain particulates.</p>
 		<p>Use particulates to get upgrades. More depth being added soon.</p>
 		<br>
 	</div>
+	
 	<div class="textbox" onClick="game('websitecreator')">
 		<h1>Website Creator</h1>
 		<p>Make basic websites with ease.</p>
 		<p>More stuff and details being added soon.</p>
 		<br>
 	</div>
+	
 	<div class="textbox" onClick="game('thumbnail')">
 		<h1>Thumbnail Maker</h1>
 		<p>Insert images and drag them around and insert more.</p>
 		<p>Click save to save your thumbnail.</p>
 		<br>
 	</div>
+	
 	<div class="textbox" onClick="game('shapes')">
 		<h1>Shape/Pattern Visualiser</h1>
 		<p>It draws shapes and patterns with two changeable paramaters and customizable colours.</p>
 		<p>Hint: 60 Steps with 1 Increment makes a rose</p>
 		<br>
 	</div>
+	
 	<div class="textbox" onClick="game('spiral')">
 		<h1>Spiral Visualiser</h1>
 		<p>It draws spirals with multiple settings to change them.</p>
@@ -198,6 +202,14 @@ tealdr's site
 		<p>Literally no gameplay, trust me.</p>
 		<br>
 	</div>
+	
+	<a disabled="disabled" href='javascript: (() => {let thingymabob = window.prompt("Website URL:", "google.com");if (thingymabob.toLowerCase().startsWith("https://")) {window.location.replace(thingymabob);} else if (thingymabob.toLowerCase().startsWith("http://")) {window.location.replace(thingymabob);} else {thingymabob = "https://" + thingymabob;window.location.replace(thingymabob);}})()' disabled>
+	<div class="textbox">
+		<h1>Safe Browsing</h1>
+		<p>Drag and drop this box into bookmark bar and click to run.</p>
+		<p>If you go to a website, run this program and go to a different website, the starting website will be gone from history.</p>
+	</div>
+	</a>
 	
 </div>
 </body>
