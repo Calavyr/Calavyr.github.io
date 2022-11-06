@@ -1,10 +1,40 @@
 <head>
 <title>Mouse Trails</title>
+<link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
 </head>
 
 <style>
+.noselect {
+-webkit-touch-callout: none; 
+-webkit-user-select: none; 
+-khtml-user-select: none; 
+-moz-user-select: none; 
+-ms-user-select: none; 
+user-select: none; 
+}
+
 body {
 background: black;
+cursor: none;
+}
+
+#settings {
+z-index: 2;
+background: grey;
+cursor: auto;
+position: fixed;
+font-family: Comfortaa;
+font-weight: 900;
+text-align: center;
+width: 15%;
+height: 20%;
+line-height: 5;
+left: 0;
+right: 0;
+}
+
+#settings span {
+line-height: 2;
 }
 
 #trail {
@@ -20,21 +50,50 @@ z-index: 0;
 position: fixed;
 width: 10;
 height: 10;
-background: grey;
 border-radius: 50%;
 }
 </style>
 
-<body>
-<div id="trail"></div>
+<body class="noselect">
+<div id="settings">
+<span>Press M to toggle this menu.</span><br>
+<label>Trail Colour: </label><select id="trailColour">
+	<option>Grey</option>
+	<option>White</option>
+	<option>Black</option>
+	<option>Red</option>
+	<option>Lime</option>
+	<option>Green</option>
+	<option>Blue</option>
+	<option value="DarkBlue">Dark Blue</option>
+	<option>Orange</option>
+	<option>Yellow</option>
+	<option>Purple</option>
+	<option value="Fuchsia">Pink</option>
+</select><br>
+<p style="display:inline">Trail Size: </p>
+<input type="range" value="10" min="5" max="50" id="trailSize" class="noselect">
+</div>
 
+<div id="trail"></div>
 </body>
 
 <script>
 var trail = document.getElementById("trail")
 
+var trailColour = "grey"
+var trailColourSelect = document.getElementById("trailColour")
+
+var trailSize = 10
+var trailSizeSelect = document.getElementById("trailSize")
+
+
+
+
 var thing = 0
 function drawTrail(x, y) {
+setTimeout(function() {
+
 /*if (thing != 1) {
 thing++
 return
@@ -43,21 +102,46 @@ thing = 0;*/
 var n = document.createElement("div");
 n.className = "trailFollower";
 document.body.appendChild(n);
-setTimeout(function() {
-n.style.left = (x - 5) + "px"
-n.style.top = (y - 5) + "px"
-}, 100)
+n.style.background = trailColour
+n.style.width = trailSize
+n.style.height = trailSize
+n.style.left = (x - trailSize / 2) + "px"
+n.style.top = (y - trailSize / 2) + "px"
+
+
+
 setTimeout(function() {
 document.body.removeChild(n);
 }, 200)
+
+}, 100)
 }
 
 window.addEventListener("mousemove", function(event) {
+trailSize = trailSizeSelect.value
+trailColour = trailColourSelect.value
 syncTrail(event.clientX, event.clientY)
 })
 function syncTrail(x, y) {
-trail.style.left = (x - 5) + "px"
-trail.style.top = (y - 5) + "px"
+trail.style.width = trailSize
+trail.style.height = trailSize
+trail.style.left = (x - trailSize / 2) + "px"
+trail.style.top = (y - trailSize / 2) + "px"
 drawTrail(x, y)
 }
+
+var settingsHidden = false
+window.addEventListener("keydown", function(event) {
+if (event.keyCode == 77) {
+var settings = document.getElementById("settings")
+
+if (settingsHidden) {
+settings.style.display = "inline-block"
+settingsHidden = !settingsHidden
+} else {
+settings.style.display = "none"
+settingsHidden = !settingsHidden
+}
+}
+})
 </script>
