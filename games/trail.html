@@ -27,7 +27,7 @@ font-family: Comfortaa;
 font-weight: 900;
 text-align: center;
 width: 15%;
-height: 20%;
+height: 30%;
 line-height: 5;
 left: 0;
 right: 0;
@@ -71,6 +71,10 @@ border-radius: 50%;
 	<option>Purple</option>
 	<option value="Fuchsia">Pink</option>
 </select><br>
+<label>Shape: </label><select id="trailShape">
+	<option>Circle</option>
+	<option>Square</option>
+</select><br>
 <p style="display:inline">Trail Size: </p>
 <input type="range" value="10" min="5" max="50" id="trailSize" class="noselect">
 </div>
@@ -87,6 +91,8 @@ var trailColourSelect = document.getElementById("trailColour")
 var trailSize = 10
 var trailSizeSelect = document.getElementById("trailSize")
 
+var trailShape = "Circle"
+var trailShapeSelect = document.getElementById("trailShape")
 
 
 
@@ -107,7 +113,11 @@ n.style.width = trailSize
 n.style.height = trailSize
 n.style.left = (x - trailSize / 2) + "px"
 n.style.top = (y - trailSize / 2) + "px"
-
+if (trailShape == "Circle") {
+n.style.borderRadius = "50%"
+} else if (trailShape == "Square") {
+n.style.borderRadius = "0"
+}
 
 
 setTimeout(function() {
@@ -120,9 +130,15 @@ document.body.removeChild(n);
 window.addEventListener("mousemove", function(event) {
 trailSize = trailSizeSelect.value
 trailColour = trailColourSelect.value
+trailShape = trailShapeSelect.value
 syncTrail(event.clientX, event.clientY)
 })
 function syncTrail(x, y) {
+if (trailShape == "Circle") {
+trail.style.borderRadius = "50%"
+} else if (trailShape == "Square") {
+trail.style.borderRadius = "0"
+}
 trail.style.width = trailSize
 trail.style.height = trailSize
 trail.style.left = (x - trailSize / 2) + "px"
