@@ -1,0 +1,63 @@
+<head>
+<title>Mouse Trails</title>
+</head>
+
+<style>
+body {
+background: black;
+}
+
+#trail {
+z-index: 1;
+position: fixed;
+width: 10;
+height: 10;
+background: white;
+border-radius: 50%;
+}
+.trailFollower {
+z-index: 0;
+position: fixed;
+width: 10;
+height: 10;
+background: grey;
+border-radius: 50%;
+}
+</style>
+
+<body>
+<div id="trail"></div>
+
+</body>
+
+<script>
+var trail = document.getElementById("trail")
+
+var thing = 0
+function drawTrail(x, y) {
+/*if (thing != 1) {
+thing++
+return
+}
+thing = 0;*/
+var n = document.createElement("div");
+n.className = "trailFollower";
+document.body.appendChild(n);
+setTimeout(function() {
+n.style.left = (x - 5) + "px"
+n.style.top = (y - 5) + "px"
+}, 100)
+setTimeout(function() {
+document.body.removeChild(n);
+}, 200)
+}
+
+window.addEventListener("mousemove", function(event) {
+syncTrail(event.clientX, event.clientY)
+})
+function syncTrail(x, y) {
+trail.style.left = (x - 5) + "px"
+trail.style.top = (y - 5) + "px"
+drawTrail(x, y)
+}
+</script>
