@@ -133,6 +133,12 @@ trailColour = trailColourSelect.value
 trailShape = trailShapeSelect.value
 syncTrail(event.clientX, event.clientY)
 })
+window.addEventListener("touchmove", function(event) {
+trailSize = trailSizeSelect.value
+trailColour = trailColourSelect.value
+trailShape = trailShapeSelect.value
+syncTrail(event.clientX, event.clientY)
+})
 function syncTrail(x, y) {
 if (trailShape == "Circle") {
 trail.style.borderRadius = "50%"
