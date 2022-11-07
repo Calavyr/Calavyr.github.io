@@ -1,4 +1,7 @@
-<head>
+cube thing: 
+height - 2cm
+width - 2cm
+length - 2cm<head>
 <title>Mouse Trails</title>
 <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
 </head>
@@ -137,7 +140,7 @@ window.addEventListener("touchmove", function(event) {
 trailSize = trailSizeSelect.value
 trailColour = trailColourSelect.value
 trailShape = trailShapeSelect.value
-syncTrail(event.clientX, event.clientY)
+syncTrail(event.touches[0].clientX, event.touches[0].clientY)
 })
 function syncTrail(x, y) {
 if (trailShape == "Circle") {
