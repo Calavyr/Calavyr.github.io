@@ -91,6 +91,7 @@ top: 0;
 
 </body>
 
+
 <script>
 var terminalInput = document.getElementById("terminalInput")
 var terminalLocation = document.getElementById("terminalLocation")
@@ -99,9 +100,10 @@ var log = document.getElementById("log")
 
 var files = [{"name": "guide.txt", "value": "Run the scan command to view available networks, run connect \[network name\] and then run hack to gain money"}]
 
+var commandList = "Command List:<br>help - Brings up command list<br>cls - Clears log<br>ls - Lists files<br>cat - Outputs info of a text file into Log<br>run - Runs an executable (.exe) file<br>calc - Calculates a mathematical equation"
 
-log.innerHTML += "Command List:<br>help - Brings up command list<br>cls - Clears log<br>ls - Lists files<br>cat - Outputs info of a text file into Log<br>"
 
+log.innerHTML += commandList + "<br>"
 
 function runCommand() {
 var input = terminalInput.innerHTML
@@ -115,7 +117,7 @@ terminalInput.innerHTML = ""
 
 switch(command) {
 	case "help": 
-	log.innerHTML += "Command List:<br>help - Brings up command list<br>cls - Clears log<br>ls - Lists files<br>cat - Outputs info of a text file into Log"
+	log.innerHTML += commandList
 	break
 	
 	case "cls":
@@ -148,6 +150,22 @@ switch(command) {
 		log.innerHTML += "<span class='error'>\"" + inputEnding + "\" is not a valid readable file</class>"
 	break
 	
+	case "run":
+	if (inputEnding == command || inputEnding.length == 0) {
+		log.innerHTML += "<span class='error'>No executable (.exe) file included. Use the syntax \"run [file name]\"</span>"
+		break
+	}
+	break
+	
+	case "calc":
+	if (inputEnding == command || inputEnding.length == 0) {
+		log.innerHTML += "<span class='error'>No calculation included. Use the syntax \"calc [calculation]\"</span>"
+		break
+	}
+	log.innerHTML += "Result: " + parse(inputEnding)
+	break
+	
+	
 	default:
 	log.innerHTML += "<span class='error'>\"" + command + "\" is not a valid command.</span>"
 }
@@ -165,4 +183,10 @@ if (event.keyCode == 8) {
 terminalInput.innerHTML = terminalInput.innerHTML.slice(0, terminalInput.innerHTML.length - 1)
 }
 })
+
+
+
+function parse(str) {
+  return Function(`'use strict'; return (${str})`)()
+}
 </script>
