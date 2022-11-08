@@ -1,0 +1,168 @@
+<head>
+<title>Hacking Game</title>
+<link href="https://fonts.cdnfonts.com/css/cascadia-code" rel="stylesheet">
+</head>
+
+<style>
+.noselect {
+-webkit-touch-callout: none; 
+-webkit-user-select: none; 
+-khtml-user-select: none; 
+-moz-user-select: none; 
+-ms-user-select: none; 
+user-select: none; 
+}
+
+.error {
+color: red;
+}
+
+body {
+background: #1a1a1a;
+top: 0;
+left: 0;
+color: lime;
+font-family: "Cascadia Code";
+}
+
+#leftContainer {
+position: fixed;
+left: 0;
+top: 0;
+width: 20%;
+height: 100%;
+border-right-style: solid;
+border-right-color: lime;
+}
+
+#centerContainer {
+position: fixed;
+left: 20%;
+top: 0;
+width: 65%;
+height: 100%;
+color: lime;
+}
+
+#rightContainer {
+position: fixed;
+left: 85%;
+top: 0;
+width: 15%;
+height: 100%;
+border-left-style: solid;
+border-left-color: lime;
+text-align: center;
+line-height: 5;
+font-weight: 900;
+}
+
+
+#terminalLocation {
+position: fixed;
+left: 22.15%;
+top: 95%;
+}
+
+#log {
+position: fixed;
+width: 64%;
+height: 90%;
+left: 21%;
+top: 0;
+}
+</style>
+
+<body class="noselect">
+<div id="leftContainer"></div>
+
+
+<div id="centerContainer">
+<div id="log">
+
+</div>
+<span id="terminalLocation">Home ~/ > <span id="terminalInput"></span><span id="terminalInputBlinking"></span></span>
+</div>
+
+
+<div id="rightContainer">
+<span>Hacking Level: 1</span>
+</div>
+
+</body>
+
+<script>
+var terminalInput = document.getElementById("terminalInput")
+var terminalLocation = document.getElementById("terminalLocation")
+
+var log = document.getElementById("log")
+
+var files = [{"name": "guide.txt", "value": "Run the scan command to view available networks, run connect \[network name\] and then run hack to gain money"}]
+
+
+log.innerHTML += "Command List:<br>help - Brings up command list<br>cls - Clears log<br>ls - Lists files<br>cat - Outputs info of a text file into Log<br>"
+
+
+function runCommand() {
+var input = terminalInput.innerHTML
+var command = input.substring(0, input.toLowerCase().indexOf(" "));
+if (command.length == 0) command = input
+
+var inputEnding = input.substring(input.toLowerCase().indexOf(" ") + 1, input.length);
+
+terminalInput.innerHTML = ""
+
+
+switch(command) {
+	case "help": 
+	log.innerHTML += "Command List:<br>help - Brings up command list<br>cls - Clears log<br>ls - Lists files<br>cat - Outputs info of a text file into Log"
+	break
+	
+	case "cls":
+	log.innerHTML = ""
+	break
+	
+	case "ls":
+	let fileList = ""
+	for (let i = 0; i < files.length; i++) {
+		fileList += "<br>" + files[i].name
+	}
+	log.innerHTML += "Files:" + fileList
+	break
+	
+	
+	case "cat":
+	if (inputEnding == command || inputEnding.length == 0) {
+		log.innerHTML += "<span class='error'>No readable file included. Use the syntax \"cat [file name]\"</span>"
+		break
+	}
+	var readableFile = false
+	for (let i = 0; i < files.length; i++) {
+		if (files[i].name == inputEnding) {
+		log.innerHTML += files[i].value
+		readableFile = true
+		break
+		}
+	}
+	if (readableFile) break
+		log.innerHTML += "<span class='error'>\"" + inputEnding + "\" is not a valid readable file</class>"
+	break
+	
+	default:
+	log.innerHTML += "<span class='error'>\"" + command + "\" is not a valid command.</span>"
+}
+log.innerHTML += "<br>"
+}
+
+addEventListener("keypress", function(event) {
+if (event.key == "Enter") runCommand()
+if (event.key.length != 1) return
+if (terminalInput.innerHTML.length >= 50) return
+terminalInput.innerHTML += event.key
+})
+addEventListener("keydown", function(event) {
+if (event.keyCode == 8) {
+terminalInput.innerHTML = terminalInput.innerHTML.slice(0, terminalInput.innerHTML.length - 1)
+}
+})
+</script>
