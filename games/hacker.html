@@ -81,7 +81,7 @@ top: 0;
 <div id="log">
 
 </div>
-<span id="terminalLocation">Home ~/ > <span id="terminalInput"></span><span id="terminalInputBlinking"></span></span>
+<span id="terminalLocation">home ~/ > <span id='terminalInput'></span></span>
 </div>
 
 
@@ -98,9 +98,24 @@ var terminalLocation = document.getElementById("terminalLocation")
 
 var log = document.getElementById("log")
 
-var files = [{"name": "guide.txt", "value": "Run the scan command to view available networks, run connect \[network name\] and then run hack to gain money"}]
+var hacking = false
+var money = 0
 
-var commandList = "Command List:<br>help - Brings up command list<br>cls - Clears log<br>ls - Lists files<br>cat - Outputs info of a text file into Log<br>run - Runs an executable (.exe) file<br>calc - Calculates a mathematical equation"
+
+
+var files = [
+{"name": "readme.txt", "value": "Use the scan command to view available networks, use connect \[network name\] and then hack to gain money"}, 
+{"name": "NUKE.exe", "value": "executable"}]
+
+
+var connectedNetwork = "home"
+var networks = [
+{"name": "Home", "networkName": "home", "security": 0, "access": true, "money": 0},
+{"name": "Yushi's Sushi", "networkName": "yushis-sushi", "security": 1, "access": false, "money": 10000}, 
+{"name": "Alpha Gym", "networkName": "alpha-gym", "security": 3, "access": false, "money": 50000}
+]
+
+var commandList = "Command List:<br>help - Brings up command list<br>cls - Clears log<br>ls - Lists files<br>cat - Outputs info of a text (.txt) file into Log<br>run - Runs an executable (.exe) file<br>scan - Lists available networks to connect to<br>connect - Connects to an available network<br>hack - Requires file access, steals money from connected network"
 
 
 log.innerHTML += commandList + "<br>"
@@ -115,7 +130,9 @@ var inputEnding = input.substring(input.toLowerCase().indexOf(" ") + 1, input.le
 terminalInput.innerHTML = ""
 
 
+
 switch(command) {
+	
 	case "help": 
 	log.innerHTML += commandList
 	break
@@ -155,14 +172,92 @@ switch(command) {
 		log.innerHTML += "<span class='error'>No executable (.exe) file included. Use the syntax \"run [file name]\"</span>"
 		break
 	}
+	
+	if (inputEnding == "NUKE.exe") {
+		for (let i = 0; i < networks.length; i++) {
+			if (networks[i].networkName == connectedNetwork) {
+				if (networks[i].access == false) {
+					networks[i].access = true
+					log.innerHTML += "File Access to " + connectedNetwork + " gained"
+					break
+				} else {
+					log.innerHTML += "<span class='error'>You already have File Access to \"" + connectedNetwork + "\"</span>"
+					break
+				}
+			}
+		}
+	}
 	break
 	
-	case "calc":
+	case "scan":
+	let networksArr = [...networks]
+	for (let i = 0; i < networksArr.length; i++) {
+		if (networksArr[i].networkName == connectedNetwork) {
+			networksArr.splice(i, 1)
+		}
+	}
+	
+	let availableNetworks = ""
+	availableNetworks += "Available Networks:"
+	for (let i = 0; i < networksArr.length; i++) {
+	availableNetworks += "<br><br>"
+	availableNetworks += "Alias: " + networksArr[i].name + "<br>"
+	availableNetworks += "Network Name: " + networksArr[i].networkName + "<br>"
+	availableNetworks += "Security Level: " + networksArr[i].security + "<br>"
+	availableNetworks += "File Access: " + networksArr[i].access
+	}
+	
+	log.innerHTML += availableNetworks
+	break
+
+	case "connect":
 	if (inputEnding == command || inputEnding.length == 0) {
-		log.innerHTML += "<span class='error'>No calculation included. Use the syntax \"calc [calculation]\"</span>"
+		log.innerHTML += "<span class='error'>No network name included. Use the syntax \"connect [network name]\"</span>"
 		break
 	}
-	log.innerHTML += "Result: " + parse(inputEnding)
+	if (inputEnding == connectedNetwork) {
+		log.innerHTML += "<span class='error'>You are already connected to the network \"" + connectedNetwork + "\"</span>"
+		break
+	}
+	
+	for (let i = 0; i < networks.length; i++) {
+		if (inputEnding == networks[i].networkName) {
+			connectedNetwork = networks[i].networkName
+			log.innerHTML += "Successfully connected to network \"" + connectedNetwork + "\""
+			terminalLocation.innerHTML = connectedNetwork + " ~/ > <span id='terminalInput'></span>"
+			terminalInput = document.getElementById("terminalInput")
+			break
+		}
+	}
+	
+	break
+	
+	case "hack":
+	if (connectedNetwork == "home") {
+		log.innerHTML += "<span class='error'>You can't hack your home network</span>"
+		break
+	}
+	
+	for (let i = 0; i < networks.length; i++) {
+		if (networks[i].networkName == connectedNetwork) {
+			if (networks[i].access == true) {
+				log.innerHTML += "Hacking..."
+				hacking = true
+				setTimeout(function() {
+					hacking = false
+					money += Math.floor(networks[i].money / 20)
+					networks[0].money = money
+					log.innerHTML += "Hacked! You have gained $" + Math.floor(networks[i].money / 20) + ". Your balance is now $" + money + "<br>"
+					networks[i].money -= Math.floor(networks[i].money / 20)
+				}, 1000)
+				break
+			} else {
+				log.innerHTML += "<span class='error'>You need File Access to hack this network. Gain File Access by running NUKE.exe</span>"
+				break
+			}
+		}
+	}
+	
 	break
 	
 	
@@ -173,20 +268,17 @@ log.innerHTML += "<br>"
 }
 
 addEventListener("keypress", function(event) {
+if (hacking) return
 if (event.key == "Enter") runCommand()
 if (event.key.length != 1) return
 if (terminalInput.innerHTML.length >= 50) return
+if (event.key == "<" || event.key == ">") return
 terminalInput.innerHTML += event.key
 })
 addEventListener("keydown", function(event) {
+if (hacking) return
 if (event.keyCode == 8) {
 terminalInput.innerHTML = terminalInput.innerHTML.slice(0, terminalInput.innerHTML.length - 1)
 }
 })
-
-
-
-function parse(str) {
-  return Function(`'use strict'; return (${str})`)()
-}
 </script>
