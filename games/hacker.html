@@ -103,6 +103,7 @@ var money = 0
 
 
 
+
 var files = [
 {"name": "readme.txt", "value": "Use the scan command to view available networks, use connect \[network name\] and then hack to gain money"}, 
 {"name": "NUKE.exe", "value": "executable"}]
@@ -178,7 +179,7 @@ switch(command) {
 			if (networks[i].networkName == connectedNetwork) {
 				if (networks[i].access == false) {
 					networks[i].access = true
-					log.innerHTML += "File Access to " + connectedNetwork + " gained"
+					log.innerHTML += "NUKE.exe running... File Access to " + connectedNetwork + " gained"
 					break
 				} else {
 					log.innerHTML += "<span class='error'>You already have File Access to \"" + connectedNetwork + "\"</span>"
