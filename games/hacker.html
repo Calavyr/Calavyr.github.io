@@ -311,5 +311,8 @@ function loadGame() {
 	if (typeof data.connectedNetwork != null) connectedNetwork = data.connectedNetwork;
 	if (typeof data.networks != null) networks = data.networks;
 	if (typeof data.log != null) log.innerHTML = data.log;
+	
+	terminalLocation.innerHTML = connectedNetwork + " ~/ > <span id='terminalInput'></span>"
+	terminalInput = document.getElementById("terminalInput")
 }
 </script>
