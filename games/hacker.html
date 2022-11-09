@@ -140,7 +140,7 @@ switch(command) {
 	}
 	var readableFile = false
 	for (let i = 0; i < files.length; i++) {
-		if (files[i].name == inputEnding) {
+		if (files[i].name == inputEnding && files[i].name.endsWith(".txt")) {
 		log.innerHTML += files[i].value
 		readableFile = true
 		break
