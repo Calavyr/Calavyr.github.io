@@ -35,6 +35,20 @@ border-right-style: solid;
 border-right-color: lime;
 }
 
+#leftContainer p {
+position: relative;
+background: #262626;
+border-radius: 25px;
+width: 100%;
+height: 10%;
+line-height: 6;
+text-align: center;
+}
+
+#leftContainer p:hover {
+background: #383838;
+}
+
 #centerContainer {
 position: fixed;
 left: 15%;
@@ -57,11 +71,10 @@ line-height: 5;
 font-weight: 900;
 }
 
-
 #terminalLocation {
 position: fixed;
-left: 22.15%;
-top: 90%;
+left: 17.15%;
+top: 95%;
 }
 
 #log {
@@ -71,17 +84,83 @@ height: 90%;
 left: 16%;
 top: 0;
 }
+
+#scriptingTab {
+position: fixed;
+width: 63%;
+height: 90%;
+left: 16%;
+top: 1%;
+display: none;
+background: #1a1a1a;
+border-color: lime;
+border-style: solid;
+}
+
+#scriptingTab button {
+background: #1a1a1a;
+color: lime;
+border-style: solid;
+border-color: lime;
+position: absolute;
+top: 102%;
+left: 0;
+width: 10%;
+height: 5%;
+}
+
+#scriptingTab button:hover {
+background: #383838;
+}
+
+#scriptingInput {
+position: absolute;
+width: 98%;
+height: 98%;
+left: 1%;
+top: 1%;
+font-size: 16px;
+color: lime;
+background: #1a1a1a;
+}
+
+textarea {
+position: absolute;
+width: 100%;
+height: 100%;
+top: 0%;
+left: 0%;
+border: none;
+outline: none;
+resize: none;
+}
 </style>
 
 <body class="noselect">
-<div id="leftContainer"></div>
+<div id="leftContainer">
+<p onClick="openWindow('terminal')">Terminal</p>
+<p onClick="openWindow('scripting')">Scripting</p>
+</div>
 
 
 <div id="centerContainer">
-<div id="log">
-
-</div>
+<div id="log"></div>
 <span id="terminalLocation">home ~/ > <span id='terminalInput'></span></span>
+
+
+<div id="scriptingTab">
+<textarea id="scriptingInput" spellcheck="false">
+//Default Script
+
+scriptConnect('yushis-sushi') //Connects to yushis-sushi
+
+while (true) {
+	scriptHack() //Hacks at connected network
+}</textarea>
+<button onClick="saveScript()">Save Script</button>
+</div>
+
+
 </div>
 
 
@@ -131,6 +210,7 @@ var inputEnding = input.substring(input.toLowerCase().indexOf(" ") + 1, input.le
 terminalInput.innerHTML = ""
 
 if (command == "") return
+if (terminalInput.style.display == "none") return
 
 
 switch(command) {
@@ -268,6 +348,69 @@ switch(command) {
 }
 log.innerHTML += "<br>"
 }
+
+
+
+
+function saveScript() {
+	var name = window.prompt("Input script name: ")
+	var script = document.getElementById("scriptingInput").value
+	if (name == null || name == "") {
+		window.alert("Error: Invalid name.")
+		return
+	}
+	if (name.includes(".")) {
+		window.alert("Error: Script name must not include \".\"")
+		return
+	}
+	if (name.startsWith("NUKE")) {
+		window.alert("Error: Script name is already being used by main file.")
+		return
+	}
+	for (let i = 0; i < files.length; i++) {
+		if (files[i].name == name + ".exe") {
+			files[i].value = script
+			break
+		}
+	}
+	files.push({"name": name + ".exe", "value": script })
+}
+
+
+function openWindow(window) {
+var center = document.getElementById("centerContainer")
+center.style.zIndex = 0
+
+if (window == "terminal") {
+	log.style.display = "initial"
+	terminalLocation.style.display = "initial"
+	scriptingTab.style.display = "none"
+}
+
+if (window == "scripting") {
+	log.style.display = "none"
+	terminalLocation.style.display = "none"
+	scriptingTab.style.display = "block"
+}
+
+}
+
+
+
+document.getElementById('scriptingInput').addEventListener('keydown', function(event) {
+  if (event.key == 'Tab') {
+    event.preventDefault();
+    var start = this.selectionStart;
+    var end = this.selectionEnd;
+
+    this.value = this.value.substring(0, start) +
+      "\t" + this.value.substring(end);
+
+    this.selectionStart =
+      this.selectionEnd = start + 1;
+  }
+});
+
 
 addEventListener("keypress", function(event) {
 if (hacking) return
