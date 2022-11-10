@@ -260,13 +260,28 @@ switch(command) {
 			if (networks[i].networkName == connectedNetwork) {
 				if (networks[i].access == false) {
 					networks[i].access = true
-					log.innerHTML += "NUKE.exe running... File Access to " + connectedNetwork + " gained"
+					log.innerHTML += "NUKE.exe running... File Access to " + connectedNetwork + " gained<br>"
 					break
 				} else {
-					log.innerHTML += "<span class='error'>You already have File Access to \"" + connectedNetwork + "\"</span>"
+					log.innerHTML += "<span class='error'>You already have File Access to \"" + connectedNetwork + "\"</span><br>"
 					break
 				}
 			}
+		}
+	}
+	
+	for (let i = 0; i < files.length; i++) {
+		if (inputEnding == files[i].name && files[i].name.endsWith(".exe")) {
+		var script = files[i].value
+			if (script.includes("while (true)")) {
+				var whileTrueIndex = script.indexOf("while (true)")
+				var whileTrueEndIndex = script.lastIndexOf("}")
+				script = script.split("")
+				script.splice(whileTrueIndex, 12, "setInterval(function()")
+				script.splice(whileTrueEndIndex, 1, ", 5000)")
+				script = script.join("")
+			}
+			eval(script)
 		}
 	}
 	break
