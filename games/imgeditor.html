@@ -48,6 +48,9 @@ height: 1%;
 
 <canvas id="viewport"></canvas>
 
+<button onClick="saveImage()">Save</button>
+<a id="link"></a>
+
 </body>
 
 <script>
@@ -91,5 +94,12 @@ ctx.filter = type
 ctx.clearRect(0, 0, canvas.width, canvas.height);
 ctx.drawImage(location, 0, 0, canvas.width, canvas.height);
 ctx.stroke();
+}
+
+function saveImage() {
+var link = document.getElementById('link');
+link.setAttribute('download', 'Image.png');
+link.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+link.click();
 }
 </script>
