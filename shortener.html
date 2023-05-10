@@ -21,12 +21,12 @@ var linkOutput = document.getElementById("linkOutput")
 if (getUrlParameter('links')) {
 	var links = getUrlParameter('links')
 	links = links.split('---')
-	console.log(links)
 	for (let i = 0; i < links.length; i++) {
 		links[i] = links[i].replace(/%3D/g, "=")
 		links[i] = links[i].replace(/%26/g, "&")
 		links[i] = links[i].replace(/%3F/g, "?")
 		window.open(links[i])
+		window.focus()
 	}
 	location.replace(location.protocol + '//' + location.host + location.pathname)
 }
