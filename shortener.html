@@ -1,5 +1,5 @@
 <head>
-<title>URL Shortener</title>
+<title>Bad URL Shortener</title>
 </head>
 
 <body>
@@ -21,6 +21,7 @@ var linkOutput = document.getElementById("linkOutput")
 if (getUrlParameter('links')) {
 	var links = getUrlParameter('links')
 	links = links.split('---')
+	console.log(links)
 	for (let i = 0; i < links.length; i++) {
 		window.open(links[i])
 	}
