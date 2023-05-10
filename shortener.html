@@ -3,16 +3,40 @@
 </head>
 
 <body>
+<div id="inputs">
 
+</div>
+<button id="addInput">Add link</button>
+<button id="generateLink">Generate Link</button>
+<div id="linkOutput">
+
+</div>
 </body>
 
 <script>
-var var1 = "a"
-var var2 = "b"
-var var3 = 1
-var var4 = 2
+var inputs = document.getElementById("inputs")
+var addInput = document.getElementById("addInput")
+var generateLink = document.getElementById("generateLink")
+var linkOutput = document.getElementById("linkOutput")
 
-insertParam('var7', '---')
+addInput.addEventListener("click", function() {
+	inputs.innerHTML += "\n<input type='text' />"
+}
+
+generateLink.addEventListener("click", function() {
+	var links = ""
+	var children = inputs.children
+	for (let i = 0; i < children.length; i++) {
+		if (children[i].value.length ~= 0) {
+			if (i ~= 0) {
+				links += "---"
+			}
+			links += children[i].value
+		}
+	}
+	linkOutput.innerHTML = "Here's your link:\n" + insertParam('links', links)
+}
+
 
 function insertParam(key, value) {
     key = encodeURIComponent(key);
@@ -37,6 +61,7 @@ function insertParam(key, value) {
 
     let params = kvp.join('&');
 
-    document.location.search = params;
+    //document.location.search = params;
+	return params
 }
 </script>
