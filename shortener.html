@@ -25,9 +25,10 @@ if (getUrlParameter('links')) {
 	for (let i = 0; i < links.length; i++) {
 		links[i] = links[i].replace(/%3D/g, "=")
 		links[i] = links[i].replace(/%26/g, "&")
+		links[i] = links[i].replace(/%3F/g, "?")
 		window.open(links[i])
 	}
-	//location.replace(location.protocol + '//' + location.host + location.pathname)
+	location.replace(location.protocol + '//' + location.host + location.pathname)
 }
 
 addInput.addEventListener("click", function() {
@@ -65,6 +66,7 @@ generateLink.addEventListener("click", function() {
 	}
 	links = links.replace(/=/g, "%3D")
 	links = links.replace(/&/g, "%26")
+	links = links.replace(/?/g, "%3F")
 	
 	linkOutput.value = location.protocol + '//' + location.host + location.pathname + "?links=" + links
 })
