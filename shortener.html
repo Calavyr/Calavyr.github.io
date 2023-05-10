@@ -27,8 +27,8 @@ generateLink.addEventListener("click", function() {
 	var links = ""
 	var children = inputs.children
 	for (let i = 0; i < children.length; i++) {
-		if (children[i].value.length ~= 0) {
-			if (i ~= 0) {
+		if (children[i].value.length != 0) {
+			if (i != 0) {
 				links += "---"
 			}
 			links += children[i].value
