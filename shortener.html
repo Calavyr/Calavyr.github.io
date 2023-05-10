@@ -21,7 +21,7 @@ var linkOutput = document.getElementById("linkOutput")
 
 addInput.addEventListener("click", function() {
 	inputs.innerHTML += "\n<input type='text' />"
-}
+})
 
 generateLink.addEventListener("click", function() {
 	var links = ""
@@ -35,7 +35,7 @@ generateLink.addEventListener("click", function() {
 		}
 	}
 	linkOutput.innerHTML = "Here's your link:\n" + insertParam('links', links)
-}
+})
 
 
 function insertParam(key, value) {
