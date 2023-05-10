@@ -18,6 +18,15 @@ var addInput = document.getElementById("addInput")
 var generateLink = document.getElementById("generateLink")
 var linkOutput = document.getElementById("linkOutput")
 
+if (urlParams.has('links')) {
+	var links = urlParams.get('links')
+	links = links.split('---')
+	for (let i = 0; i < links.length; i++) {
+		window.open(links[i])
+	}
+	location.replace(location.protocol + '//' + location.host + location.pathname)
+}
+
 addInput.addEventListener("click", function() {
 	var newInput = document.createElement("input")
 	newInput.setAttribute("type", "text")
