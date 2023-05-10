@@ -20,18 +20,35 @@ var generateLink = document.getElementById("generateLink")
 var linkOutput = document.getElementById("linkOutput")
 
 addInput.addEventListener("click", function() {
-	inputs.innerHTML += "\n<input type='text' />"
+	var newInput = document.createElement("input")
+	newInput.setAttribute("type", "text")
+	
+	var removeButton = document.createElement("button")
+	
+	var lineBreak = document.createElement("br")
+	
+	removeButton.addEventListener("onclick", function() {
+		newInput.remove()
+		removeButton.remove()
+		lineBreak.remove()
+	end})
+	
+	inputs.appendChild(newInput)
+	inputs.appendChild(removeButton)
+	inputs.appendChild(lineBreak)
 })
 
 generateLink.addEventListener("click", function() {
 	var links = ""
 	var children = inputs.children
 	for (let i = 0; i < children.length; i++) {
-		if (children[i].value.length != 0) {
-			if (i != 0) {
-				links += "---"
+		if (children[i].tagName.toLowerCase() == "input") {
+			if (children[i].value.length != 0) {
+				if (i != 0) {
+					links += "---"
+				}
+				links += children[i].value
 			}
-			links += children[i].value
 		}
 	}
 	linkOutput.innerHTML = "Here's your link:\n" + insertParam('links', links)
