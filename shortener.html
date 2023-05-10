@@ -8,9 +8,8 @@
 </div>
 <button id="addInput">Add link</button>
 <button id="generateLink">Generate Link</button>
-<div id="linkOutput">
-
-</div>
+<br><br><button id="copyLink">Copy Link</button> &nbsp;Link output:<br>
+<input id="linkOutput" READONLY/>
 </body>
 
 <script>
@@ -52,10 +51,17 @@ generateLink.addEventListener("click", function() {
 			}
 		}
 	}
-	linkOutput.innerHTML = "Here's your link:\n" + insertParam('links', links)
+	linkOutput.value = location.protocol + '//' + location.host + location.pathname + "?links=" + links
 })
 
-
+copyLink.addEventListener("click", function() {
+	if (linkOutput.value.length != 0) {
+		linkOutput.select()
+		linkOutput.setSelectionRange(0, 99999)
+		navigator.clipboard.writeText(linkOutput.value)
+	}
+})
+/*
 function insertParam(key, value) {
     key = encodeURIComponent(key);
     value = encodeURIComponent(value);
@@ -81,5 +87,5 @@ function insertParam(key, value) {
 
     //document.location.search = params;
 	return params
-}
+}*/
 </script>
