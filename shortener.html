@@ -61,6 +61,9 @@ generateLink.addEventListener("click", function() {
 			}
 		}
 	}
+	links = links.replace(/=/g, "%3D")
+	links = links.replace(/&/g, "%26")
+	
 	linkOutput.value = location.protocol + '//' + location.host + location.pathname + "?links=" + links
 })
 
