@@ -25,7 +25,11 @@ if (getUrlParameter('links')) {
 		links[i] = links[i].replace(/%3D/g, "=")
 		links[i] = links[i].replace(/%26/g, "&")
 		links[i] = links[i].replace(/%3F/g, "?")
-		window.open(links[i])
+		var newWindow = window.open(links[i])
+		if (!newWindow) {
+			alert("Could not open popup tabs. Enabled popup for this page in settings by clicking on the lock icon on the left of the search bar at the top of the screen.")
+			break
+		}
 		window.focus()
 	}
 	location.replace(location.protocol + '//' + location.host + location.pathname)
