@@ -27,7 +27,7 @@ if (getUrlParameter('links')) {
 		links[i] = links[i].replace(/%3F/g, "?")
 		var newWindow = window.open(links[i])
 		if (!newWindow) {
-			alert("Could not open popup tabs. Enabled popup for this page in settings by clicking on the lock icon on the left of the search bar at the top of the screen.")
+			alert("Could not open popup tabs. Enable popup for this page in settings by clicking on the lock icon on the left of the search bar at the top of the screen.")
 			break
 		}
 		window.focus()
