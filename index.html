@@ -1,5 +1,5 @@
 <head>
-<title>GameHub</title>
+<title>TealDR Hub</title>
 <link rel="shortcut icon" type="image/x-icon" href="./images/favicon.ico">
 
 <link href='https://fonts.googleapis.com/css?family=Comfortaa' rel='stylesheet'>
@@ -91,18 +91,6 @@ tealdr's site
 <br><br><br>
 
 <div id="games">
-	<div class="textbox" onClick="game('hacker')">
-		<h1>Hacker Game</h1>
-		<p>Futuristic terminal-like game.</p>
-		<p>Learning how to program makes it easier, but the knowledge isn't necessary.</p>
-	</div>
-	
-	<div class="textbox" onClick="game('trail')">
-		<h1>Mouse Trails</h1>
-		<p>Does cool mouse trails.</p>
-		<p>Will add settings soon.</p>
-	</div>
-	
 	<div class="textbox" onClick="game('library')">
 		<h1>The Library</h1>
 		<p>Generates random text which you can search through for words.</p>
@@ -110,24 +98,17 @@ tealdr's site
 		<br>
 	</div>
 	
+	<div class="textbox" onClick="tool('multilink')">
+		<h1>Multilink</h1>
+		<p>Insert multiple links into a single link for ease of access.</p>
+		<p>Requires popup permission on this website.</p>
+		<br>
+	</div>
+	
 	<div class="textbox" onClick="game('particle')">
 		<h1>Particle Collector</h1>
 		<p>Move your mouse to collect particles to gain particulates.</p>
 		<p>Use particulates to get upgrades. More depth being added soon.</p>
-		<br>
-	</div>
-	
-	<div class="textbox" onClick="game('websitecreator')">
-		<h1>Website Creator</h1>
-		<p>Make basic websites with ease.</p>
-		<p>More stuff and details being added soon.</p>
-		<br>
-	</div>
-	
-	<div class="textbox" onClick="game('thumbnail')">
-		<h1>Thumbnail Maker</h1>
-		<p>Insert images and drag them around and insert more.</p>
-		<p>Click save to save your thumbnail.</p>
 		<br>
 	</div>
 	
@@ -144,18 +125,44 @@ tealdr's site
 		<p>Have fun trying cool spirals</p>
 		<br>
 	</div>
-	
-	<div class="textbox" onClick="game('reload')">
-		<h1>Reload</h1>
-		<p>A basic incremental game about reloading the page.</p>
-		<p>Reload.</p>
-		<br>
+		
+	<div class="textbox" onClick="game('trail')">
+		<h1>Mouse Trails</h1>
+		<p>Does cool mouse trails.</p>
+		<p>Will add settings soon.</p>
 	</div>
 	
 	<div class="textbox" onClick="game('aimtrainer')">
 		<h1>Aim Trainer</h1>
 		<p>A basic 2D aim trainer made while bored.</p>
 		<p>R to Restart and M to open Settings</p>
+		<br>
+	</div>
+	
+	<div class="textbox" onClick="game('hacker')">
+		<h1>Hacker Game</h1>
+		<p>Futuristic terminal-like game.</p>
+		<p>Learning how to program makes it easier, but the knowledge isn't necessary.</p>
+	</div>
+	
+	<div class="textbox" onClick="game('websitecreator')">
+		<h1>Website Creator</h1>
+		<p>Make basic websites with ease.</p>
+		<p>REALLY, REALLY BAD!!</p>
+		<br>
+	</div>
+	
+	<div class="textbox" onClick="game('thumbnail')">
+		<h1>Thumbnail Maker</h1>
+		<p>Insert images and drag them around and insert more.</p>
+		<p>REALLY, REALLY BAD!!</p>
+		<br>
+	</div>
+	
+	<div class="textbox" onClick="game('reload')">
+		<h1>Reload</h1>
+		<p>A basic incremental game about reloading the page.</p>
+		<p>Reload.</p>
 		<br>
 	</div>
 	
@@ -202,12 +209,6 @@ tealdr's site
 		<br>
 	</div>
 	
-	<div class="textbox" onClick="game('job')">
-		<h1>False Job Application</h1>
-		<p>A false job application I made as practice.</p>
-		<p>Literally no gameplay, trust me.</p>
-		<br>
-	</div>
 	
 	<a disabled="disabled" href='javascript: (() => {let thingymabob = window.prompt("Website URL:", "google.com");if (thingymabob.toLowerCase().startsWith("https://")) {window.location.replace(thingymabob);} else if (thingymabob.toLowerCase().startsWith("http://")) {window.location.replace(thingymabob);} else {thingymabob = "https://" + thingymabob;window.location.replace(thingymabob);}})()' disabled>
 	<div class="textbox">
@@ -223,5 +224,8 @@ tealdr's site
 <script>
 function game(gamename) {
 	window.location.href = './games/' + gamename;
+}
+function tool(toolname) {
+	window.location.href = './tools/' + toolname;
 }
 </script>
