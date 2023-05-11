@@ -1,0 +1,101 @@
+<head>
+<title>URL Shortener</title>
+</head>
+
+<body>
+<div id="inputs">
+
+</div>
+<button id="addInput">Add link</button>
+<button id="generateLink">Generate Link</button>
+<br><br><button id="copyLink">Copy Link</button> &nbsp;Link output:<br>
+<input id="linkOutput" READONLY/>
+</body>
+
+<script>
+var inputs = document.getElementById("inputs")
+var addInput = document.getElementById("addInput")
+var generateLink = document.getElementById("generateLink")
+var linkOutput = document.getElementById("linkOutput")
+
+if (getUrlParameter('links')) {
+	var links = getUrlParameter('links')
+	links = links.split('---')
+	for (let i = 0; i < links.length; i++) {
+		links[i] = links[i].replace(/%3D/g, "=")
+		links[i] = links[i].replace(/%26/g, "&")
+		links[i] = links[i].replace(/%3F/g, "?")
+		var newWindow = window.open(links[i])
+		if (!newWindow) {
+			alert("Could not open popup tabs. Enable popup for this page in settings by clicking on the lock icon on the left of the search bar at the top of the screen.")
+			break
+		}
+		window.focus()
+	}
+	location.replace(location.protocol + '//' + location.host + location.pathname)
+}
+
+addInput.addEventListener("click", function() {
+	var newInput = document.createElement("input")
+	newInput.setAttribute("type", "text")
+	
+	var removeButton = document.createElement("button")
+	removeButton.textContent = "-"
+	
+	var lineBreak = document.createElement("br")
+	
+	removeButton.addEventListener("onclick", function() {
+		newInput.remove()
+		removeButton.remove()
+		lineBreak.remove()
+	end})
+	
+	inputs.appendChild(newInput)
+	inputs.appendChild(removeButton)
+	inputs.appendChild(lineBreak)
+})
+
+generateLink.addEventListener("click", function() {
+	var links = ""
+	var children = inputs.children
+	for (let i = 0; i < children.length; i++) {
+		if (children[i].tagName.toLowerCase() == "input") {
+			if (children[i].value.length != 0) {
+				if (i != 0) {
+					links += "---"
+				}
+				links += children[i].value
+			}
+		}
+	}
+	links = links.replace(/=/g, "%3D")
+	links = links.replace(/&/g, "%26")
+	links = links.replace(/\?/g, "%3F")
+	
+	linkOutput.value = location.protocol + '//' + location.host + location.pathname + "?links=" + links
+})
+
+copyLink.addEventListener("click", function() {
+	if (linkOutput.value.length != 0) {
+		linkOutput.select()
+		linkOutput.setSelectionRange(0, 99999)
+		navigator.clipboard.writeText(linkOutput.value)
+	}
+})
+
+function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+    }
+    return false;
+}
+</script>
