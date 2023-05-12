@@ -35,23 +35,32 @@ if (getUrlParameter('links')) {
 	location.replace(location.protocol + '//' + location.host + location.pathname)
 }
 
+function createButton(context, value, func) {
+  var button = document.createElement("input");
+  button.type = "button";
+  button.value = value; // text on button
+  button.onclick = func;
+  context.appendChild(button); // add the button to the context
+}
+
 addInput.addEventListener("click", function() {
 	var newInput = document.createElement("input")
 	newInput.setAttribute("type", "text")
 	
 	var removeButton = document.createElement("button")
 	removeButton.textContent = "-"
+	removeButton.onclick = deleteFunc
 	
 	var lineBreak = document.createElement("br")
 	
-	removeButton.addEventListener("onclick", function() {
+	var deleteFunc = function(button) {
 		newInput.remove()
-		removeButton.remove()
 		lineBreak.remove()
-	end})
+		this.remove()
+	}
 	
 	inputs.appendChild(newInput)
-	inputs.appendChild(removeButton)
+	createButton(inputs, "-", deleteFunc)
 	inputs.appendChild(lineBreak)
 })
 
