@@ -27,11 +27,10 @@ if (getUrlParameter('links')) {
 		}
 		links[i] = links[i].replace(/h:/g, "http://")
 		links[i] = links[i].replace(/H:/g, "https://")
-		links[i] = links[i].replace(/w.w/g, "www.")
+		links[i] = links[i].replace(/w\.w/g, "www.")
 		links[i] = links[i].replace(/%3D/g, "=")
 		links[i] = links[i].replace(/%26/g, "&")
 		links[i] = links[i].replace(/%3F/g, "?")
-		console.log(links[i])
 		var newWindow = window.open(links[i])
 		if (!newWindow) {
 			alert("Could not open popup tabs. Enable popup for this page in settings by clicking on the lock icon on the left of the search bar at the top of the screen.")
@@ -84,10 +83,9 @@ generateLink.addEventListener("click", function() {
 			}
 		}
 	}
-	console.log(links)
 	links = links.replace(/http:\/\//gi, "h:")
 	links = links.replace(/https:\/\//gi, "H:")
-	links = links.replace(/www./gi, "w.w")
+	links = links.replace(/www\./gi, "w.w")
 	links = links.replace(/=/g, "%3D")
 	links = links.replace(/&/g, "%26")
 	links = links.replace(/\?/g, "%3F")
