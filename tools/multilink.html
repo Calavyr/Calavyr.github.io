@@ -74,7 +74,7 @@ generateLink.addEventListener("click", function() {
 	var links = ""
 	var children = inputs.children
 	for (let i = 0; i < children.length; i++) {
-		if (children[i].tagName.toLowerCase() == "input") {
+		if (children[i].tagName.toLowerCase() == "input" && children[i].type.toLowerCase() == "text") {
 			if (children[i].value.length != 0) {
 				if (i != 0) {
 					links += "---"
