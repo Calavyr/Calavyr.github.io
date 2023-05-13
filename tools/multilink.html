@@ -20,7 +20,7 @@ var linkOutput = document.getElementById("linkOutput")
 
 if (getUrlParameter('links')) {
 	var links = getUrlParameter('links')
-	links = links.split('&')
+	links = links.split('&&')
 	for (let i = 0; i < links.length; i++) {
 		links[i] = links[i].replace(/h:/, "http://")
 		links[i] = links[i].replace(/H:/, "https://")
@@ -73,7 +73,7 @@ generateLink.addEventListener("click", function() {
 		if (children[i].tagName.toLowerCase() == "input") {
 			if (children[i].value.length != 0) {
 				if (i != 0) {
-					links += "---"
+					links += "&&"
 				}
 				links += children[i].value
 			}
@@ -84,7 +84,6 @@ generateLink.addEventListener("click", function() {
 	links = links.replace(/=/g, "%3D")
 	links = links.replace(/&/g, "%26")
 	links = links.replace(/\?/g, "%3F")
-	links = links.replace(/---/g, "&")
 	
 	linkOutput.value = location.protocol + '//' + location.host + location.pathname + "?links=" + links
 })
