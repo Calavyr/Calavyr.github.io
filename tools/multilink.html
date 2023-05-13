@@ -1,14 +1,54 @@
 <head>
 <title>Multilink</title>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
 </head>
+
+<style>
+body {
+	background-color: #36393F;
+	color: #ffffff;
+	font-weight: bold;
+	font-family: Comfortaa
+}
+
+button {
+	background-color: #36393F;
+	color: #ffffff;
+	font-weight: bold;
+	font-family: Comfortaa;
+	border-radius: 1000px;
+}
+
+.linkInput {
+	background-color: #666666;
+	color: #ffffff;
+	font-weight: bold;
+	font-family: Comfortaa;
+}
+
+.removeButton {
+	background-color: #36393F;
+	color: #ffffff;
+	font-weight: bold;
+	font-family: Comfortaa;
+	border-radius: 50%;
+}
+
+#linkOutput {
+	background-color: #666666;
+	color: #ffffff;
+	font-weight: bold;
+	font-family: Comfortaa;
+}
+</style>
 
 <body>
 <div id="inputs">
 
 </div>
 <button id="addInput">Add link</button>
-<button id="generateLink">Generate Link</button>
-<br><br><button id="copyLink">Copy Link</button> &nbsp;Link output:<br>
+<br><br>
+<button id="generateLink">Generate Multilink</button><button id="copyLink">Copy Multilink</button><br>Multilink output:
 <input id="linkOutput" READONLY/>
 </body>
 
@@ -46,16 +86,15 @@ function createButton(context, value, func) {
   button.type = "button";
   button.value = value; // text on button
   button.onclick = func;
+  button.setAttribute("class", "removeButton")
   context.appendChild(button); // add the button to the context
 }
 
 addInput.addEventListener("click", function() {
 	var newInput = document.createElement("input")
 	newInput.setAttribute("type", "text")
+	newInput.setAttribute("class", "linkInput")
 	
-	var removeButton = document.createElement("button")
-	removeButton.textContent = "-"
-	removeButton.onclick = deleteFunc
 	
 	var lineBreak = document.createElement("br")
 	
