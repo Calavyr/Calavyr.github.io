@@ -22,8 +22,7 @@ if (getUrlParameter('links')) {
 	var links = getUrlParameter('links')
 	links = links.split('--')
 	for (let i = 0; i < links.length; i++) {
-		links[i] = links[i].replace(/h:/, "http://")
-		links[i] = links[i].replace(/H:/, "https://")
+		links[i] = links[i].replace(/w.w/g, "www.")
 		links[i] = links[i].replace(/%3D/g, "=")
 		links[i] = links[i].replace(/%26/g, "&")
 		links[i] = links[i].replace(/%3F/g, "?")
@@ -79,8 +78,9 @@ generateLink.addEventListener("click", function() {
 			}
 		}
 	}
-	links = links.replace(/http:\/\//g, "h:")
-	links = links.replace(/https:\/\//g, "H:")
+	links = links.replace(/http:\/\//gi, "//")
+	links = links.replace(/https:\/\//gi, "//")
+	links = links.replace(/www./gi, "")
 	links = links.replace(/=/g, "%3D")
 	links = links.replace(/&/g, "%26")
 	links = links.replace(/\?/g, "%3F")
