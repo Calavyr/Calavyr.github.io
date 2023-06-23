@@ -106,6 +106,7 @@ background: #0286ab;
 
 
 <body>
+<button onClick="saveGame()">Save Game</button>
 <div id="game" class="noselect">
 <canvas id="canvas"></canvas>
 <div id="canvasInfo">
@@ -241,7 +242,6 @@ if (particleLocations.length == 0) { return }
 
 for (let i = 0; i <= particleLocations.length - 1; i++) {
 
-
 	for (let j = Math.ceil(pickupRange) * -1; j <= Math.ceil(pickupRange / 2); j++) {
 	
 			for (let k = Math.ceil(pickupRange) * -1; k <= Math.ceil(pickupRange / 2); k++) {
@@ -272,20 +272,20 @@ for (let i = 0; i <= particleLocations.length - 1; i++) {
 
 resizeCanvas()
 function resizeCanvas() {
-let port = document.getElementById("game")
-canvas.height = (port.clientHeight / 100) * 80
-canvas.width = (port.clientWidth / 100) * 45
-drawParticles()
+	let port = document.getElementById("game")
+	canvas.height = (port.clientHeight / 100) * 80
+	canvas.width = (port.clientWidth / 100) * 45
+	drawParticles()
 }
 
 canvasBackground()
 function canvasBackground() {
-ctx.fillStyle = "#63BCE6"
-ctx.fillRect(0, 0, canvas.width, canvas.height)
+	ctx.fillStyle = "#63BCE6"
+	ctx.fillRect(0, 0, canvas.width, canvas.height)
 }
 
 window.addEventListener("resize", function() {
-resizeCanvas()
+	resizeCanvas()
 })
 
 
@@ -303,27 +303,59 @@ function getMousePos(canvas, evt) {
 }
 
 function upgrade(type) {
-if (type == "particulateMulti") {
-if (particulates >= particulateMultiCost) {
-particulates -= particulateMultiCost
-particulateMulti += 1
-particulateMultiCost = Math.floor(particulateMultiCost * 1.5)
-}
-} else if (type == "maxParticles") {
-if (particulates >= maxParticlesCost) {
-particulates -= maxParticlesCost
-maxParticles += 1
-maxParticlesCost = Math.floor(maxParticlesCost * 1.5)
-}
-} else if (type == "particlesPerSec") {
-if (particulates >= particlesPerSecCost) {
-particulates -= particlesPerSecCost
-particlesPerSec += 0.5
-particlesPerSecCost = Math.floor(particlesPerSecCost * 1.5)
-}
+	if (type == "particulateMulti") {
+		if (particulates >= particulateMultiCost) {
+		particulates -= particulateMultiCost
+		particulateMulti += 1
+		particulateMultiCost = Math.floor(particulateMultiCost * 1.5)
+		}
+	} else if (type == "maxParticles") {
+		if (particulates >= maxParticlesCost) {
+		particulates -= maxParticlesCost
+		maxParticles += 1
+		maxParticlesCost = Math.floor(maxParticlesCost * 1.5)
+		}
+	} else if (type == "particlesPerSec") {
+		if (particulates >= particlesPerSecCost) {
+			particulates -= particlesPerSecCost
+			particlesPerSec += 0.5
+			particlesPerSecCost = Math.floor(particlesPerSecCost * 1.5)
+		}
+	}
+
 }
 
-
+function loadGame() {
+	var savedGame = JSON.parse(localStorage.getItem("particleGameSave"));
+	if (!savedGame) return
+	if (typeof savedGame.particulates !== "undefined") particulates = savedGame.particulates;
+	if (typeof savedGame.particulatesMulti !== "undefined") particulatesMulti = savedGame.particulatesMulti;
+	if (typeof savedGame.particulateMulti !== "undefined") particulateMulti = savedGame.particulateMulti;
+	if (typeof savedGame.particulateMultiCost !== "undefined") particulateMultiCost = savedGame.particulateMultiCost;
+	if (typeof savedGame.maxParticles !== "undefined") maxParticles = savedGame.maxParticles;
+	if (typeof savedGame.maxParticlesCost !== "undefined") maxParticlesCost = savedGame.maxParticlesCost;
+	if (typeof savedGame.particlesPerSec !== "undefined") particlesPerSec = savedGame.particlesPerSec;
+	if (typeof savedGame.particlesPerSecCost !== "undefined") particlesPerSecCost = savedGame.particlesPerSecCost;
+	if (typeof savedGame.particleSize !== "undefined") particleSize = savedGame.particleSize;
+	if (typeof savedGame.pickupRange !== "undefined") pickupRange = savedGame.pickupRange;
+};
+function saveGame() {
+	var gameSave = {
+		particulates: particulates,
+		particulatesMulti: particulatesMulti,
+		particulateMulti: particulateMulti,
+		particulateMultiCost: particulateMultiCost,
+		maxParticles: maxParticles,
+		maxParticlesCost: maxParticlesCost,
+		particlesPerSec: particlesPerSec,
+		particlesPerSecCost: particlesPerSecCost,
+		particleSize: particleSize,
+		pickupRange: pickupRange
+	};
+	localStorage.setItem("particleGameSave", JSON.stringify(gameSave));
 }
+window.onload = function() {
+	loadGame();
+};
 
 </script>
