@@ -329,7 +329,6 @@ function loadGame() {
 	var savedGame = JSON.parse(localStorage.getItem("particleGameSave"));
 	if (!savedGame) return
 	if (typeof savedGame.particulates !== "undefined") particulates = savedGame.particulates;
-	if (typeof savedGame.particulatesMulti !== "undefined") particulatesMulti = savedGame.particulatesMulti;
 	if (typeof savedGame.particulateMulti !== "undefined") particulateMulti = savedGame.particulateMulti;
 	if (typeof savedGame.particulateMultiCost !== "undefined") particulateMultiCost = savedGame.particulateMultiCost;
 	if (typeof savedGame.maxParticles !== "undefined") maxParticles = savedGame.maxParticles;
@@ -342,7 +341,6 @@ function loadGame() {
 function saveGame() {
 	var gameSave = {
 		particulates: particulates,
-		particulatesMulti: particulatesMulti,
 		particulateMulti: particulateMulti,
 		particulateMultiCost: particulateMultiCost,
 		maxParticles: maxParticles,
