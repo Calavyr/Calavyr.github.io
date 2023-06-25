@@ -28,44 +28,43 @@
 </body>
 <element onscroll="fillData()">
 <script>
-	var count = 0
-	
-	let fillDataTop = () => {
-        let ele = document.getElementById('container');
-        ele.innerHTML += '^----^<br>|  OwO  |<br>';
-		count = count + 1;
-		document.getElementById("count").innerHTML = count;
-    }
-	let fillData = () => {
-        let ele = document.getElementById('container');
-        ele.innerHTML += '|&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|<br>';
-		count = count + 1;
-		document.getElementById("count").innerHTML = count;
-    }
-	window.onscroll = function(e) {
-		if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 250)) {
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-		}
-		if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-			fillData()
-			fillData()	
-		}
+var count = 0
+
+let fillDataTop = () => {
+	let ele = document.getElementById('container');
+	ele.innerHTML += '^----^<br>|  OwO  |<br>';
+	count = count + 1;
+	document.getElementById("count").innerHTML = count;
+}
+let fillData = () => {
+	let ele = document.getElementById('container');
+	ele.innerHTML += '|&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|<br>';
+	count = count + 1;
+	document.getElementById("count").innerHTML = count;
+}
+window.onscroll = function(e) {
+	if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 250)) {
+		fillData()
+		fillData()
+		fillData()
+		fillData()
+		fillData()
+		fillData()
+		fillData()
+		fillData()
+		fillData()
 	}
-};
+	if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+		fillData()
+		fillData()
+		fillData()
+		fillData()
+		fillData()
+		fillData()
+		fillData()
+		fillData()
+		fillData()	
+	}
+}
 </script>
 </html>
