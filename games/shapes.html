@@ -1,17 +1,32 @@
 <head>
 <title>Shape Generator</title>
+<link href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet">
 </head>
 
 <style>
 #screen {
 position: absolute;
 }
+body {
+	background-color: #36393F;
+	color: #ffffff;
+	font-weight: bold;
+	font-family: Comfortaa
+}
+
+button {
+	background-color: #36393F;
+	color: #ffffff;
+	font-weight: bold;
+	font-family: Comfortaa;
+	border-radius: 1000px;
+}
 </style>
 
 <body>
 <canvas id="screen" width="500" height="500"></canvas>
-<label>Steps:</label><input id="steps" max="200" min="1" value="60" type="number">
-<label>Increment:</label><input id="inc" max="100" min="0" value="0" type="number">
+<label>Steps: </label><input id="steps" max="200" min="1" value="60" type="number">
+<label>Increment: </label><input id="inc" max="100" min="0" value="0" type="number">
 <br>
 
 <label>Line Colour: </label><select id="strokeStyle">
@@ -46,9 +61,14 @@ position: absolute;
 <script>
 var canvas = document.getElementById("screen")
 var ctx = canvas.getContext("2d")
+ctx.fillStyle = 'White'
+ctx.strokeStyle = 'Black'
 
 var stroke = 'Black'
 var fill = 'White'
+
+ctx.clearRect(0, 0, canvas.width, canvas.height)
+ctx.fillRect(0, 0, canvas.width, canvas.height)
 
 ctx.fillStyle = document.getElementById("fillStyle").value
 ctx.strokeStyle = document.getElementById("strokeStyle").value
