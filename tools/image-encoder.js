@@ -24,6 +24,10 @@ HorizontifyButton.onclick = function() {
 }
 
 function horizontify(image) {
+    if (image.width * image.height < 16) {
+        alert("Image must be at least 16 pixels")
+        return
+    }
     const aspectRatio = image.width / image.height;
 
     let targetWidth = Math.sqrt(65000 * aspectRatio);
@@ -70,6 +74,10 @@ DehorizontifyButton.onclick = function() {
 }
 
 function dehorizontify(image) {
+    if (image.width * image.height < 16) {
+        alert("Image must be at least 16 pixels")
+        return
+    }
     InputCanvas.height = image.height
     InputCanvas.width = image.width
     InputCTX.drawImage(image, 0, 0)
