@@ -6,8 +6,17 @@
     <input id="imageInput" type="file" accept="image/*">
     <button id="horizontifyButton">Horizontify</button>
     <button id="dehorizontifyButton">Dehorizontify</button>
-    <button id="saveButton">Save image</button>
+    <button id="saveButton">Save image</button><br>
+    How it horizontifies:<br>
+    Loops through every pixel in the input vertically, copying each line of pixels to the output image in a line.<br>
+    When saving, it encodes the original image's width using steganography in the alpha values of the first 16 pixels as binary, changing only the last digit in the binary so it doesn't have any visible effect<br>
+    The 16 pixels is used because it allows a width up to 65,536, which is roughly the maximum amount of pixels an image can have before it gets shrunk down because of HTML canvas limitations<br>
     <br><br>
+    How it dehorizontifies:<br>
+    It decodes the original image's width from the binary hidden in the first 16 pixels' alpha values, and then gets the original image's height by dividing the amount of pixels by its width<br>
+    It then loops over the original's height, and copies the pixels from the loop count times the width to loop count times width plus width<br>
+    This copies over each horizontal slice of the image to the output canvas, where it stacks all these slices and shows the original image
+    <br>
     Input:<br><canvas id="inputCanvas" height="10px" width="10px"></canvas>
     <br><br>
     Output:<br><canvas id="outputCanvas" height="10px" width="10px"></canvas>
