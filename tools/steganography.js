@@ -61,7 +61,7 @@ function embedImages(image1, image2) {
 
     const image2AspectRatio = image2.width / image2.height;
 
-    let targetPixelCountToEmbed = Math.floor((image1.width * image1.height) / 4)
+    let targetPixelCountToEmbed = Math.floor((image1.width * image1.height) / 8)
     let targetWidth = Math.sqrt(targetPixelCountToEmbed * image2AspectRatio)
     let targetHeight = targetWidth / image2AspectRatio
 
@@ -86,8 +86,17 @@ function embedImages(image1, image2) {
     let imageData1 = InputCTX1.getImageData(0, 0, InputCanvas1.width, InputCanvas1.height)
     let imageData2 = InputCTX2.getImageData(0, 0, InputCanvas2.width, InputCanvas2.height)
 
-    for (let i = 0; i < imageData2.data.length; i++) {
-        imageData1.data[i] = (imageData1.data[i] & 0b11111110) | ((imageData2.data[i] >> 7) & 1)
+    for (let i = 0; i < imageData2.data.length; i += 4) {
+        const sourceR = imageData2.data[i];
+        const sourceG = imageData2.data[i + 1];
+        const sourceB = imageData2.data[i + 2];
+        const sourceA = imageData2.data[i + 3];
+        for (let j = 0; j < 8; j++) {
+            imageData1.data[i * 8 + j * 4] = (imageData1.data[i * 8 + j * 4] & 0xFE) | ((sourceR >> (7 - j)) & 1);
+            imageData1.data[i * 8 + j * 4 + 1] = (imageData1.data[i * 8 + j * 4 + 1] & 0xFE) | ((sourceG >> (7 - j)) & 1);
+            imageData1.data[i * 8 + j * 4 + 2] = (imageData1.data[i * 8 + j * 4 + 2] & 0xFE) | ((sourceB >> (7 - j)) & 1);
+            imageData1.data[i * 8 + j * 4 + 3] = (imageData1.data[i * 8 + j * 4 + 3] & 0xFE) | ((sourceA >> (7 - j)) & 1);
+        }
     }
 
     OutputCanvas1.width = image1.width
@@ -126,44 +135,41 @@ function extractImages(image, width, height) {
     let imageData1 = InputCTX1.getImageData(0, 0, InputCanvas1.width, InputCanvas1.height)
 
     let extractedImageData = new ImageData(width, height)
-
-    OutputCanvas1.width = width
-    OutputCanvas1.height = height
-    OutputCanvas2.width = width
-    OutputCanvas2.height = height
-    
-    for (let i = 0; i < imageData1.data.length; i++) {
-        extractedImageData.data[i] = (imageData1.data[i] & 1) << 7;
-    }
-    OutputCTX1.putImageData(extractedImageData, 0, 0)
-    for (let i = 0; i < imageData1.data.length; i += 32) {
-        let currentRByte = 0;
-        let currentGByte = 0;
-        let currentBByte = 0;
-        let currentAByte = 0;
-
+    for (let i = 0; i < extractedImageData.data.length; i += 4) {
+        let r = 0, g = 0, b = 0, a = 0
         for (let j = 0; j < 8; j++) {
-            let pixelIndex = i + j * 4;
-            currentRByte |= (imageData1.data[pixelIndex] & 1) << (7 - j);
-            currentGByte |= (imageData1.data[pixelIndex + 1] & 1) << (7 - j);
-            currentBByte |= (imageData1.data[pixelIndex + 2] & 1) << (7 - j);
-            currentAByte |= (imageData1.data[pixelIndex + 3] & 1) << (7 - j);
+            r = (r << 1) | (imageData1.data[i * 8 + j * 4] & 1);
+            g = (g << 1) | (imageData1.data[i * 8 + j * 4 + 1] & 1);
+            b = (b << 1) | (imageData1.data[i * 8 + j * 4 + 2] & 1);
+            a = (a << 1) | (imageData1.data[i * 8 + j * 4 + 3] & 1);
         }
-
-        let index = i / 4
-        extractedImageData.data[index] = currentRByte;
-        extractedImageData.data[index + 1] = currentGByte;
-        extractedImageData.data[index + 2] = currentBByte;
-        extractedImageData.data[index + 3] = currentAByte;
+        if (r == 0 && g == 0 && b == 0 && a == 0) {
+            console.log(i, extractedImageData.data.length)
+            break
+        }
+        extractedImageData.data[i] = r
+        extractedImageData.data[i + 1] = g
+        extractedImageData.data[i + 2] = b
+        extractedImageData.data[i + 3] = a
+        if (i == extractedImageData.data.length - 4) {
+            console.log(
+                extractedImageData.data[i],
+                extractedImageData.data[i + 1],
+                extractedImageData.data[i + 2],
+                extractedImageData.data[i + 3]
+            )
+        }
     }
+    
     OutputCTX2.putImageData(extractedImageData, 0, 0)
-    /*OutputCanvas1.width = image.width
+    
+    OutputCanvas1.width = image.width
     OutputCanvas1.height = image.height
     OutputCanvas2.width = width
     OutputCanvas2.height = height
 
     OutputCTX1.putImageData(imageData1, 0, 0)
-    OutputCTX2.putImageData(extractedImageData, 0, 0)*/
+    OutputCTX2.putImageData(extractedImageData, 0, 0)
 }
 
 SaveButton.onclick = function() {
