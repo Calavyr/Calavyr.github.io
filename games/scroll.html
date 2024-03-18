@@ -24,7 +24,7 @@
 
     </div>
 </body>
-<body onload="fillDataTop(); fillData(); fillData(); fillData(); fillData(); fillData(); fillData(); fillData(); fillData(); fillData(); fillData(); fillData(); fillData(); fillData(); fillData(); fillData(); ">
+<body onload="fillDataTop(); fillData(9);">
 </body>
 <element onscroll="fillData()">
 <script>
@@ -36,34 +36,17 @@ let fillDataTop = () => {
 	count = count + 1;
 	document.getElementById("count").innerHTML = count;
 }
-let fillData = () => {
-	let ele = document.getElementById('container');
-	ele.innerHTML += '|&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|<br>';
-	count = count + 1;
-	document.getElementById("count").innerHTML = count;
+let fillData = (number = 1) => {
+    for (let i = 0; i < number; i++) {
+        let ele = document.getElementById('container');
+        ele.innerHTML += '|&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp|<br>';
+        count = count + 1;
+        document.getElementById("count").innerHTML = count;
+    }
 }
 window.onscroll = function(e) {
-	if ((window.innerHeight + window.scrollY) >= (document.body.offsetHeight - 250)) {
+	if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
 		fillData()
-		fillData()
-		fillData()
-		fillData()
-		fillData()
-		fillData()
-		fillData()
-		fillData()
-		fillData()
-	}
-	if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-		fillData()
-		fillData()
-		fillData()
-		fillData()
-		fillData()
-		fillData()
-		fillData()
-		fillData()
-		fillData()	
 	}
 }
 </script>
