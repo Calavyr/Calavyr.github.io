@@ -180,10 +180,13 @@ function extractImages(image) {
 SaveButton.onclick = function() {
     let link = document.createElement('a')
     let name = ''
+    let fileNameArrayNoExtension = lastFile1.name.split('.')
+    fileNameArrayNoExtension.pop()
+    let fileNameNoExtension = fileNameArrayNoExtension.join('.')
     if (lastOperationWasEmbed) {
-        name = lastFile1.name + ' embedded'
+        name = fileNameNoExtension + ' embedded'
     } else {
-        name = lastFile1.name + ' extracted'
+        name = fileNameNoExtension + ' extracted'
     }
     link.setAttribute('download', `${name}.png`)
     link.setAttribute('href', OutputCanvas1.toDataURL('image/png').replace('image/png', 'image/octet-stream'))
