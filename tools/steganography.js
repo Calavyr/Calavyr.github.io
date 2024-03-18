@@ -11,8 +11,8 @@ const InputCTX1 = InputCanvas1.getContext('2d')
 const InputCTX2 = InputCanvas2.getContext('2d')
 const OutputCTX1 = OutputCanvas1.getContext('2d')
 
-let image2Width = 0
-let image2Height = 0
+let lastOperationWasEmbed = false
+let lastFile1 = null
 
 EmbedButton.onclick = function() {
     if (!ImageInput1.files || !ImageInput1.files[0] || !ImageInput2.files || !ImageInput2.files[0]) return
@@ -52,6 +52,8 @@ EmbedButton.onclick = function() {
 }
 
 function embedImages(image1, image2) {
+    lastOperationWasEmbed = true
+    lastFile1 = image1
     InputCanvas1.width = image1.width
     InputCanvas1.height = image1.height
 
@@ -59,7 +61,7 @@ function embedImages(image1, image2) {
 
     const image2AspectRatio = image2.width / image2.height;
 
-    let targetPixelCountToEmbed = Math.floor((image1.width * image1.height) / 8)
+    let targetPixelCountToEmbed = Math.min(Math.floor((image1.width * image1.height) / 8), 65536) //The maximum pixel count of the embedded image is one eighth of the visible image or the maximum value shown by 2 bytes
     let targetWidth = Math.sqrt(targetPixelCountToEmbed * image2AspectRatio)
     let targetHeight = targetWidth / image2AspectRatio
 
@@ -76,13 +78,20 @@ function embedImages(image1, image2) {
     targetHeight = Math.floor(targetHeight)
     InputCanvas2.width = targetWidth
     InputCanvas2.height = targetHeight
-    image2Width = targetWidth
-    image2Height = targetHeight
 
     InputCTX2.drawImage(image2, 0, 0, targetWidth, targetHeight)
     
     let imageData1 = InputCTX1.getImageData(0, 0, InputCanvas1.width, InputCanvas1.height)
     let imageData2 = InputCTX2.getImageData(0, 0, InputCanvas2.width, InputCanvas2.height)
+
+    let valuesToEncode = [targetWidth.toString(2).padStart(16, '0'), targetHeight.toString(2).padStart(16, '0')]
+    for (let i = 0; i < 2; i++) { //For both width and height
+        let valueToEncode = valuesToEncode[i]
+
+        for (let j = 0; j < 16; j++) { //For two bytes to store up to 65536 as width/height value
+            imageData1.data[i * 16 + j] = (imageData1.data[i * 16 + j] & 0xFD) | ((valueToEncode[j] & 1) << 1);
+        }
+    }
 
     for (let i = 0; i < imageData2.data.length; i += 4) {
         const sourceR = imageData2.data[i];
@@ -109,10 +118,7 @@ ExtractButton.onclick = function() {
     let fileReader = new FileReader()
     let image = new Image()
     image.onload = function() {
-        let fileName = imageFile.name.split('.')[0]
-        let width = fileName.split(' ')[0]
-        let height = fileName.split(' ')[1]
-        extractImages(image, width, height)
+        extractImages(image)
     }
     fileReader.onloadend = function() {
         image.src = fileReader.result
@@ -120,7 +126,10 @@ ExtractButton.onclick = function() {
     fileReader.readAsDataURL(imageFile)
 }
 
-function extractImages(image, width, height) {
+function extractImages(image) {
+    lastOperationWasEmbed = false
+    lastFile1 = image
+
     InputCanvas1.width = image.width
     InputCanvas1.height = image.height
     InputCanvas2.width = 10
@@ -129,6 +138,23 @@ function extractImages(image, width, height) {
     InputCTX1.drawImage(image, 0, 0)
 
     let imageData1 = InputCTX1.getImageData(0, 0, InputCanvas1.width, InputCanvas1.height)
+
+    let width = 0
+    let height = 0
+
+    for (let i = 0; i < 2; i++) { //For both width and height
+        let decodedValue = ''
+        for (let j = 0; j < 16; j++) { //Get the two bytes storing the values
+            let byte = imageData1.data[i * 16 + j]
+            let bit = (byte >> 1) & 1;
+            decodedValue += bit.toString()
+        }
+        if (i == 0) { //Width
+            width = parseInt(decodedValue, 2)
+        } else { //Height
+            height = parseInt(decodedValue, 2)
+        }
+    }
 
     let extractedImageData = new ImageData(width, height)
     for (let i = 0; i < extractedImageData.data.length; i += 4) {
@@ -139,22 +165,10 @@ function extractImages(image, width, height) {
             b = (b << 1) | (imageData1.data[i * 8 + j * 4 + 2] & 1);
             a = (a << 1) | (imageData1.data[i * 8 + j * 4 + 3] & 1);
         }
-        if (r == 0 && g == 0 && b == 0 && a == 0) {
-            console.log(i, extractedImageData.data.length)
-            break
-        }
         extractedImageData.data[i] = r
         extractedImageData.data[i + 1] = g
         extractedImageData.data[i + 2] = b
         extractedImageData.data[i + 3] = a
-        if (i == extractedImageData.data.length - 4) {
-            console.log(
-                extractedImageData.data[i],
-                extractedImageData.data[i + 1],
-                extractedImageData.data[i + 2],
-                extractedImageData.data[i + 3]
-            )
-        }
     }
     
     OutputCanvas1.width = extractedImageData.width
@@ -165,7 +179,13 @@ function extractImages(image, width, height) {
 
 SaveButton.onclick = function() {
     let link = document.createElement('a')
-    link.setAttribute('download', `${image2Width} ${image2Height}.png`)
+    let name = ''
+    if (lastOperationWasEmbed) {
+        name = lastFile1.name + ' embedded'
+    } else {
+        name = lastFile1.name + ' extracted'
+    }
+    link.setAttribute('download', `${name}.png`)
     link.setAttribute('href', OutputCanvas1.toDataURL('image/png').replace('image/png', 'image/octet-stream'))
     link.click()
     link.remove()
