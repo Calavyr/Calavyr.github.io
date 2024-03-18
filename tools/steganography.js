@@ -47,13 +47,13 @@ EmbedButton.onclick = function() {
 
     function executeOnBothLoaded() {
         if (loadedImages < 2) return
+        lastFile1 = imageFile1
         embedImages(image1, image2)
     }
 }
 
 function embedImages(image1, image2) {
     lastOperationWasEmbed = true
-    lastFile1 = image1
     InputCanvas1.width = image1.width
     InputCanvas1.height = image1.height
 
@@ -118,6 +118,7 @@ ExtractButton.onclick = function() {
     let fileReader = new FileReader()
     let image = new Image()
     image.onload = function() {
+        lastFile1 = imageFile
         extractImages(image)
     }
     fileReader.onloadend = function() {
@@ -128,7 +129,6 @@ ExtractButton.onclick = function() {
 
 function extractImages(image) {
     lastOperationWasEmbed = false
-    lastFile1 = image
 
     InputCanvas1.width = image.width
     InputCanvas1.height = image.height
