@@ -6,12 +6,10 @@ const SaveButton = document.getElementById('saveButton')
 const InputCanvas1 = document.getElementById('inputCanvas1')
 const InputCanvas2 = document.getElementById('inputCanvas2')
 const OutputCanvas1 = document.getElementById('outputCanvas1')
-const OutputCanvas2 = document.getElementById('outputCanvas2')
 
 const InputCTX1 = InputCanvas1.getContext('2d')
 const InputCTX2 = InputCanvas2.getContext('2d')
 const OutputCTX1 = OutputCanvas1.getContext('2d')
-const OutputCTX2 = OutputCanvas2.getContext('2d')
 
 let image2Width = 0
 let image2Height = 0
@@ -101,8 +99,6 @@ function embedImages(image1, image2) {
 
     OutputCanvas1.width = image1.width
     OutputCanvas1.height = image1.height
-    OutputCanvas2.width = 10
-    OutputCanvas2.height = 10
 
     OutputCTX1.putImageData(imageData1, 0, 0)
 }
@@ -161,15 +157,10 @@ function extractImages(image, width, height) {
         }
     }
     
-    OutputCTX2.putImageData(extractedImageData, 0, 0)
-    
     OutputCanvas1.width = image.width
     OutputCanvas1.height = image.height
-    OutputCanvas2.width = width
-    OutputCanvas2.height = height
 
-    OutputCTX1.putImageData(imageData1, 0, 0)
-    OutputCTX2.putImageData(extractedImageData, 0, 0)
+    OutputCTX1.putImageData(extractedImageData, 0, 0)
 }
 
 SaveButton.onclick = function() {
