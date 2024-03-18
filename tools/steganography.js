@@ -157,8 +157,8 @@ function extractImages(image, width, height) {
         }
     }
     
-    OutputCanvas1.width = image.width
-    OutputCanvas1.height = image.height
+    OutputCanvas1.width = extractedImageData.width
+    OutputCanvas1.height = extractedImageData.height
 
     OutputCTX1.putImageData(extractedImageData, 0, 0)
 }
