@@ -61,7 +61,7 @@ function embedImages(image1, image2) {
 
     const image2AspectRatio = image2.width / image2.height;
 
-    let targetPixelCountToEmbed = Math.min(Math.floor((image1.width * image1.height) / 8), 65536) //The maximum pixel count of the embedded image is one eighth of the visible image or the maximum value shown by 2 bytes
+    let targetPixelCountToEmbed = Math.min(Math.floor((image1.width * image1.height) / 8), 65535) //The maximum pixel count of the embedded image is one eighth of the visible image or the maximum value shown by 2 bytes
     let targetWidth = Math.sqrt(targetPixelCountToEmbed * image2AspectRatio)
     let targetHeight = targetWidth / image2AspectRatio
 
@@ -88,7 +88,7 @@ function embedImages(image1, image2) {
     for (let i = 0; i < 2; i++) { //For both width and height
         let valueToEncode = valuesToEncode[i]
 
-        for (let j = 0; j < 16; j++) { //For two bytes to store up to 65536 as width/height value
+        for (let j = 0; j < 16; j++) { //For two bytes to store up to 65535 as width/height value
             imageData1.data[i * 16 + j] = (imageData1.data[i * 16 + j] & 0xFD) | ((valueToEncode[j] & 1) << 1);
         }
     }
