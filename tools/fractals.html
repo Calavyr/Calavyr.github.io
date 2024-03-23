@@ -1,0 +1,23 @@
+<head>
+    <title>Fractals</title>
+    <link rel="stylesheet" href="fractals.css">
+</head>
+
+<body onload="resizeCanvas()" style="margin: 0">
+    <div id="menu">
+        <label>Length </label><input id="lengthInput" type="range" min="50" max="1000" step="1" value="350"><br>
+        <label>Width </label><input id="widthInput" type="range" min="1" max="200" step="1" value="25"><br>
+        <label>Scale </label><input id="scaleInput" type="range" min="0.01" max="0.99" step="0.01" value="0.7"><br>
+        <label>Rotation </label><input id="rotationInput" type="range" min="-360" max="360" step="1" value="60"><br>
+        <label>Sides </label><input id="sidesInput" type="range" min="1" max="20" step="1" value="6"><br>
+        <label>Branches </label><input id="branchesInput" type="range" min="1" max="3" step="1" value="2"><br>
+        <label>Forks </label><input id="forksInput" type="range" min="1" max="5" step="1" value="1"><br>
+        <label>Depth </label><input id="depthInput" type="range" min="1" max="10" step="1" value="10"><br>
+        <label>Shadow </label><input id="shadowBlurInput" type="checkbox"><br>
+        <button id="drawButton">Draw</button>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+
+    <script src="fractals.js"></script>
+</body>
