@@ -1,10 +1,10 @@
 const Canvas = document.getElementById('canvas')
 const CTX = Canvas.getContext('2d')
 
-const Rows = 200
-const Columns = 200
-const Width = 5
-const Height = 5
+const Rows = 400
+const Columns = 400
+const Width = 2.5
+const Height = 2.5
 
 function make2dArray(rows, cols) {
     let array = []
@@ -103,6 +103,7 @@ class Pixel {
 
     Update() {
         let affectedPixels = []
+        let pixelsToUpdate = []
         if (!inGrid(this.x, this.y)) {
             grid[this.x][this.y] = new Pixel(0, this.x, this.y)
             return
@@ -197,11 +198,19 @@ class Pixel {
 
             let bottomA = undefined
             let bottomB = undefined
+            let sideA = undefined
+            let sideB = undefined
             if (inGrid(this.x + dir, this.y + 1)) {
                 bottomA = grid[this.x + dir][this.y + 1]
             }
             if (inGrid(this.x - dir, this.y + 1)) {
                 bottomB = grid[this.x - dir][this.y + 1]
+            }
+            if (inGrid(this.x + dir, this.y)) {
+                sideA = grid[this.x + dir][this.y]
+            }
+            if (inGrid(this.x - dir, this.y)) {
+                sideB = grid[this.x - dir][this.y]
             }
             if (below != undefined && (below.State == "Gas" || lowest.State == "Gas")) {
                 this.y += 1
@@ -211,10 +220,26 @@ class Pixel {
             } else if (bottomB != undefined && bottomB.TypeId == 0) {
                 this.x -= dir
                 this.y += 1
+            } else if (sideA != undefined && sideA.TypeId == 0) {
+                this.x += dir
+                if (above != undefined && above.TypeId == this.TypeId) {
+                    pixelsToUpdate.push(above)
+                }
+                if (inGrid(this.x + dir, this.y - 1) && grid[this.x + dir][this.y - 1].TypeId == this.TypeId) {
+                    pixelsToUpdate.push(grid[this.x + dir][this.y - 1])
+                }
+            } else if (sideB != undefined && sideB.TypeId == 0) {
+                this.x -= dir
+                if (above != undefined && above.TypeId == this.TypeId) {
+                    pixelsToUpdate.push(above)
+                }
+                if (inGrid(this.x - dir, this.y - 1) && grid[this.x - dir][this.y - 1].TypeId == this.TypeId) {
+                    pixelsToUpdate.push(grid[this.x - dir][this.y - 1])
+                }
             } else if (bottomA != undefined && bottomA.State == "Liquid") {
-                bottomA.Update()
+                pixelsToUpdate.push(bottomA)
             } else if (bottomB != undefined && bottomB.State == "Liquid") {
-                bottomB.Update()
+                pixelsToUpdate.push(bottomB)
             }
         }
         if (this.x != oldPos[0] || this.y != oldPos[1]) {
@@ -231,10 +256,15 @@ class Pixel {
             if (grid[this.x][this.y].State == "Liquid") {
                 grid[this.x][oldPos[1]] = grid[this.x][this.y]
             }
-            if (grid[this.x][this.y].TypeName == "Void") return
-            grid[this.x][this.y] = this
+            if (grid[this.x][this.y].TypeName != "Void") {
+                grid[this.x][this.y] = this
+            }
         } else {
             grid[oldPos[0]][oldPos[1]] = new Pixel(0, oldPos[0], oldPos[1])
+        }
+        for (let i in pixelsToUpdate) {
+            let pixelToUpdate = pixelsToUpdate[i]
+            pixelToUpdate.Update()
         }
     }
 
@@ -250,12 +280,14 @@ class Pixel {
 let grid = make2dArray(Rows, Columns)
 
 function updateGrid() {
-    for (let i = Rows - 1; i > -1; i--) {
-        for (let j = Columns - 1; j > -1; j--) {
-            let currentPixel = grid[i][j]
-            let oldPos = [currentPixel.x, currentPixel.y]
-            if (currentPixel.TypeId == 0) continue
-            currentPixel.Update()
+    for (let k = 0; k < 3; k++) {
+        for (let i = Rows - 1; i > -1; i--) {
+            for (let j = Columns - 1; j > -1; j--) {
+                let currentPixel = grid[i][j]
+                let oldPos = [currentPixel.x, currentPixel.y]
+                if (currentPixel.TypeId == 0) continue
+                currentPixel.Update()
+            }
         }
     }
 }
@@ -279,7 +311,6 @@ function run() {
     drawGrid()
     window.requestAnimationFrame(run)
 }
-
 window.requestAnimationFrame(run)
 
 
@@ -312,8 +343,8 @@ setInterval(function() {
     if (mouseDown == 0) return
     let gridPositionX = Math.floor(mousePosition[0] / Width)
     let gridPositionY = Math.floor(mousePosition[1] / Height)
-    for (let i = -3; i < 3; i++) {
-        for (let j = -3; j < 3; j++) {
+    for (let i = -5; i < 5; i++) {
+        for (let j = -5; j < 5; j++) {
             if (!grid[gridPositionX + i]) break
             if (grid[gridPositionX + i][gridPositionY + j] == undefined) continue
             grid[gridPositionX + i][gridPositionY + j] = new Pixel(mouseDown, gridPositionX + i, gridPositionY + j)
