@@ -291,14 +291,19 @@ document.onmouseup = function(event) {
     mouseDown = 0
 }
 
+let mousePosition = []
+
 Canvas.onmousemove = function(event) {
-    if (mouseDown == 0) return
     let boundingRect = Canvas.getBoundingClientRect()
     let mouseX = event.clientX - boundingRect.left
     let mouseY = event.clientY - boundingRect.top
+    mousePosition = [mouseX, mouseY]
+}
 
-    let gridPositionX = Math.floor(mouseX / Width)
-    let gridPositionY = Math.floor(mouseY / Height)
+setInterval(function() {
+    if (mouseDown == 0) return
+    let gridPositionX = Math.floor(mousePosition[0] / Width)
+    let gridPositionY = Math.floor(mousePosition[1] / Height)
     for (let i = -3; i < 3; i++) {
         for (let j = -3; j < 3; j++) {
             if (!grid[gridPositionX + i]) break
@@ -306,4 +311,4 @@ Canvas.onmousemove = function(event) {
             grid[gridPositionX + i][gridPositionY + j] = new Pixel(mouseDown, gridPositionX + i, gridPositionY + j)
         }
     }
-}
+}, 10)
