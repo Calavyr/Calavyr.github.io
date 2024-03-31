@@ -49,6 +49,7 @@ Math.clamp = function(x, min, max) {
 }
 
 const PixelNames = {
+    100: "Void",
     0: "Air",
     1: "Sand",
     2: "Water",
@@ -57,7 +58,8 @@ const PixelNames = {
     5: "Smoke"
 }
 const PixelColours = {
-    "Air": "rgba(0, 0, 0, 0)",
+    "Void": "rgba(0, 0, 0, 1)",
+    "Air": "rgba(255, 255, 255, 0)",
     "Sand": "rgba(217, 209, 98, 1)",
     "Water": "rgba(35, 137, 218, 4)",
     "Oil": "rgba(0, 5, 10, 1)",
@@ -65,6 +67,7 @@ const PixelColours = {
     "Smoke": "rgba(128, 128, 128, 2)"
 }
 const PixelStates = {
+    "Void": "Gas",
     "Air": "Gas",
     "Sand": "Solid",
     "Water": "Liquid",
@@ -145,10 +148,10 @@ class Pixel {
             } else if (below != undefined && (below.State == "Liquid" || below.State == "Gas")) {
                 below.y = this.y
                 this.y += 1
-            } else if (bottomA != undefined && bottomA.TypeId == 0) {
+            } else if (bottomA != undefined && (bottomA.State == "Gas")) {
                 this.x += dir
                 this.y += 1
-            } else if (bottomB != undefined && bottomB.TypeId == 0) {
+            } else if (bottomB != undefined && (bottomB.State == "Gas")) {
                 this.x -= dir
                 this.y += 1
             } else if (bottomA != undefined && bottomA.State == "Solid") {
@@ -157,7 +160,7 @@ class Pixel {
                 bottomB.Update()
             }
         }
-        if (this.State == "Gas") {
+        if (this.State == "Gas" && this.TypeName != "Void") {
             let dir = Math.random() < 0.5 ? 1 : -1
 
             let topA = undefined
@@ -168,7 +171,9 @@ class Pixel {
             if (inGrid(this.x - dir, this.y - 1)) {
                 topB = grid[this.x - dir][this.y - 1]
             }
-            if (above != undefined && above.TypeId == 0 && Math.random() < 0.5) {
+            if (above != undefined && above.TypeName == "Void") {
+                this.y -= 1
+            } else if (above != undefined && above.TypeId == 0 && Math.random() < 0.5) {
                 this.y -= 1
             } else if (topA != undefined && topA.TypeId == 0) {
                 this.x += dir
@@ -226,6 +231,7 @@ class Pixel {
             if (grid[this.x][this.y].State == "Liquid") {
                 grid[this.x][oldPos[1]] = grid[this.x][this.y]
             }
+            if (grid[this.x][this.y].TypeName == "Void") return
             grid[this.x][this.y] = this
         } else {
             grid[oldPos[0]][oldPos[1]] = new Pixel(0, oldPos[0], oldPos[1])
@@ -283,8 +289,10 @@ document.onmousedown = function(event) {
         mouseDown = 1
     } else if (event.button == 1) {
         mouseDown = 5
-    } else if (event.button == 4) {
+    } else if (event.button == 2) {
         mouseDown = 2
+    } else if (event.button == 4) {
+        mouseDown = 100
     }
 }
 document.onmouseup = function(event) {
