@@ -29,6 +29,7 @@ function inGrid(x = 0, y = 0) {
     return (x >= 0 && x <= Columns - 1) && (y >= 0 && y <= Rows - 1)
 }
 
+let selectedType = 1
 
 const PixelDataDict = {
     0: {
@@ -316,25 +317,25 @@ function run() {
 }
 window.requestAnimationFrame(run)
 
-let mouseDown = 0
+let mouseDown = false
 document.onmousedown = function(event) {
-    if (event.button == 0) {
-        mouseDown = 1
-    } else if (event.button == 1) {
-        mouseDown = -1
-    } else if (event.button == 2) {
-        mouseDown = 2
-    } else if (event.button == 4) {
-        mouseDown = 3
-    }
+    if (event.button != 0) return
+    mouseDown = true
 }
 document.onmouseup = function(event) {
-    mouseDown = 0
+    if (event.button != 0) return
+    mouseDown = false
+}
+
+document.onkeyup = function(event) {
+    if (parseInt(event.key) > 0 && parseInt(event.key) <= 4) {
+        selectedType = parseInt(event.key) - 1
+    }
 }
 
 let mousePosition = []
 
-Canvas.onmousemove = function(event) {
+document.onmousemove = function(event) {
     let boundingRect = Canvas.getBoundingClientRect()
     let mouseX = event.clientX - boundingRect.left
     let mouseY = event.clientY - boundingRect.top
@@ -345,12 +346,8 @@ setInterval(function() {
     if (mouseDown == 0) return
     let gridPositionX = Math.floor(mousePosition[0] / Width)
     let gridPositionY = Math.floor(mousePosition[1] / Height)
-    if (!grid[gridPositionX]) return
+    if (!inGrid(gridPositionX, gridPositionY)) return
     if (grid[gridPositionX][gridPositionY] == undefined) return
-    if (grid[gridPositionX][gridPositionY].Type == mouseDown) return
-    if (mouseDown == -1) {
-        grid[gridPositionX][gridPositionY] = new Pixel(0, gridPositionX, gridPositionY)
-    } else {
-        grid[gridPositionX][gridPositionY] = new Pixel(mouseDown, gridPositionX, gridPositionY)
-    }
+    if (grid[gridPositionX][gridPositionY].Type == selectedType) return
+    grid[gridPositionX][gridPositionY] = new Pixel(selectedType, gridPositionX, gridPositionY)
 }, 10)
