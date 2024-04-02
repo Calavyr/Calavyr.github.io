@@ -3,11 +3,11 @@ const CTX = Canvas.getContext("2d")
 
 const Gravity = 1
 
-var Columns = 50
-var Rows = 50
+let Columns = 50
+let Rows = 50
 
-const Width = Canvas.clientWidth / Columns
-const Height = Canvas.clientHeight / Rows
+let Width = Canvas.clientWidth / Columns
+let Height = Canvas.clientHeight / Rows
 
 
 Math.clamp = function(x, a, b) {
@@ -343,6 +343,8 @@ document.onmousemove = function(event) {
 }
 
 setInterval(function() {
+    Width = Canvas.clientWidth / Columns
+    Height = Canvas.clientHeight / Rows
     if (mouseDown == 0) return
     let gridPositionX = Math.floor(mousePosition[0] / Width)
     let gridPositionY = Math.floor(mousePosition[1] / Height)
