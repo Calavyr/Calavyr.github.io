@@ -3,8 +3,8 @@ const CTX = Canvas.getContext("2d")
 
 const Gravity = 1
 
-const Columns = 50
-const Rows = 50
+var Columns = 50
+var Rows = 50
 
 const Width = Canvas.clientWidth / Columns
 const Height = Canvas.clientHeight / Rows
