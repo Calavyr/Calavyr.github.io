@@ -104,6 +104,20 @@ tealdr's site
 		<p>Literally took me like 8 hours to get working properly.</p>
 		<br>
 	</div>
+
+	<div class="textbox" onClick="goTo('endless-canvas.glitch.me')">
+		<h1>Endless canvas</h1>
+		<p>Endless online canvas. was planning on adding multiple 'rooms' but ran out of motivation</p>
+		<p>Has mobile support</p>
+		<br>
+	</div>
+	
+	<div class="textbox" onClick="goTo('sillyer-chatroom.glitch.me')">
+		<h1>Online chatroom</h1>
+		<p>Practicing full stack</p>
+		<p>Pretty bad.</p>
+		<br>
+	</div>
 	
 	<div class="textbox" onClick="tool('image-horizontifier')">
 		<h1>Image Horizontifier</h1>
@@ -236,5 +250,8 @@ function game(gamename) {
 }
 function tool(toolname) {
 	window.location.href = './tools/' + toolname;
+}
+function goTo(url) {
+	window.location.href = url;
 }
 </script>
