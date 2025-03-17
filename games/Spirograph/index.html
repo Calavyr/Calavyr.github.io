@@ -1,0 +1,15 @@
+<head>
+    <title>Fractal Spirograph</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+
+<body onload="createNew()">
+    <input id="quantitySlider" type="range" min="1" max="15" step="1" value="8">
+    <input id="scaleSlider" type="range" min="0.1" max="1" step="0.05" value="0.5">
+    <input id="speedSlider" type="range" min="0.1" max="50" step="0.1" value="5">
+    <button onclick="stop()">stop drawing</button>
+    <br>
+    <canvas id="canvas" height="2500" width="2500"></canvas>
+
+    <script src = "index.js"></script>
+</body>
