@@ -49,3 +49,12 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   border-radius: 50%;
 }
+
+button {
+  width: 10%;
+  height: 4%;
+}
+#drawSwitch {
+  width: 10%;
+  height: 4%;
+}
