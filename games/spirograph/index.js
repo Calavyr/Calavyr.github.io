@@ -76,6 +76,8 @@ function createNext(circles) {
             circles[j].y = parent.y + (circles[j].radius + parent.radius) * Math.sin(thetaRad)
         }
     }
+    if (document.getElementById("drawSwitch").checked) 
+        return;
     ctx.moveTo(points[0].x, points[0].y)
     ctx.beginPath()
     for (let i = 1; i < points.length; i++) {
