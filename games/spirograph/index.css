@@ -45,7 +45,7 @@ input[type="range"]::-moz-range-track {
 input[type="range"]::-moz-range-thumb {
   width: 10%;
   height: 100%;
-  background: red;
+  background: lightgray;
   cursor: pointer;
   border-radius: 50%;
 }
@@ -53,8 +53,9 @@ input[type="range"]::-moz-range-thumb {
 button {
   width: 10%;
   height: 4%;
+  font-size: 200%;
 }
-#drawSwitch {
+input[type="checkbox"] {
   width: 10%;
   height: 4%;
 }
