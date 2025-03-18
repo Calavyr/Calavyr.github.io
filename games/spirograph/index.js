@@ -51,7 +51,7 @@ function createNew() {
     }
     currentInterval = setInterval(function() {
         createNext(circles)
-    }, 1)
+    }, 0)
 }
 
 function createNext(circles) {
