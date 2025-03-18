@@ -45,7 +45,7 @@ function createNew() {
         totalOffset += radius * 1.5
         let circle = new Circle(x, y, radius, 0);
         
-        circle.speed = Math.pow(speed, i)/(speed * speed * speed)
+        circle.speed = Math.pow(speed, i) / Math.pow(speed, 4);
         circles.push(circle)
         drawCircle(circle, "black")
     }
