@@ -3,6 +3,8 @@ let ctx = canvas.getContext("2d")
 let quantitySlider = document.getElementById("quantitySlider")
 let scaleSlider = document.getElementById("scaleSlider")
 let speedSlider = document.getElementById("speedSlider")
+let pauseSwitch = document.getElementById("pauseSwitch")
+let drawSwitch = document.getElementById("drawSwitch")
 
 class Circle {
     constructor(x, y, radius, angle) {
@@ -28,6 +30,7 @@ let currentInterval
 let points = []
 
 function createNew() {
+    clearInterval(currentInterval)
     let quantity = parseInt(quantitySlider.value)
     let scale = parseFloat(scaleSlider.value)
     let speed = parseFloat(speedSlider.value)
@@ -39,19 +42,20 @@ function createNew() {
 
     let totalOffset = 0;
     for (let i = 0; i < quantity; i++) {
-        let radius = canvasHeight/7.5 * Math.pow(scale, i);
+        let radius = canvasHeight/4 * Math.pow(1/scale, i)
         let x = canvasWidth/2
         let y = canvasHeight/2 - totalOffset
         totalOffset += radius * 1.5
-        let circle = new Circle(x, y, radius, 0);
+        let circle = new Circle(x, y, radius, -Math.PI/2);
         
-        circle.speed = Math.pow(speed, i) / Math.pow(speed, 4);
+        circle.speed = (Math.pow(speed, i - 1) * Math.PI / 180) / 10
         circles.push(circle)
         drawCircle(circle, "black")
     }
     currentInterval = setInterval(function() {
-        createNext(circles)
-    }, 0)
+        if (!pauseSwitch.checked)
+            createNext(circles)
+    }, 1)
 }
 
 function createNext(circles) {
@@ -59,24 +63,21 @@ function createNext(circles) {
     let lastCircle = circles[circles.length - 1]
     points.push(
         new Point(
-            lastCircle.x + lastCircle.radius * Math.cos((lastCircle.angle - 90) * (Math.PI/180)), 
-            lastCircle.y + lastCircle.radius * Math.sin((lastCircle.angle - 90) * (Math.PI/180))
+            lastCircle.x + lastCircle.radius * Math.cos(lastCircle.angle), 
+            lastCircle.y + lastCircle.radius * Math.sin(lastCircle.angle)
         )
     )
-
     for (let i = 0; i < circles.length; i++) {
         drawCircle(circles[i])
-        // circles[i].angle += circles[0].radius * 1/Math.pow(circles[i].radius, 2)
+        if (i - 1 < 0)
+            continue;
+        let parent = circles[i - 1]
         circles[i].angle += circles[i].speed;
-        for (let j = 1; j < circles.length; j++) {
-            let parent = circles[j - 1]
-            let thetaRad = (parent.angle - 90) * (Math.PI / 180)
-            
-            circles[j].x = parent.x + (circles[j].radius + parent.radius) * Math.cos(thetaRad)
-            circles[j].y = parent.y + (circles[j].radius + parent.radius) * Math.sin(thetaRad)
-        }
+        var rsum = circles[i].radius + parent.radius
+        circles[i].x = parent.x + rsum * Math.cos(circles[i].angle)
+        circles[i].y = parent.y + rsum * Math.sin(circles[i].angle)
     }
-    if (document.getElementById("drawSwitch").checked) 
+    if (!drawSwitch.checked) 
         return;
     ctx.moveTo(points[0].x, points[0].y)
     ctx.beginPath()
@@ -97,15 +98,26 @@ scaleSlider.addEventListener("change", function() {
 speedSlider.addEventListener("change", function() {
     clearInterval(currentInterval)
     createNew()
-}) 
-
-function stop() {
-    clearInterval(currentInterval)
-}
+})
 
 function drawCircle(circle) {
     ctx.beginPath()
     ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
+    ctx.stroke()
+}
+
+function resetAngle() {
+    for (let i = 0; i < circles.length; i++) {
+        circles[i].angle = -Math.PI/2
+        drawCircle(circles[i])
+    }
+    if (!drawSwitch.checked)
+        return
+    ctx.moveTo(points[0].x, points[0].y)
+    ctx.beginPath()
+    for (let i = 1; i < points.length; i++) {
+        ctx.lineTo(points[i].x, points[i].y)
+    }
     ctx.stroke()
 }
 
