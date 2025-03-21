@@ -1,10 +1,12 @@
 let canvas = document.getElementById("canvas")
 let ctx = canvas.getContext("2d")
+let menu = document.getElementById("menu")
 let quantitySlider = document.getElementById("quantitySlider")
 let scaleSlider = document.getElementById("scaleSlider")
 let speedSlider = document.getElementById("speedSlider")
 let pauseSwitch = document.getElementById("pauseSwitch")
 let drawSwitch = document.getElementById("drawSwitch")
+let invertedSwitch = document.getElementById("invertedSwitch")
 
 class Circle {
     constructor(x, y, radius, angle) {
@@ -23,6 +25,27 @@ class Point {
 
 let canvasHeight = canvas.clientHeight
 let canvasWidth = canvas.clientWidth
+
+function onLoad() {
+    adjustMenu()
+    createNew()
+}
+
+function adjustMenu() {
+    let sliderChildren = menu.querySelectorAll("input[type='range']")
+    for (let index in sliderChildren) {
+        let child = sliderChildren[index]
+        if (!child.style)
+            continue;
+        child.style.height = child.clientWidth * 0.1
+    }
+
+    let labels = menu.querySelectorAll("label")
+    labels[0].textContent = `Quantity: ${quantitySlider.value}`
+    labels[1].textContent = `Scale: 1/${scaleSlider.value}`
+    labels[2].textContent = `Speed: ${speedSlider.value}`
+}
+
 let circles
 
 let currentInterval
@@ -30,6 +53,8 @@ let currentInterval
 let points = []
 
 function createNew() {
+    adjustMenu()
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight)
     clearInterval(currentInterval)
     let quantity = parseInt(quantitySlider.value)
     let scale = parseFloat(scaleSlider.value)
@@ -43,18 +68,24 @@ function createNew() {
     let totalOffset = 0;
     for (let i = 0; i < quantity; i++) {
         let radius = canvasHeight/4 * Math.pow(1/scale, i)
+        let nextRadius = radius * 1/scale
         let x = canvasWidth/2
         let y = canvasHeight/2 - totalOffset
-        totalOffset += radius * 1.5
+        if (!invertedSwitch.checked) {
+            totalOffset += nextRadius + radius
+        } else {
+            totalOffset += radius - nextRadius
+        }
         let circle = new Circle(x, y, radius, -Math.PI/2);
         
         circle.speed = (Math.pow(speed, i - 1) * Math.PI / 180) / 10
         circles.push(circle)
-        drawCircle(circle, "black")
+        drawCircle(circle)
     }
     currentInterval = setInterval(function() {
-        if (!pauseSwitch.checked)
+        if (!pauseSwitch.checked) {
             createNext(circles)
+        }
     }, 1)
 }
 
@@ -73,9 +104,15 @@ function createNext(circles) {
             continue;
         let parent = circles[i - 1]
         circles[i].angle += circles[i].speed;
-        var rsum = circles[i].radius + parent.radius
-        circles[i].x = parent.x + rsum * Math.cos(circles[i].angle)
-        circles[i].y = parent.y + rsum * Math.sin(circles[i].angle)
+        if (!invertedSwitch.checked) {
+            let rsum = circles[i].radius + parent.radius
+            circles[i].x = parent.x + rsum * Math.cos(circles[i].angle) 
+            circles[i].y = parent.y + rsum * Math.sin(circles[i].angle)
+        } else {
+            let rsub = parent.radius - circles[i].radius
+            circles[i].x = parent.x + rsub * Math.cos(circles[i].angle)
+            circles[i].y = parent.y + rsub * Math.sin(circles[i].angle)
+        }
     }
     if (!drawSwitch.checked) 
         return;
@@ -100,6 +137,11 @@ speedSlider.addEventListener("change", function() {
     createNew()
 })
 
+invertedSwitch.addEventListener("change", function() {
+    clearInterval(currentInterval)
+    createNew()
+})
+
 function drawCircle(circle) {
     ctx.beginPath()
     ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
@@ -107,6 +149,7 @@ function drawCircle(circle) {
 }
 
 function resetAngle() {
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight)
     for (let i = 0; i < circles.length; i++) {
         circles[i].angle = -Math.PI/2
         drawCircle(circles[i])
