@@ -142,6 +142,10 @@ invertedSwitch.addEventListener("change", function() {
     createNew()
 })
 
+document.body.addEventListener("resize", function() {
+    adjustMenu()
+}
+
 function drawCircle(circle) {
     ctx.beginPath()
     ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI)
