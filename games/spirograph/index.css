@@ -2,15 +2,24 @@ canvas {
   outline-style: solid;
   outline-color: black;
   outline-width: 5;
+  position: absolute;
+  top: 0;
+  left: 20%;
 }
 
+#menu {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 20%;
+  font-size: 5vmin;
+}
 input[type="range"] {
-  width: 20%; /* 20% of the page width */
-  height: 4%; /* 10% of the page height */
+  width: 100%;
   -webkit-appearance: none;
   appearance: none;
-  background: transparent; /* Remove default background */
-  /* transform: translate(-50%, -50%); Center it */
+  background: transparent;
 }
 
 /* Track (WebKit Browsers) */
