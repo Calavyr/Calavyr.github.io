@@ -144,7 +144,7 @@ invertedSwitch.addEventListener("change", function() {
 
 document.body.addEventListener("resize", function() {
     adjustMenu()
-}
+})
 
 function drawCircle(circle) {
     ctx.beginPath()
