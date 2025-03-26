@@ -142,6 +142,7 @@ invertedSwitch.addEventListener("change", function() {
     createNew()
 })
 
+document.body.onresize = adjustMenu;
 document.body.addEventListener("resize", function() {
     adjustMenu()
 })
