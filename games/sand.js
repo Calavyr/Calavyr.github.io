@@ -1,6 +1,7 @@
 var imageInput = document.getElementById('imageInput');
 var setImageButton = document.getElementById('setImageButton');
 var clearButton = document.getElementById('clearButton');
+var fillButton = document.getElementById('fillButton');
 var placeRangeInput = document.getElementById('placeRangeInput');
 var gridWidthInput = document.getElementById('gridWidthInput');
 var gridHeightInput = document.getElementById('gridHeightInput');
@@ -126,6 +127,14 @@ function clear() {
     }
 }
 clearButton.onclick = clear;
+function fill() {
+    for (var x = 0; x < grid.width; x++) {
+        for (var y = 0; y < grid.height; y++) {
+            grid.pixels[x][y].type = PixelTypes.SAND;
+        }
+    }
+}
+fillButton.onclick = fill;
 function setImage() {
     var tempCanvas = document.createElement('canvas');
     var ctx = tempCanvas.getContext('2d');
