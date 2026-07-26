@@ -1,5 +1,187 @@
 import { Pixel } from './pixel.js';
+export class StructureBehaviour {
+    getStructure(pixelPos, grid) {
+        const pixels = floodFill(pixelPos, grid, p => this.structureIds.has(p.id));
+        const byId = new Map();
+        for (const pos of pixels) {
+            const id = grid.nextGrid[pos.y][pos.x].id;
+            if (!byId.has(id)) {
+                byId.set(id, []);
+            }
+            byId.get(id).push(pos);
+        }
+        return {
+            pixels,
+            byId
+        };
+    }
+    getStructureOwner(structure) {
+        let owner = structure.pixels[0];
+        for (const pos of structure.pixels) {
+            if (pos.y < owner.y ||
+                (pos.y === owner.y && pos.x < owner.x)) {
+                owner = pos;
+            }
+        }
+        return owner;
+    }
+}
+export class BatteryPartBehaviour extends StructureBehaviour {
+    structureType = "battery";
+    structureIds = new Set([17, 18, 19]);
+    energy = 10000;
+    maxEnergy = 10000;
+    voltage = 12;
+    resistance = 0.1;
+    get current() {
+        return this.energy > 0 ? Infinity : 0;
+    }
+    update(pixel, pixelPos, grid) {
+        if (this.energy <= 0) {
+            return;
+        }
+        const structure = this.getStructure(pixelPos, grid);
+        if (this.getStructureOwner(structure) != pixelPos) {
+            return;
+        }
+        const body = structure.byId.get(17) ?? [];
+        const positive = structure.byId.get(18) ?? [];
+        const negative = structure.byId.get(19) ?? [];
+        if (positive.length == 0 || negative.length == 0) {
+            return;
+        }
+        const circuit = findCircuit(positive[0], negative[0], grid);
+        if (!circuit.reachesOtherTerminal)
+            return;
+        let currentDraw = 0;
+        for (const pos of circuit.pixels) {
+            const pixel = grid.nextGrid[pos.y][pos.x];
+            const electrical = getBehaviour(pixel, ElectricalBehaviour);
+            if (!electrical)
+                continue;
+            electrical.voltage = Math.max(this.voltage, electrical.voltage);
+            electrical.powered = true;
+            currentDraw += electrical.current;
+        }
+        this.energy -= currentDraw * 0.01;
+        if (this.energy < 0) {
+            this.energy = 0;
+        }
+    }
+    clone() {
+        const copy = new BatteryPartBehaviour();
+        copy.energy = this.energy;
+        return copy;
+    }
+}
+export class ElectricalBehaviour {
+    voltage = 0;
+    powered = false;
+    resistance = 1;
+    get current() {
+        if (!this.powered)
+            return 0;
+        return this.voltage / this.resistance;
+    }
+    canTransferTo(other) {
+        return false;
+    }
+}
+export class LampBehaviour extends ElectricalBehaviour {
+    resistance = 10;
+    brightness = 0;
+    update(pixel, pixelPos, grid) {
+        this.powered = this.voltage > 0;
+        if (!this.powered) {
+            this.brightness = 0;
+            this.updateBrightness(pixelPos, grid);
+            return;
+        }
+        this.brightness = Math.min(1, this.current / 1.2);
+        this.updateBrightness(pixelPos, grid);
+    }
+    canTransferTo(other) {
+        return other instanceof LampBehaviour;
+    }
+    updateBrightness(pixelPos, grid) {
+        if (this.brightness == 0) {
+            grid.nextGrid[pixelPos.y][pixelPos.x].colour = `rgb(20, 20, 20)`;
+        }
+        const dark = { r: 20, g: 20, b: 20 };
+        const bright = { r: 255, g: 220, b: 80 };
+        const r = Math.floor(dark.r + (bright.r - dark.r) * this.brightness);
+        const g = Math.floor(dark.g + (bright.g - dark.g) * this.brightness);
+        const b = Math.floor(dark.b + (bright.b - dark.b) * this.brightness);
+        grid.nextGrid[pixelPos.y][pixelPos.x].colour = `rgb(${r}, ${g}, ${b})`;
+    }
+    clone() {
+        const copy = new LampBehaviour();
+        copy.voltage = this.voltage;
+        copy.powered = this.powered;
+        copy.brightness = this.brightness;
+        return new LampBehaviour();
+    }
+}
+export class SteamGeneratorBehaviour extends ElectricalBehaviour {
+    voltage = 12;
+    maxCurrent = 5;
+    generatedCurrent = 0;
+    resistance = 0;
+    update(pixel, pixelPos, grid) {
+        this.generatedCurrent = 0;
+        for (const neighbour of grid.getNeighbours(pixelPos.x, pixelPos.y)) {
+            const other = grid.nextGrid[neighbour.y][neighbour.x];
+            if (other.id == 6) {
+                this.generatedCurrent += 1;
+            }
+        }
+        this.generatedCurrent = Math.min(this.generatedCurrent, this.maxCurrent);
+        this.voltage = this.generatedCurrent > 0 ? 12 : 0;
+        this.powered = this.generatedCurrent > 0;
+        if (!this.powered)
+            return;
+        let circuit = findCircuit(pixelPos, pixelPos, grid);
+        for (const pos of circuit.pixels) {
+            const electrical = getBehaviour(grid.nextGrid[pos.y][pos.x], ElectricalBehaviour);
+            if (!electrical)
+                continue;
+            electrical.voltage = Math.max(this.voltage, electrical.voltage);
+            electrical.powered = true;
+        }
+    }
+    canTransferTo(other) {
+        return true;
+    }
+    get current() {
+        return this.generatedCurrent;
+    }
+    clone() {
+        const copy = new SteamGeneratorBehaviour();
+        copy.generatedCurrent = this.generatedCurrent;
+        return copy;
+    }
+}
+export class WireBehaviour extends ElectricalBehaviour {
+    voltage = 0;
+    powered = false;
+    resistance = 1;
+    get current() {
+        return 0;
+    }
+    update(pixel, pixelPos, grid) {
+    }
+    canTransferTo(other) {
+        return true;
+    }
+    clone() {
+        const copy = new WireBehaviour();
+        copy.voltage = this.voltage;
+        copy.powered = this.powered;
+        return copy;
+    }
+}
 export class GravityBehaviour {
+    gravity;
     constructor(gravity) {
         this.gravity = gravity;
     }
@@ -27,7 +209,7 @@ export class GravityBehaviour {
             ? [-1, 1]
             : [1, -1];
         for (const side of sides) {
-            if (grid.inBounds(pixelPos.x + side, pixelPos.y + direction) && grid.isClear(pixelPos.x + side, pixelPos.y + direction)) {
+            if (grid.inBounds(pixelPos.x + side, pixelPos.y + direction) && grid.isClear(pixelPos.x + side, pixelPos.y + direction) && grid.isClear(pixelPos.x + side, pixelPos.y)) {
                 grid.move(pixelPos.x, pixelPos.y, pixelPos.x + side, pixelPos.y + direction);
                 return true;
             }
@@ -39,6 +221,9 @@ export class GravityBehaviour {
     }
 }
 export class FluidBehaviour {
+    gravityBehaviour;
+    viscosity;
+    density;
     constructor(gravity, density, viscosity) {
         this.gravityBehaviour = new GravityBehaviour(gravity);
         this.density = density;
@@ -115,7 +300,7 @@ export class FluidBehaviour {
 export class PlantBehaviour {
     update(pixel, pixelPos, grid) {
         if (Math.random() < 0.005 && pixelPos.y > 0) {
-            let waterPos = floodFillSearch(pixelPos, 13, 2, grid.nextGrid);
+            let waterPos = floodFillSearch(pixelPos, 13, 2, grid);
             if (!waterPos)
                 return;
             let growthX = [pixelPos.x];
@@ -136,6 +321,12 @@ export class PlantBehaviour {
     }
 }
 export class FlammableBehaviour {
+    burning;
+    burnDuration;
+    maxBurnDuration;
+    ignitionEnergy;
+    ignitionResult;
+    burnHeatProduction;
     constructor(duration, ignitionEnergy, ignitionResult, burnHeatProduction) {
         this.burning = false;
         this.maxBurnDuration = duration;
@@ -154,7 +345,7 @@ export class FlammableBehaviour {
             if (this.burnDuration <= 0) {
                 pixel.nextId = this.ignitionResult;
             }
-            let neighbours = getNeighbours(pixelPos.x, pixelPos.y, grid.nextGrid);
+            let neighbours = grid.getNeighbours(pixelPos.x, pixelPos.y);
             for (let neighbour of neighbours) {
                 let neighbourPixel = grid.nextGrid[neighbour.y][neighbour.x];
                 let flammable = getBehaviour(neighbourPixel, FlammableBehaviour);
@@ -175,36 +366,71 @@ export class FlammableBehaviour {
     }
 }
 function floodFillSearch(origin, pixelType, targetType, grid) {
-    let queue = getNeighbours(origin.x, origin.y, grid);
+    return floodFill(origin, grid, p => p.id == pixelType)
+        .find(pos => grid.pixels[pos.y][pos.x].id == targetType);
+}
+function floodFill(origin, grid, canVisit) {
+    let queue = [origin];
     let visited = {};
+    let result = [];
     while (queue.length > 0) {
         let front = queue.shift();
-        if (grid[front.y][front.x].id == targetType) {
-            return front;
-        }
-        if (visited[front.x] && visited[front.x][front.y]) {
+        if (visited[front.x]?.[front.y]) {
             continue;
         }
-        if (!visited[front.x]) {
-            visited[front.x] = {};
-        }
+        visited[front.x] ??= {};
         visited[front.x][front.y] = true;
-        if (grid[front.y][front.x].id == pixelType) {
-            queue = queue.concat(getNeighbours(front.x, front.y, grid));
+        if (!canVisit(grid.nextGrid[front.y][front.x])) {
+            continue;
         }
+        result.push(front);
+        queue.push(...grid.getAdjacent(front.x, front.y));
     }
-    return undefined;
+    return result;
 }
-function getNeighbours(x, y, grid) {
-    let neighbours = [];
-    for (let xOff = -1; xOff <= 1; xOff++) {
-        for (let yOff = -1; yOff <= 1; yOff++) {
-            if (xOff == 0 && yOff == 0 || x + xOff < 0 || x + xOff >= grid[0].length || y + yOff < 0 || y + yOff >= grid.length)
-                continue;
-            neighbours.push({ x: x + xOff, y: y + yOff });
+function findCircuit(start, end, grid) {
+    const queue = [
+        { pos: start }
+    ];
+    const visited = new Set();
+    const pixels = [];
+    const components = [];
+    let reachesOtherTerminal = false;
+    while (queue.length > 0) {
+        const node = queue.shift();
+        const pos = node.pos;
+        const key = `${pos.x},${pos.y}`;
+        if (visited.has(key))
+            continue;
+        visited.add(key);
+        if (pos.x === end.x && pos.y === end.y) {
+            reachesOtherTerminal = true;
+        }
+        const pixel = grid.nextGrid[pos.y][pos.x];
+        const electrical = getBehaviour(pixel, ElectricalBehaviour);
+        if (!electrical)
+            continue;
+        // Check if electricity is allowed to enter this object
+        if (node.from &&
+            !node.from.canTransferTo(electrical)) {
+            continue;
+        }
+        pixels.push(pos);
+        if (electrical.resistance > 0) {
+            components.push(electrical);
+        }
+        for (const neighbour of grid.getAdjacent(pos.x, pos.y)) {
+            queue.push({
+                pos: neighbour,
+                from: electrical
+            });
         }
     }
-    return neighbours;
+    return {
+        pixels,
+        components,
+        reachesOtherTerminal
+    };
 }
 export function getBehaviour(pixel, type) {
     return pixel.behaviours.find(b => b instanceof type);

@@ -11,7 +11,6 @@ brushSizeSlider.onchange = (e) => {
     brushSize = parseInt(brushSizeSlider.value)
 }
 
-
 let canvasConfig = {
     rows: 100,
     columns: 100,

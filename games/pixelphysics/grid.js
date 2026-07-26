@@ -4,6 +4,10 @@ import { Pixel, interactions } from './pixel.js';
 // Also so that sand can fall through water even if the water is still moving
 // And other stuff like that that arises because of refusing to update already updating tiles
 export class Grid {
+    rows;
+    columns;
+    pixels;
+    ambientTemperature;
     constructor(rows, columns) {
         this.rows = rows;
         this.columns = columns;
@@ -12,6 +16,8 @@ export class Grid {
         this.nextGrid = this.pixels.map(row => row.map(pixel => pixel.clone()));
         this.updated = Array.from({ length: this.rows }, () => Array(this.columns).fill(false));
     }
+    nextGrid;
+    updated;
     updatePixels() {
         this.nextGrid = this.pixels.map(row => row.map(pixel => pixel.clone()));
         this.updated = Array.from({ length: this.rows }, () => Array(this.columns).fill(false));
@@ -97,7 +103,6 @@ export class Grid {
         this.updated[newY][newX] = true;
     }
     updateHeat(nextGrid) {
-        var _a;
         for (let y = 0; y < this.rows; y++) {
             for (let x = 0; x < this.columns; x++) {
                 const pixel = this.nextGrid[y][x];
@@ -110,7 +115,7 @@ export class Grid {
                         continue;
                     this.transferHeat(pixel, this.nextGrid[ny][nx]);
                 }
-                pixel.thermalEnergy += (_a = pixel.info.passiveHeatProduction) !== null && _a !== void 0 ? _a : 0;
+                pixel.thermalEnergy += pixel.info.passiveHeatProduction ?? 0;
                 pixel.thermalEnergy += (this.ambientTemperature - pixel.temperature) * 0.001 * pixel.info.heatConductivity;
                 if (pixel.info.boilingEnergy != undefined && pixel.thermalEnergy > pixel.info.boilingEnergy) {
                     pixel.nextId = pixel.info.boilingResult;
@@ -148,7 +153,18 @@ export class Grid {
         let neighbours = [];
         for (let xOff = -1; xOff <= 1; xOff++) {
             for (let yOff = -1; yOff <= 1; yOff++) {
-                if (xOff == 0 && yOff == 0 || x + xOff < 0 || x + xOff >= this.columns || y + yOff < 0 || y + yOff >= this.rows)
+                if (xOff == 0 && yOff == 0 || !this.inBounds(x + xOff, y + yOff))
+                    continue;
+                neighbours.push({ x: x + xOff, y: y + yOff });
+            }
+        }
+        return neighbours;
+    }
+    getAdjacent(x, y) {
+        let neighbours = [];
+        for (let xOff = -1; xOff <= 1; xOff++) {
+            for (let yOff = -1; yOff <= 1; yOff++) {
+                if (xOff == 0 && yOff == 0 || !this.inBounds(x + xOff, y + yOff) || (xOff == 0) == (yOff == 0))
                     continue;
                 neighbours.push({ x: x + xOff, y: y + yOff });
             }

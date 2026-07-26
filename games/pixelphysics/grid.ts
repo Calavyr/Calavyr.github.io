@@ -218,7 +218,19 @@ export class Grid {
         let neighbours: Array<Position> = []
         for (let xOff = -1; xOff <= 1; xOff++) {
             for (let yOff = -1; yOff <= 1; yOff++) {
-                if (xOff == 0 && yOff == 0 || x + xOff < 0 || x + xOff >= this.columns || y + yOff < 0 || y + yOff >= this.rows) continue
+                if (xOff == 0 && yOff == 0 || !this.inBounds(x + xOff, y + yOff)) continue
+                neighbours.push({x: x + xOff, y: y + yOff})
+            }
+        }
+        return neighbours
+    }
+
+
+    getAdjacent(x: number, y: number): Array<Position> {
+        let neighbours: Array<Position> = []
+        for (let xOff = -1; xOff <= 1; xOff++) {
+            for (let yOff = -1; yOff <= 1; yOff++) {
+                if (xOff == 0 && yOff == 0 || !this.inBounds(x + xOff, y + yOff) || (xOff == 0) == (yOff == 0)) continue
                 neighbours.push({x: x + xOff, y: y + yOff})
             }
         }
