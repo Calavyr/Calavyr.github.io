@@ -60,7 +60,7 @@ export class Grid {
         if (interactions[pixel.id]) {
             const neighbours = this.getNeighbours(x, y);
             for (const neighbour of neighbours) {
-                const neighbourPixel = this.pixels[neighbour.y][neighbour.x];
+                const neighbourPixel = this.nextGrid[neighbour.y][neighbour.x];
                 const interaction = interactions[pixel.id][neighbourPixel.id];
                 if (interaction) {
                     if (!pastInteractions[pixel.id]) {
@@ -197,17 +197,17 @@ export class Grid {
             if (newX < 0 || newX >= this.columns)
                 break;
             // open horizontal space
-            if (this.isEmptyForFluid(this.pixels[y][newX])) {
+            if (this.isEmptyForFluid(this.nextGrid[y][newX])) {
                 score += 1;
             }
             // a place where water can actually fall
             if (y + 1 < this.rows &&
-                this.isEmptyForFluid(this.pixels[y + 1][newX])) {
+                this.isEmptyForFluid(this.nextGrid[y + 1][newX])) {
                 score += 100;
             }
             // reward deeper drops
             if (y + 2 < this.rows &&
-                this.isEmptyForFluid(this.pixels[y + 2][newX])) {
+                this.isEmptyForFluid(this.nextGrid[y + 2][newX])) {
                 score += 200;
             }
         }
@@ -219,10 +219,10 @@ export class Grid {
             if (checkX < 0 || checkX >= this.columns)
                 return false;
             // blocked horizontally
-            if (!this.isEmptyForFluid(this.pixels[y][checkX]))
+            if (!this.isEmptyForFluid(this.nextGrid[y][checkX]) && this.nextGrid[y][checkX].id != this.nextGrid[y][x].id)
                 return false;
             // can fall here
-            if (this.pixels[y + 1] && this.isEmptyForFluid(this.pixels[y + 1][checkX]))
+            if (this.nextGrid[y + 1] && this.isEmptyForFluid(this.nextGrid[y + 1][checkX]))
                 return true;
         }
         return false;

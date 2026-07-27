@@ -319,12 +319,19 @@ export class GravityBehaviour implements PixelBehaviour {
             return true
         }
 
+        // if (getBehaviour(pixel, FluidBehaviour)) return
+
         let sides = Math.random() < 0.5
             ? [-1, 1]
             : [1, -1]
 
         for (const side of sides) {
-            if (grid.inBounds(pixelPos.x + side, pixelPos.y + direction) && grid.isClear(pixelPos.x + side, pixelPos.y + direction) && grid.isClear(pixelPos.x + side, pixelPos.y)) {
+            if 
+            (
+                grid.inBounds(pixelPos.x + side, pixelPos.y + direction) && 
+                grid.isClear(pixelPos.x + side, pixelPos.y + direction) && 
+                grid.isClear(pixelPos.x + side, pixelPos.y)
+            ) {
                 grid.move(pixelPos.x, pixelPos.y, pixelPos.x + side, pixelPos.y + direction)
                 return true
             }
@@ -337,6 +344,9 @@ export class GravityBehaviour implements PixelBehaviour {
     }
 }
 
+
+//Fluids sometimes duplicate themselves? Something to do with shift not working properly, 
+// also fluids are duplicating wrong when shifting shown through the colours are duplicating
 export class FluidBehaviour implements PixelBehaviour {
     gravityBehaviour: GravityBehaviour
     viscosity: number
@@ -386,21 +396,12 @@ export class FluidBehaviour implements PixelBehaviour {
 
             if (
                 grid.inBounds(newX, y) &&
-                grid.isClear(newX, y) &&
+                !grid.isGas(pixel) && 
+                pixel.id != 4 &&
+                (grid.isClear(newX, y) || grid.nextGrid[y][newX].id == pixel.id) &&
                 grid.canFlowDown(x, y, side)
             ) {
-                let movedPixel = pixel.clone()
-                movedPixel.velocityX = side
-
-                let displaced = grid.nextGrid[y][newX].clone()
-
-                grid.nextGrid[y][newX] = movedPixel
-                grid.nextGrid[y][x] = displaced
-
-                grid.updated[y][x] = true
-                grid.updated[y][newX] = true
-
-                moved = true
+                moved = this.shift(pixel, pixelPos, grid, side)
                 break
             }
         }
@@ -437,6 +438,12 @@ export class FluidBehaviour implements PixelBehaviour {
 
             let displaced = targetPixel.clone()
 
+            if (pixel.id == targetPixel.id) {
+                let displacedColour = displaced.colour
+                displaced.colour = movedPixel.colour
+                movedPixel.colour = displacedColour
+            }
+
             grid.nextGrid[newY][x] = movedPixel
             grid.nextGrid[y][x] = displaced
 
@@ -445,6 +452,57 @@ export class FluidBehaviour implements PixelBehaviour {
 
             return
         }
+    }
+
+    shift(pixel: Pixel, pixelPos: Position, grid: Grid, direction: number): boolean {
+        let newX = pixelPos.x + direction
+
+        if (!grid.inBounds(newX, pixelPos.y)) {
+            return false
+        }
+
+        let targetPixel = grid.nextGrid[pixelPos.y][newX]
+        let fluidBehaviour = getBehaviour(targetPixel, FluidBehaviour)
+
+        let shifted = false
+        if (fluidBehaviour) {
+            shifted = fluidBehaviour.shift(targetPixel, { x: newX, y: pixelPos.y }, grid, direction)
+            targetPixel = grid.nextGrid[pixelPos.y][newX]
+        }
+
+        if (shifted || targetPixel.id == 0 || (grid.isGas(targetPixel) && !grid.isGas(pixel))) {
+            let displaced = targetPixel.clone()
+            let movedPixel = pixel.clone()
+            movedPixel.velocityX = direction
+            grid.nextGrid[pixelPos.y][newX] = movedPixel
+            grid.nextGrid[pixelPos.y][pixelPos.x] = displaced
+
+            grid.updated[pixelPos.y][newX] = true
+            grid.updated[pixelPos.y][pixelPos.x] = true
+            this.trySettle(pixel, pixelPos, grid)
+
+            return true
+        }
+
+        return false
+    }
+
+    trySettle(pixel: Pixel, pixelPos: Position, grid: Grid) {
+        let newY = pixelPos.y + this.gravityBehaviour.gravity
+        if (grid.inBounds(pixelPos.x, newY)) {
+            let targetPixel = grid.nextGrid[newY][pixelPos.x]
+            if (grid.isClear(pixelPos.x, newY) || grid.isGas(targetPixel))   {
+                let displaced = targetPixel.clone()
+                let movedPixel = pixel.clone()
+                grid.nextGrid[newY][pixelPos.x] = movedPixel
+                grid.nextGrid[pixelPos.y][pixelPos.x] = displaced
+
+                grid.updated[newY][pixelPos.x] = true
+                grid.updated[pixelPos.y][pixelPos.x] = true
+                return true
+            }
+        }
+        return false
     }
 
     clone() {
