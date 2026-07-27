@@ -269,9 +269,6 @@ export class FluidBehaviour {
                 break;
             }
         }
-        if (moved) {
-            this.trySettle(pixel, pixelPos, grid);
-        }
     }
     shiftChain(pixel, pixelPos, grid, direction) {
         const y = pixelPos.y;

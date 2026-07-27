@@ -250,6 +250,10 @@ export class Grid {
             for (let x = 0; x < this.columns; x++) {
                 const pixel = this.nextGrid[y][x]
 
+                if (pixel.fixedThermalEnergy) {
+                    pixel.thermalEnergy = pixel.fixedThermalEnergy
+                }
+
                 const neighbours = [
                     [x + 1, y],
                     [x, y + 1]
@@ -264,7 +268,6 @@ export class Grid {
                     )
                 }
 
-                pixel.thermalEnergy += pixel.info.passiveHeatProduction ?? 0
                 pixel.thermalEnergy += (this.ambientTemperature - pixel.temperature) * 0.001 * pixel.info.heatConductivity
 
                 if (pixel.info.boilingEnergy != undefined && pixel.thermalEnergy > pixel.info.boilingEnergy) {

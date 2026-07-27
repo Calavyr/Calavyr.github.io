@@ -393,10 +393,6 @@ export class FluidBehaviour implements PixelBehaviour {
                 break
             }
         }
-
-        if (moved) {
-            this.trySettle(pixel, pixelPos, grid)
-        }
     }
 
     shiftChain(pixel: Pixel, pixelPos: Position, grid: Grid, direction: number): ShiftResult {
@@ -404,6 +400,7 @@ export class FluidBehaviour implements PixelBehaviour {
         const chain: Position[] = []
         let cx = pixelPos.x
         let hitWall = false
+
 
         while (true) {
             if (!grid.inBounds(cx, y)) {

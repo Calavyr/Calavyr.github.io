@@ -117,7 +117,10 @@ window.onkeydown = (e) => {
 (document.getElementById('fillButton') as HTMLButtonElement).onclick = () => {
     for (let y = 0; y < canvasConfig.rows; y++) {
         for (let x = 0; x < canvasConfig.columns; x++) {
-            grid.pixels[y][x] = new Pixel(selectedPixel)
+            grid.nextGrid[y][x].id = selectedPixel
+            grid.nextGrid[y][x].nextId = selectedPixel
+            grid.nextGrid[y][x].updateInfo()
+            grid.nextGrid[y][x].thermalEnergy = grid.nextGrid[y][x].info.thermalEnergy
         }
     }
 }
