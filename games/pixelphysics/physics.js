@@ -28,6 +28,8 @@ function render() {
         }
     }
     window.requestAnimationFrame(render);
+    if (mousePos.x == -1 && mousePos.y == -1)
+        return;
     let mousePixel = grid.nextGrid[mousePos.y][mousePos.x];
     let temperature = Math.trunc(mousePixel.temperature * 100) / 100;
     let thermalEnergy = Math.trunc(mousePixel.thermalEnergy * 100) / 100;
@@ -41,6 +43,9 @@ function render() {
     else {
         document.getElementById('burnDisplay').innerText = ``;
     }
+    if (mouseDown) {
+        pixelBrush();
+    }
 }
 window.requestAnimationFrame(render);
 let mouseDown = false;
@@ -52,19 +57,28 @@ document.onmouseup = (e) => {
 };
 let selectedPixel = 1;
 let mousePos = { x: 0, y: 0 };
-canvas.onmousemove = (e) => {
-    let centreX = Math.floor(e.offsetX / canvasConfig.columnWidth);
-    let centreY = Math.floor(e.offsetY / canvasConfig.rowHeight);
+document.onmousemove = (e) => {
+    let canvasRect = canvas.getBoundingClientRect();
+    let canvasMouseOffsetX = e.clientX - canvasRect.left;
+    let canvasMouseOffsetY = e.clientY - canvasRect.top;
+    let centreX = Math.floor(canvasMouseOffsetX / canvasConfig.columnWidth);
+    let centreY = Math.floor(canvasMouseOffsetY / canvasConfig.rowHeight);
     if (centreX >= 0 && centreX < canvasConfig.columns && centreY >= 0 && centreY < canvasConfig.rows) {
         mousePos.x = centreX;
         mousePos.y = centreY;
     }
+    else {
+        mousePos.x = -1;
+        mousePos.y = -1;
+    }
     if (!mouseDown)
         return;
+};
+function pixelBrush() {
     for (let xOff = -(brushSize - 1); xOff < brushSize; xOff++) {
         for (let yOff = -(brushSize - 1); yOff < brushSize; yOff++) {
-            let x = centreX + xOff;
-            let y = centreY + yOff;
+            let x = mousePos.x + xOff;
+            let y = mousePos.y + yOff;
             if (x < 0 || x >= canvasConfig.columns)
                 continue;
             if (y < 0 || y >= canvasConfig.rows)
@@ -80,7 +94,7 @@ canvas.onmousemove = (e) => {
             }
         }
     }
-};
+}
 window.onkeydown = (e) => {
     if (!isNaN(parseInt(e.key))) {
         selectedPixel = parseInt(e.key);

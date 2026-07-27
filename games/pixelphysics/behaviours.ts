@@ -1,4 +1,4 @@
-import { Grid } from './grid.js'
+import { Grid, Structure } from './grid.js'
 import { Pixel, pixelIds, PixelInfo } from './pixel.js'
 
 type Position = {
@@ -11,53 +11,12 @@ export interface PixelBehaviour {
     clone(): PixelBehaviour;
 }
 
-type Structure = {
-    pixels: Position[]
-    byId: Map<number, Position[]>
-}
-
 export abstract class StructureBehaviour implements PixelBehaviour {
     abstract structureType: string
     abstract structureIds: Set<number>
 
     getStructure(pixelPos: Position, grid: Grid): Structure {
-        const pixels = floodFill(
-            pixelPos,
-            grid,
-            p => this.structureIds.has(p.id)
-        )
-
-        const byId = new Map<number, Position[]>()
-
-        for (const pos of pixels) {
-            const id = grid.nextGrid[pos.y][pos.x].id
-
-            if (!byId.has(id)) {
-                byId.set(id, [])
-            }
-
-            byId.get(id)!.push(pos)
-        }
-
-        return {
-            pixels,
-            byId
-        }
-    }
-
-    getStructureOwner(structure: Structure): Position {
-        let owner = structure.pixels[0]
-
-        for (const pos of structure.pixels) {
-            if (
-                pos.y < owner.y ||
-                (pos.y === owner.y && pos.x < owner.x)
-            ) {
-                owner = pos
-            }
-        }
-
-        return owner
+        return grid.getStructure(pixelPos, this.structureIds)
     }
 
     abstract update(pixel: Pixel, pixelPos: Position, grid: Grid): void
@@ -88,8 +47,7 @@ export class BatteryPartBehaviour extends StructureBehaviour implements PowerSou
         }
 
         const structure = this.getStructure(pixelPos, grid)
-
-        if (this.getStructureOwner(structure) != pixelPos) {
+        if (structure.owner.x != pixelPos.x && structure.owner.y != pixelPos.y) {
             return
         }
 
@@ -197,7 +155,7 @@ export class LampBehaviour extends ElectricalBehaviour {
         copy.voltage = this.voltage
         copy.powered = this.powered
         copy.brightness = this.brightness
-        return new LampBehaviour()
+        return copy
     }
 }
 
@@ -344,9 +302,11 @@ export class GravityBehaviour implements PixelBehaviour {
     }
 }
 
-
-//Fluids sometimes duplicate themselves? Something to do with shift not working properly, 
-// also fluids are duplicating wrong when shifting shown through the colours are duplicating
+type ShiftResult = {
+    moved: boolean
+    hitWall: boolean
+}
+// Fluids under other fluids don't spread out or do anything. Same with powders in fluids. ie. sand in water can build towers, water in oil can do the same
 export class FluidBehaviour implements PixelBehaviour {
     gravityBehaviour: GravityBehaviour
     viscosity: number
@@ -360,131 +320,143 @@ export class FluidBehaviour implements PixelBehaviour {
 
     update(pixel: Pixel, pixelPos: Position, grid: Grid) {
         const direction = Math.sign(this.gravityBehaviour.gravity)
-
         const x = pixelPos.x
         const y = pixelPos.y
         const newY = y + direction
 
-        // Try moving down/up first
         if (this.gravityBehaviour.update(pixel, pixelPos, grid)) {
             return
         }
 
-        let sides: number[]
+        // 1) Try swapping vertically first
+        if (grid.inBounds(x, newY)) {
+            const targetPixel = grid.nextGrid[newY][x]
+            const otherFluid = getBehaviour(targetPixel, FluidBehaviour)
 
-        // Continue existing flow direction
-        if (pixel.velocityX != 0) {
-            let current = grid.getFlowDistance(x, y, pixel.velocityX)
-            let opposite = grid.getFlowDistance(x, y, -pixel.velocityX)
+            if (
+                otherFluid &&
+                (
+                    (this.density === otherFluid.density && pixel.temperature < targetPixel.temperature) ||
+                    (this.density > otherFluid.density)
+                )
+            ) {
+                const movedPixel = pixel.clone()
+                movedPixel.velocityX = 0
+
+                const displaced = targetPixel.clone()
+
+                if (pixel.id === targetPixel.id) {
+                    const displacedColour = displaced.colour
+                    displaced.colour = movedPixel.colour
+                    movedPixel.colour = displacedColour
+                }
+
+                grid.nextGrid[newY][x] = movedPixel
+                grid.nextGrid[y][x] = displaced
+
+                grid.updated[y][x] = true
+                grid.updated[newY][x] = true
+                return
+            }
+        }
+
+        // 2) Only then try sideways movement
+        let sides: number[]
+        if (pixel.velocityX !== 0) {
+            const current = grid.getFlowDistance(x, y, pixel.velocityX, this.gravityBehaviour.gravity)
+            const opposite = grid.getFlowDistance(x, y, -pixel.velocityX, this.gravityBehaviour.gravity)
 
             if (opposite > current + 3) {
                 pixel.velocityX *= -1
             }
 
             sides = [pixel.velocityX, -pixel.velocityX]
-
         } else {
-            sides = grid.getFluidDirections(x, y)
+            sides = grid.getFluidDirections(x, y, this.gravityBehaviour.gravity)
         }
 
-
-        // Sideways flow
         let moved = false
-
         for (const side of sides) {
             const newX = x + side
 
             if (
                 grid.inBounds(newX, y) &&
-                !grid.isGas(pixel) && 
-                pixel.id != 4 &&
-                (grid.isClear(newX, y) || grid.nextGrid[y][newX].id == pixel.id) &&
-                grid.canFlowDown(x, y, side)
+                pixel.id !== 4 &&
+                (grid.isClear(newX, y) || grid.nextGrid[y][newX].id === pixel.id) &&
+                grid.canFlow(x, y, side, direction)
             ) {
-                moved = this.shift(pixel, pixelPos, grid, side)
+                const result = this.shiftChain(pixel, pixelPos, grid, side)
+                moved = result.moved
+                if (result.hitWall && !result.moved) {
+                    pixel.velocityX = -pixel.velocityX
+                }
                 break
             }
         }
 
-        if (!grid.inBounds(x, newY)) {
-            return
-        }
-
-
-        let targetPixel = grid.nextGrid[newY][x]
-        let otherFluid = getBehaviour(
-            targetPixel,
-            FluidBehaviour
-        )
-
-        if (
-            !moved &&
-            otherFluid &&
-            (
-                // Same density: hotter fluid rises
-                (
-                    this.density === otherFluid.density &&
-                    pixel.temperature < targetPixel.temperature
-                )
-                ||
-                // Different density: denser fluid sinks
-                (
-                    this.density > otherFluid.density
-                )
-            )
-        ) {
-            let movedPixel = pixel.clone()
-            movedPixel.velocityX = 0
-
-            let displaced = targetPixel.clone()
-
-            if (pixel.id == targetPixel.id) {
-                let displacedColour = displaced.colour
-                displaced.colour = movedPixel.colour
-                movedPixel.colour = displacedColour
-            }
-
-            grid.nextGrid[newY][x] = movedPixel
-            grid.nextGrid[y][x] = displaced
-
-            grid.updated[y][x] = true
-            grid.updated[newY][x] = true
-
-            return
+        if (moved) {
+            this.trySettle(pixel, pixelPos, grid)
         }
     }
 
-    shift(pixel: Pixel, pixelPos: Position, grid: Grid, direction: number): boolean {
-        let newX = pixelPos.x + direction
+    shiftChain(pixel: Pixel, pixelPos: Position, grid: Grid, direction: number): ShiftResult {
+        const y = pixelPos.y
+        const chain: Position[] = []
+        let cx = pixelPos.x
+        let hitWall = false
 
-        if (!grid.inBounds(newX, pixelPos.y)) {
-            return false
+        while (true) {
+            if (!grid.inBounds(cx, y)) {
+                hitWall = true
+                return { moved: false, hitWall: true }
+            }
+
+            const p = grid.nextGrid[y][cx]
+
+            if (p.id === 0) {
+                break
+            }
+
+            if (!getBehaviour(p, FluidBehaviour) && cx !== pixelPos.x) {
+                hitWall = true
+                return { moved: false, hitWall: true }
+            }
+
+            chain.push({ x: cx, y })
+            cx += direction
         }
 
-        let targetPixel = grid.nextGrid[pixelPos.y][newX]
-        let fluidBehaviour = getBehaviour(targetPixel, FluidBehaviour)
-
-        let shifted = false
-        if (fluidBehaviour) {
-            shifted = fluidBehaviour.shift(targetPixel, { x: newX, y: pixelPos.y }, grid, direction)
-            targetPixel = grid.nextGrid[pixelPos.y][newX]
+        if (!grid.inBounds(cx, y) || grid.nextGrid[y][cx].id !== 0) {
+            return { moved: false, hitWall: true }
         }
 
-        if (shifted || targetPixel.id == 0 || (grid.isGas(targetPixel) && !grid.isGas(pixel))) {
-            let displaced = targetPixel.clone()
-            let movedPixel = pixel.clone()
+        for (let i = chain.length - 1; i >= 0; i--) {
+            const from = chain[i]
+            const toX = from.x + direction
+
+            const movedPixel = grid.nextGrid[y][from.x].clone()
             movedPixel.velocityX = direction
-            grid.nextGrid[pixelPos.y][newX] = movedPixel
-            grid.nextGrid[pixelPos.y][pixelPos.x] = displaced
 
-            grid.updated[pixelPos.y][newX] = true
-            grid.updated[pixelPos.y][pixelPos.x] = true
-            this.trySettle(pixel, pixelPos, grid)
+            grid.nextGrid[y][toX] = movedPixel
+            grid.nextGrid[y][from.x] = new Pixel(0)
 
-            return true
+            grid.updated[y][toX] = true
+            grid.updated[y][from.x] = true
+
+            chain[i] = {x: toX, y: chain[i].y}
         }
 
-        return false
+        for (let i = chain.length - 1; i >= 0; i--) {
+            const pixelPos = chain[i]
+            const pixel = grid.nextGrid[pixelPos.y][pixelPos.x]
+            
+            let fluidBehaviour = getBehaviour(pixel, FluidBehaviour)
+            if (fluidBehaviour) {
+                fluidBehaviour.trySettle(pixel, pixelPos, grid)
+            }
+        }
+
+        return { moved: true, hitWall: false }
     }
 
     trySettle(pixel: Pixel, pixelPos: Position, grid: Grid) {
@@ -513,7 +485,10 @@ export class FluidBehaviour implements PixelBehaviour {
 export class PlantBehaviour implements PixelBehaviour {
     update(pixel: Pixel, pixelPos: Position, grid: Grid) {
         if (Math.random() < 0.005 && pixelPos.y > 0) {
-            let waterPos = floodFillSearch(pixelPos, 13, 2, grid)
+            
+            let waterPos = grid.floodFill(pixelPos, p => p.id == 13)
+                .find(pos => grid.pixels[pos.y][pos.x].id == 2)
+            
             if (!waterPos) return
             
             let growthX = [pixelPos.x]
@@ -584,42 +559,6 @@ export class FlammableBehaviour implements PixelBehaviour {
         copy.burnDuration = this.burnDuration
         return copy
     }
-}
-
-
-function floodFillSearch(origin: Position, pixelType: number, targetType: number, grid: Grid) {
-    return floodFill(origin, grid, p => p.id == pixelType)
-        .find(pos => grid.pixels[pos.y][pos.x].id == targetType)
-}
-
-function floodFill(
-    origin: Position,
-    grid: Grid,
-    canVisit: (pixel: Pixel) => boolean
-): Position[] {
-    let queue: Position[] = [origin]
-    let visited: Record<number, Record<number, boolean>> = {}
-    let result: Position[] = []
-
-    while (queue.length > 0) {
-        let front = queue.shift()!
-
-        if (visited[front.x]?.[front.y]) {
-            continue
-        }
-
-        visited[front.x] ??= {}
-        visited[front.x][front.y] = true
-
-        if (!canVisit(grid.nextGrid[front.y][front.x])) {
-            continue
-        }
-
-        result.push(front)
-        queue.push(...grid.getAdjacent(front.x, front.y))
-    }
-
-    return result
 }
 
 type Circuit = {

@@ -8,6 +8,8 @@ export class Grid {
     columns;
     pixels;
     ambientTemperature;
+    structureCache;
+    structureKeyAt;
     constructor(rows, columns) {
         this.rows = rows;
         this.columns = columns;
@@ -15,12 +17,18 @@ export class Grid {
         this.ambientTemperature = 20;
         this.nextGrid = this.pixels.map(row => row.map(pixel => pixel.clone()));
         this.updated = Array.from({ length: this.rows }, () => Array(this.columns).fill(false));
+        this.structureCache = new Map();
+        this.structureKeyAt = Array.from({ length: rows }, () => Array(columns).fill(undefined));
     }
     nextGrid;
     updated;
     updatePixels() {
         this.nextGrid = this.pixels.map(row => row.map(pixel => pixel.clone()));
         this.updated = Array.from({ length: this.rows }, () => Array(this.columns).fill(false));
+        this.structureCache.clear();
+        for (let y = 0; y < this.rows; y++) {
+            this.structureKeyAt[y].fill(undefined);
+        }
         // Falling / static pixels: bottom-to-top so vacancies propagate downward correctly
         for (let y = this.rows - 1; y >= 0; y--) {
             for (let x = this.columns - 1; x >= 0; x--) {
@@ -93,6 +101,63 @@ export class Grid {
             pixel.id = pixel.nextId;
             pixel.updateInfo();
         }
+    }
+    getStructure(origin, structureIds) {
+        const cachedKey = this.structureKeyAt[origin.y][origin.x];
+        if (cachedKey) {
+            const cached = this.structureCache.get(cachedKey);
+            if (cached)
+                return cached;
+        }
+        const pixels = this.floodFill(origin, p => structureIds.has(p.id));
+        if (pixels.length === 0) {
+            return {
+                pixels: [],
+                byId: new Map(),
+                owner: origin
+            };
+        }
+        const byId = new Map();
+        let owner = pixels[0];
+        for (const pos of pixels) {
+            const id = this.nextGrid[pos.y][pos.x].id;
+            let list = byId.get(id);
+            if (!list) {
+                list = [];
+                byId.set(id, list);
+            }
+            list.push(pos);
+            if (pos.y < owner.y ||
+                (pos.y === owner.y && pos.x < owner.x)) {
+                owner = pos;
+            }
+        }
+        const key = `${owner.x},${owner.y}`;
+        const structure = { pixels, byId, owner };
+        this.structureCache.set(key, structure);
+        for (const pos of pixels) {
+            this.structureKeyAt[pos.y][pos.x] = key;
+        }
+        return structure;
+    }
+    floodFill(origin, canVisit) {
+        const queue = [origin];
+        const visited = new Set();
+        const result = [];
+        let head = 0;
+        while (head < queue.length) {
+            const front = queue[head++];
+            const key = `${front.x},${front.y}`;
+            if (visited.has(key))
+                continue;
+            visited.add(key);
+            if (!canVisit(this.nextGrid[front.y][front.x])) {
+                continue;
+            }
+            result.push(front);
+            queue.push(...this.getAdjacent(front.x, front.y));
+        }
+        return result;
     }
     move(oldX, oldY, newX, newY) {
         const movingPixel = this.nextGrid[oldY][oldX];
@@ -178,9 +243,9 @@ export class Grid {
         }
         return row;
     }
-    getFluidDirections(x, y) {
-        let leftDistance = this.getFlowDistance(x, y, -1);
-        let rightDistance = this.getFlowDistance(x, y, 1);
+    getFluidDirections(x, y, gravityDirection) {
+        let leftDistance = this.getFlowDistance(x, y, -1, gravityDirection);
+        let rightDistance = this.getFlowDistance(x, y, 1, gravityDirection);
         if (leftDistance < rightDistance) {
             return [-1, 1];
         }
@@ -190,39 +255,42 @@ export class Grid {
         // Equal distance, pick a random preference
         return Math.random() < 0.5 ? [-1, 1] : [1, -1];
     }
-    getFlowDistance(x, y, direction) {
+    getFlowDistance(x, y, side, gravityDirection) {
         let score = 0;
         for (let i = 1; i < 20; i++) {
-            let newX = x + direction * i;
+            let newX = x + side * i;
             if (newX < 0 || newX >= this.columns)
                 break;
             // open horizontal space
             if (this.isEmptyForFluid(this.nextGrid[y][newX])) {
                 score += 1;
             }
-            // a place where water can actually fall
-            if (y + 1 < this.rows &&
-                this.isEmptyForFluid(this.nextGrid[y + 1][newX])) {
+            // a place where fluid can actually fall
+            if (y + gravityDirection >= 0 &&
+                y + gravityDirection < this.rows &&
+                this.isEmptyForFluid(this.nextGrid[y + gravityDirection][newX])) {
                 score += 100;
             }
             // reward deeper drops
-            if (y + 2 < this.rows &&
-                this.isEmptyForFluid(this.nextGrid[y + 2][newX])) {
+            if (y + gravityDirection * 2 >= 0 &&
+                y + gravityDirection * 2 < this.rows &&
+                this.isEmptyForFluid(this.nextGrid[y + gravityDirection * 2][newX])) {
                 score += 200;
             }
         }
         return score;
     }
-    canFlowDown(x, y, side) {
+    canFlow(x, y, side, gravityDirection) {
         for (let i = 1; i <= this.columns; i++) {
             let checkX = x + side * i;
-            if (checkX < 0 || checkX >= this.columns)
+            let nextY = y + gravityDirection;
+            if (!this.inBounds(checkX, nextY) || !this.inBounds(checkX, y) || !this.inBounds(x, nextY) || !this.inBounds(x, y))
                 return false;
             // blocked horizontally
             if (!this.isEmptyForFluid(this.nextGrid[y][checkX]) && this.nextGrid[y][checkX].id != this.nextGrid[y][x].id)
                 return false;
             // can fall here
-            if (this.nextGrid[y + 1] && this.isEmptyForFluid(this.nextGrid[y + 1][checkX]))
+            if (this.isEmptyForFluid(this.nextGrid[nextY][checkX]))
                 return true;
         }
         return false;
@@ -235,6 +303,6 @@ export class Grid {
         return getBehaviour(pixel, FluidBehaviour) != undefined;
     }
     isEmptyForFluid(pixel) {
-        return pixel.id == 0 || this.isGas(pixel);
+        return pixel.id == 0 || this.isGas(pixel) || pixel.id == 4;
     }
 }
