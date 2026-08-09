@@ -152,6 +152,7 @@ export class Grid {
         }
 
         if (pixel.nextId != pixel.id) {
+            console.log('a')
             pixel.id = pixel.nextId
             pixel.updateInfo()
         }

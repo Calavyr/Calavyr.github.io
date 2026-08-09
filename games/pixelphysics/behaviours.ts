@@ -6,6 +6,10 @@ type Position = {
     y: number
 }
 
+//Fix gases being able to push up solids (ie. smoke lifting wood) (fill wood -> burn to test) 
+// (possibly fixed? was an issue with updating old pixel's nextId in flammablebehaviur)
+//Fix things staying powered (ie. lamps) when not connected to a powered circuit (FIXED)
+
 export interface PixelBehaviour {
     update(pixel: Pixel, pixelPos: Position, grid: Grid): void;
     clone(): PixelBehaviour;
@@ -152,8 +156,6 @@ export class LampBehaviour extends ElectricalBehaviour {
 
     clone(): PixelBehaviour {
         const copy = new LampBehaviour()
-        copy.voltage = this.voltage
-        copy.powered = this.powered
         copy.brightness = this.brightness
         return copy
     }
@@ -229,8 +231,6 @@ export class WireBehaviour extends ElectricalBehaviour {
 
     clone() {
         const copy = new WireBehaviour()
-        copy.voltage = this.voltage
-        copy.powered = this.powered
         return copy
     }
 }
@@ -340,6 +340,7 @@ export class FluidBehaviour implements PixelBehaviour {
                     (this.density > otherFluid.density)
                 )
             ) {
+
                 const movedPixel = pixel.clone()
                 movedPixel.velocityX = 0
 
@@ -534,7 +535,9 @@ export class FlammableBehaviour implements PixelBehaviour {
             }
 
             if (this.burnDuration <= 0) {
-                pixel.nextId = this.ignitionResult
+                let nextPixel = grid.nextGrid[pixelPos.y][pixelPos.x]
+                nextPixel.nextId = this.ignitionResult
+                nextPixel.updateInfo()
             }
             let neighbours = grid.getNeighbours(pixelPos.x, pixelPos.y)
             for (let neighbour of neighbours) {

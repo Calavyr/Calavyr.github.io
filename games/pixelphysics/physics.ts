@@ -112,6 +112,9 @@ window.onkeydown = (e) => {
     if (!isNaN(parseInt(e.key))) {
         selectedPixel = parseInt(e.key)
     }
+    if (e.key == 'i') {
+        grid.nextGrid[mousePos.y][mousePos.x].log()
+    }
 }
 
 (document.getElementById('fillButton') as HTMLButtonElement).onclick = () => {

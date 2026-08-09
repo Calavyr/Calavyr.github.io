@@ -69,6 +69,30 @@ export class Pixel {
         this.colour = this.info.colours[randomInt(0, this.info.colours.length - 1)];
         this.behaviours = this.info.behaviours.map(behaviour => behaviour.clone());
     }
+    log() {
+        const behaviourSummary = this.behaviours.map(b => b.constructor.name).join(', ');
+        // 1. Print a styled, scannable header line
+        console.group(`%cPixel #${this.info.name} (${this.id})%c | Temp: %c${this.temperature.toFixed(1)}°C%c | Behaviours: [%c${behaviourSummary}%c]`, 'color: #00ffff; font-weight: bold;', // Cyan ID
+        'color: #aaa;', 'color: #ff9900; font-weight: bold;', // Orange Temp
+        'color: #aaa;', 'color: #ff00ff;', // Magenta Behaviours
+        'color: #aaa;');
+        // 2. Output the actual structure as an expandable dropdown tree
+        console.dir({
+            id: this.id,
+            nextId: this.nextId,
+            colour: this.colour,
+            thermalEnergy: this.thermalEnergy,
+            fixedThermalEnergy: this.fixedThermalEnergy,
+            velocityX: this.velocityX,
+            info: this.info,
+            // Maps behaviors into their true subclass representations inside the dropdown
+            activeBehaviours: this.behaviours.reduce((acc, b) => {
+                acc[b.constructor.name] = b;
+                return acc;
+            }, {})
+        });
+        console.groupEnd();
+    }
 }
 export const interactions = {
     4: {

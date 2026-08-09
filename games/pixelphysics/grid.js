@@ -98,6 +98,7 @@ export class Grid {
             behaviour.update(pixel, { x: x, y: y }, this);
         }
         if (pixel.nextId != pixel.id) {
+            console.log('a');
             pixel.id = pixel.nextId;
             pixel.updateInfo();
         }
