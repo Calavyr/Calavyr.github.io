@@ -160,6 +160,27 @@ export class Grid {
         }
         return result;
     }
+    floodFillFind(origin, canVisit, target) {
+        const queue = [origin];
+        const visited = new Set();
+        let result;
+        let head = 0;
+        while (head < queue.length) {
+            const front = queue[head++];
+            const key = `${front.x},${front.y}`;
+            if (visited.has(key))
+                continue;
+            visited.add(key);
+            if (target(this.nextGrid[front.y][front.x])) {
+                return front;
+            }
+            if (!canVisit(this.nextGrid[front.y][front.x])) {
+                continue;
+            }
+            queue.push(...this.getAdjacent(front.x, front.y));
+        }
+        return undefined;
+    }
     move(oldX, oldY, newX, newY) {
         const movingPixel = this.nextGrid[oldY][oldX];
         const displacedPixel = this.nextGrid[newY][newX];

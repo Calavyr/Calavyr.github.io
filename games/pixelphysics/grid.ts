@@ -233,6 +233,37 @@ export class Grid {
         return result
     }
 
+    floodFillFind(
+        origin: Position,
+        canVisit: (pixel: Pixel) => boolean,
+        target: (pixel: Pixel) => boolean
+    ): Position | undefined {
+        const queue: Position[] = [origin]
+        const visited = new Set<string>()
+        let result: Position;
+
+        let head = 0
+        while (head < queue.length) {
+            const front = queue[head++]
+            const key = `${front.x},${front.y}`
+
+            if (visited.has(key)) continue
+            visited.add(key)
+
+            if (target(this.nextGrid[front.y][front.x])) {
+                return front
+            }
+
+            if (!canVisit(this.nextGrid[front.y][front.x])) {
+                continue
+            }
+
+            queue.push(...this.getAdjacent(front.x, front.y))
+        }
+
+        return undefined
+    }
+
 
 
     move(oldX: number, oldY: number, newX: number, newY: number) {

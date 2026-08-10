@@ -36,8 +36,9 @@ export class BatteryPartBehaviour extends StructureBehaviour implements PowerSou
     structureType: string = "battery"
     structureIds: Set<number> = new Set([17, 18, 19])
 
-    energy = 10000
-    maxEnergy = 10000
+    energy = 250
+    maxEnergy = 250
+    baseEnergyPer = 250
     voltage = 12
     resistance = 0.1
 
@@ -46,9 +47,9 @@ export class BatteryPartBehaviour extends StructureBehaviour implements PowerSou
     }
 
     update(pixel: Pixel, pixelPos: Position, grid: Grid) {
-        if (this.energy <= 0) {
-            return
-        }
+        // if (this.energy <= 0) {
+        //     return
+        // }
 
         const structure = this.getStructure(pixelPos, grid)
         if (structure.owner.x != pixelPos.x && structure.owner.y != pixelPos.y) {
@@ -87,16 +88,30 @@ export class BatteryPartBehaviour extends StructureBehaviour implements PowerSou
             currentDraw += electrical.current
         }
 
-        this.energy -= currentDraw * 0.01
-
-        if (this.energy < 0) {
-            this.energy = 0
+        let nextBattery = getBehaviour(grid.nextGrid[pixelPos.y][pixelPos.x], BatteryPartBehaviour)
+        if (nextBattery) {
+            nextBattery.energy -= currentDraw * 0.01
+            if (nextBattery.baseEnergyPer * body.length > nextBattery.maxEnergy) {
+                let energyDifference = nextBattery.baseEnergyPer * body.length - nextBattery.maxEnergy
+                nextBattery.maxEnergy = nextBattery.baseEnergyPer * body.length
+                nextBattery.energy += energyDifference
+            }
+            if (nextBattery.baseEnergyPer * body.length < nextBattery.maxEnergy) {
+                nextBattery.maxEnergy = nextBattery.baseEnergyPer * body.length
+                nextBattery.energy = Math.min(nextBattery.energy, nextBattery.baseEnergyPer * body.length)
+            }
+            
+            if (nextBattery.energy < 0) {
+                nextBattery.energy = 0
+            }
         }
+        console.log(this.energy, this.maxEnergy, currentDraw)
     }
 
     clone() {
         const copy = new BatteryPartBehaviour()
         copy.energy = this.energy
+        copy.maxEnergy = this.maxEnergy
         return copy
     }
 }
@@ -484,8 +499,7 @@ export class PlantBehaviour implements PixelBehaviour {
     update(pixel: Pixel, pixelPos: Position, grid: Grid) {
         if (Math.random() < 0.005 && pixelPos.y > 0) {
             
-            let waterPos = grid.floodFill(pixelPos, p => p.id == 13)
-                .find(pos => grid.pixels[pos.y][pos.x].id == 2)
+            let waterPos = grid.floodFillFind(pixelPos, p => p.id == 13, p => p.id == 2)
             
             if (!waterPos) return
             
