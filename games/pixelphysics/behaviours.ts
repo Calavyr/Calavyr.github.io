@@ -508,8 +508,10 @@ export class PlantBehaviour implements PixelBehaviour {
             for (let x of growthX) {
                 if (x < 0 || x >= grid.columns) continue
                 if (grid.nextGrid[pixelPos.y - 1][x].id == 0 || grid.nextGrid[pixelPos.y - 1][x].id == 2) {
+                    let temp = grid.nextGrid[pixelPos.y - 1][x].temperature
                     grid.nextGrid[pixelPos.y - 1][x].nextId = 13
                     grid.nextGrid[pixelPos.y - 1][x].updateInfo()
+                    grid.nextGrid[pixelPos.y - 1][x].thermalEnergy = temp * pixel.info.heatCapacity
                     grid.nextGrid[waterPos.y][waterPos.x].nextId = 0
                     grid.nextGrid[waterPos.y][waterPos.x].updateInfo()
                 }
@@ -529,14 +531,16 @@ export class FlammableBehaviour implements PixelBehaviour {
     ignitionEnergy: number
     ignitionResult: number
     burnHeatProduction: number
+    flameProbability: number
 
-    constructor(duration: number, ignitionEnergy: number, ignitionResult: number, burnHeatProduction: number) {
+    constructor(duration: number, ignitionEnergy: number, ignitionResult: number, burnHeatProduction: number, flameProbability: number) {
         this.burning = false
         this.maxBurnDuration = duration
         this.burnDuration = duration
         this.ignitionEnergy = ignitionEnergy
         this.ignitionResult = ignitionResult
         this.burnHeatProduction = burnHeatProduction
+        this.flameProbability = flameProbability
     }
 
     update(pixel: Pixel, pixelPos: Position, grid: Grid) {
@@ -560,7 +564,7 @@ export class FlammableBehaviour implements PixelBehaviour {
                 let flammable = getBehaviour(neighbourPixel, FlammableBehaviour)
                 if (flammable) {
                     flammable.burning = true
-                } else if (neighbourPixel.id == 0 || neighbourPixel.id == 5) {
+                } else if ((neighbourPixel.id == 0 || neighbourPixel.id == 5) && Math.random() < this.flameProbability) {
                     grid.nextGrid[neighbour.y][neighbour.x] = new Pixel(4)
                 }
             }
@@ -568,7 +572,7 @@ export class FlammableBehaviour implements PixelBehaviour {
     }
     
     clone() {
-        let copy = new FlammableBehaviour(this.maxBurnDuration, this.ignitionEnergy, this.ignitionResult, this.burnHeatProduction)
+        let copy = new FlammableBehaviour(this.maxBurnDuration, this.ignitionEnergy, this.ignitionResult, this.burnHeatProduction, this.flameProbability)
         copy.burning = this.burning
         copy.burnDuration = this.burnDuration
         return copy

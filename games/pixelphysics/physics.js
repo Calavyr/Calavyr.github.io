@@ -3,6 +3,7 @@ import { Grid } from './grid.js';
 import { Pixel } from './pixel.js';
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
+// Implement some kind of base temperature/thermal energy for when drawing pixels into the sandbox, i.e. steam should start hot, 
 const brushSizeSlider = document.getElementById('brushSize');
 let brushSize = 1;
 brushSizeSlider.onchange = (e) => {

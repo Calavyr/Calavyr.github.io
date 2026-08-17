@@ -11,18 +11,18 @@ export const pixelIds = {
     0: DEFAULT_PIXEL,
     1: { name: 'sand', colours: ['#d9a441', '#e8c56b', '#c89b45'], heatCapacity: 0.8, heatConductivity: 0.25, thermalEnergy: 16, meltingEnergy: 1200, meltingResult: 7, behaviours: [new GravityBehaviour(1)] },
     2: { name: 'water', colours: ['#0066cc', '#2389e8', '#6fc8ff'], heatCapacity: 4, heatConductivity: 0.45, thermalEnergy: 80, boilingEnergy: 400, boilingResult: 6, freezingEnergy: 0, freezingResult: 10, behaviours: [new FluidBehaviour(1, 1, 0)] },
-    3: { name: 'wood', colours: ['#3b1f0b', '#6b3a17', '#8c5527'], heatCapacity: 1.6, heatConductivity: 0.08, thermalEnergy: 32, behaviours: [new FlammableBehaviour(300, 480, 4, 2)] },
+    3: { name: 'wood', colours: ['#3b1f0b', '#6b3a17', '#8c5527'], heatCapacity: 1.6, heatConductivity: 0.08, thermalEnergy: 32, behaviours: [new FlammableBehaviour(300, 480, 4, 2, 0.03)] },
     4: { name: 'fire', colours: ['#ff3300', '#ff9900', '#fff200'], heatCapacity: 0.5, heatConductivity: 0.8, thermalEnergy: 500, behaviours: [new FluidBehaviour(-1, 0, 0)] },
     5: { name: 'smoke', colours: ['#414141', '#7a7a7a', '#777777'], heatCapacity: 0.9, heatConductivity: 0.05, thermalEnergy: 120, behaviours: [new FluidBehaviour(-1, 0.02, 0)] },
-    6: { name: 'steam', colours: ['#d9ffff', '#efffff', '#b8e8ff'], heatCapacity: 2.2, heatConductivity: 0.25, thermalEnergy: 260, freezingEnergy: 220, freezingResult: 2, behaviours: [new FluidBehaviour(-1, 0.01, 0)] },
+    6: { name: 'steam', colours: ['#d9ffff', '#efffff', '#b8e8ff'], heatCapacity: 2.2, heatConductivity: 0.25, thermalEnergy: 330, freezingEnergy: 220, freezingResult: 2, behaviours: [new FluidBehaviour(-1, 0.01, 0)] },
     7: { name: 'glass', colours: ['#8de0d5'], heatCapacity: 0.9, heatConductivity: 0.35, thermalEnergy: 18, behaviours: [] },
-    8: { name: 'oil', colours: ['#100d08', '#302010', '#57401f'], heatCapacity: 2.0, heatConductivity: 0.15, thermalEnergy: 40, behaviours: [new FluidBehaviour(1, 0.3, 0.2), new FlammableBehaviour(1500, 500, 4, 4)] },
+    8: { name: 'oil', colours: ['#100d08', '#302010', '#57401f'], heatCapacity: 2.0, heatConductivity: 0.15, thermalEnergy: 40, behaviours: [new FluidBehaviour(1, 0.3, 0.2), new FlammableBehaviour(1500, 500, 4, 4, 0.2)] },
     9: { name: 'fuse', colours: ['#555555', '#888888', '#bbbbbb'], heatCapacity: 0.5, heatConductivity: 0.15, thermalEnergy: 10, behaviours: [] },
     10: { name: 'ice', colours: ['#75d8ff', '#b9eeff', '#e6ffff'], heatCapacity: 3.8, heatConductivity: 0.6, thermalEnergy: -38, meltingEnergy: 0, meltingResult: 2, behaviours: [] },
     11: { name: 'snow', colours: ['#ffffff', '#e8f5ff', '#c9e6ff'], heatCapacity: 2.0, heatConductivity: 0.25, thermalEnergy: -10, meltingEnergy: 0, meltingResult: 2, behaviours: [new GravityBehaviour(1)] },
     12: { name: 'cold void', colours: ['#000814', '#001d3d', '#003566'], heatCapacity: 1, heatConductivity: 0.8, thermalEnergy: -1200, fixedThermalEnergy: -1200, behaviours: [] },
-    13: { name: 'plant', colours: ['#145214', '#278b27', '#63c957'], heatCapacity: 3.5, heatConductivity: 0.15, thermalEnergy: 70, behaviours: [new PlantBehaviour(), new FlammableBehaviour(100, 600, 4, 1)] },
-    14: { name: 'lava', colours: ['#6b0000', '#d52b00', '#ff6a00'], heatCapacity: 1, heatConductivity: 0.8, thermalEnergy: 1200, fixedThermalEnergy: 1200, behaviours: [new FluidBehaviour(1, 10, 0), new FlammableBehaviour(Infinity, 0, 4, 0)] },
+    13: { name: 'plant', colours: ['#145214', '#278b27', '#63c957'], heatCapacity: 3.5, heatConductivity: 0.15, thermalEnergy: 70, behaviours: [new PlantBehaviour(), new FlammableBehaviour(100, 600, 4, 1, 0.001)] },
+    14: { name: 'lava', colours: ['#6b0000', '#d52b00', '#ff6a00'], heatCapacity: 1, heatConductivity: 0.8, thermalEnergy: 1200, fixedThermalEnergy: 1200, behaviours: [new FluidBehaviour(1, 10, 0), new FlammableBehaviour(Infinity, 0, 4, 0, 1)] },
     15: { name: 'metal', colours: ['#8a8a8a'], heatCapacity: 3.5, heatConductivity: 0.9, thermalEnergy: 70, behaviours: [new WireBehaviour()] },
     16: { name: 'air filter', colours: ['#151515'], heatCapacity: 3.5, heatConductivity: 0.9, thermalEnergy: 70, behaviours: [] },
     17: { name: 'battery', colours: ['#1100ff'], heatCapacity: 3.5, heatConductivity: 0.9, thermalEnergy: 70, behaviours: [new BatteryPartBehaviour()] },
@@ -124,6 +124,12 @@ export const interactions = {
     },
     5: {
         0: (smoke, smokePos, air, airPos, current, next, grid) => {
+            if (Math.random() < 0.01) {
+                next[smokePos.y][smokePos.x] = new Pixel(0);
+                grid.updated[smokePos.y][smokePos.x] = true;
+            }
+        },
+        5: (smoke, smokePos, otherSmoke, otherSmokePos, current, next, grid) => {
             if (Math.random() < 0.01) {
                 next[smokePos.y][smokePos.x] = new Pixel(0);
                 grid.updated[smokePos.y][smokePos.x] = true;

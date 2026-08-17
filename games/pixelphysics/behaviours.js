@@ -357,8 +357,10 @@ export class PlantBehaviour {
                 if (x < 0 || x >= grid.columns)
                     continue;
                 if (grid.nextGrid[pixelPos.y - 1][x].id == 0 || grid.nextGrid[pixelPos.y - 1][x].id == 2) {
+                    let temp = grid.nextGrid[pixelPos.y - 1][x].temperature;
                     grid.nextGrid[pixelPos.y - 1][x].nextId = 13;
                     grid.nextGrid[pixelPos.y - 1][x].updateInfo();
+                    grid.nextGrid[pixelPos.y - 1][x].thermalEnergy = temp * pixel.info.heatCapacity;
                     grid.nextGrid[waterPos.y][waterPos.x].nextId = 0;
                     grid.nextGrid[waterPos.y][waterPos.x].updateInfo();
                 }
@@ -376,13 +378,15 @@ export class FlammableBehaviour {
     ignitionEnergy;
     ignitionResult;
     burnHeatProduction;
-    constructor(duration, ignitionEnergy, ignitionResult, burnHeatProduction) {
+    flameProbability;
+    constructor(duration, ignitionEnergy, ignitionResult, burnHeatProduction, flameProbability) {
         this.burning = false;
         this.maxBurnDuration = duration;
         this.burnDuration = duration;
         this.ignitionEnergy = ignitionEnergy;
         this.ignitionResult = ignitionResult;
         this.burnHeatProduction = burnHeatProduction;
+        this.flameProbability = flameProbability;
     }
     update(pixel, pixelPos, grid) {
         if (this.burning || pixel.thermalEnergy > this.ignitionEnergy) {
@@ -403,14 +407,14 @@ export class FlammableBehaviour {
                 if (flammable) {
                     flammable.burning = true;
                 }
-                else if (neighbourPixel.id == 0 || neighbourPixel.id == 5) {
+                else if ((neighbourPixel.id == 0 || neighbourPixel.id == 5) && Math.random() < this.flameProbability) {
                     grid.nextGrid[neighbour.y][neighbour.x] = new Pixel(4);
                 }
             }
         }
     }
     clone() {
-        let copy = new FlammableBehaviour(this.maxBurnDuration, this.ignitionEnergy, this.ignitionResult, this.burnHeatProduction);
+        let copy = new FlammableBehaviour(this.maxBurnDuration, this.ignitionEnergy, this.ignitionResult, this.burnHeatProduction, this.flameProbability);
         copy.burning = this.burning;
         copy.burnDuration = this.burnDuration;
         return copy;
